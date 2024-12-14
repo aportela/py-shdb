@@ -3,6 +3,14 @@ import sys
 import requests
 import feedparser
 
+import configparser
+
+# Crear un objeto ConfigParser
+config = configparser.ConfigParser()
+
+# Leer el archivo de configuración
+config.read('config.ini')
+
 # Inicializar Pygame
 pygame.init()
 
@@ -148,7 +156,8 @@ while running:
     pygame.display.flip()
 
     # Controlar FPS
-    clock.tick(60)
+
+    clock.tick(int(config.get('app', 'max_fps', fallback=60)))
 
 # Salir de Pygame
 pygame.quit()
