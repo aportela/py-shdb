@@ -6,6 +6,7 @@ class Example(Widget):
     def __init__(self, surface: pygame.Surface, debug: bool = False, x_offset: int = 0, y_offset: int = 0, width: int = 0, height: int = 0, padding: int = 0):
         # Llamada al constructor de la clase base
         super().__init__(surface=surface, debug=debug, x_offset=x_offset, y_offset=y_offset, width=width, height=height, padding=padding)
+        self.refresh(True)
 
     def refresh(self, force: bool = False) -> bool:
         if (force):
