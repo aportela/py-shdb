@@ -11,7 +11,7 @@ class Example(Widget):
         if (force):
             self.clear()
             pygame.draw.rect(self._tmp_surface, (255, 100, 255), (self._padding, self._padding, self._width / 2, self._height / 2))
-            print(f"Refreshed")
+            # print(f"Refreshed")
             super().blit()
             return True
         else:
