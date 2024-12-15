@@ -16,6 +16,7 @@ class FPSCounter(Widget):
         current_fps = int(self._clock.get_fps())
         if (force or current_fps != self._previousFPS):
             self._previousFPS = current_fps
+            # TODO: only refresh counter
             fps_text = self._font.render(f"FPS: {current_fps:03d}", True, (255, 255, 0))
             self.clear()
             match self._position:
