@@ -39,6 +39,11 @@ font = pygame.font.Font(None, 36)
 small_font = pygame.font.Font(None, 24)
 icon_font = pygame.font.Font("resources/fonts/fa-solid-900.ttf", 32)  # Ruta a tu fuente de íconos (fontawesome)
 
+# fuente para fps
+
+
+fps_font = pygame.font.SysFont("monospace", 12)
+
 # Reloj para controlar el FPS
 clock = pygame.time.Clock()
 
@@ -166,11 +171,11 @@ while running:
     screen.blit(framebuffer_global, (0, 0))
 
 
-    fps = clock.get_fps()
+    fps = int(clock.get_fps())
 
-    fps_text = font.render(f"FPS: {fps:.2f}", True, (255, 255, 255))
+    fps_text = fps_font.render(f"FPS: {fps:03d}", True, (255, 255, 0))
 
-    screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 10, 10))
+    screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, 8))
 
     # Actualizar pantalla
     pygame.display.flip()
