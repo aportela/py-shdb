@@ -5,6 +5,7 @@ import feedparser
 
 import configparser
 
+from src.display.widgets.FPSCounter import FPSCounter
 from src.display.widgets.Example import Example
 
 # Crear un objeto ConfigParser
@@ -26,8 +27,22 @@ pygame.display.set_caption("Weather Forecast and RSS Feed")
 
 framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
 
+def add_widget(widget):
+    for w in widgets:
+        if w.__class__.__name__ == widget.__class__.__name__:
+            print(f"Warning, duplicated widget ('{widget.name}') found")
+            return
+    widgets.append(widget)
+
+widgets = []
+
 widgetExample = Example(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=200, height=150, padding = 2)
 
+add_widget(widgetExample)
+
+fpsCounter = FPSCounter(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=200, height=150, padding = 2)
+
+add_widget(fpsCounter)
 
 # Colores
 WHITE = (255, 255, 255)
@@ -170,12 +185,25 @@ while running:
     widgetExample.refresh(True)
     screen.blit(framebuffer_global, (0, 0))
 
-
     fps = int(clock.get_fps())
 
     fps_text = fps_font.render(f"FPS: {fps:03d}", True, (255, 255, 0))
 
-    screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, 8))
+    print (config.get('app', 'fps_counter', fallback="none"))
+
+    match config.get('app', 'fps_counter', fallback="none"):
+        case "top_left":
+            screen.blit(fps_text, (8, 8))
+        case "top_right":
+            screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, 8))
+        case "bottom_left":
+            screen.blit(fps_text, (8, screen.get_height() - fps_text.get_height() - 8))
+        case "bottom_right":
+            screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, 8))
+            screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, screen.get_height() - fps_text.get_height() - 8))
+
+
+#    screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, 8))
 
     # Actualizar pantalla
     pygame.display.flip()
