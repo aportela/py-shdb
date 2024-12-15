@@ -5,6 +5,8 @@ import feedparser
 
 import configparser
 
+from src.display.widgets.Example import Example
+
 # Crear un objeto ConfigParser
 config = configparser.ConfigParser()
 
@@ -21,6 +23,11 @@ RESOLUTION = (screen_info.current_w, screen_info.current_h)
 # Configurar pantalla completa
 screen = pygame.display.set_mode(RESOLUTION, pygame.FULLSCREEN)
 pygame.display.set_caption("Weather Forecast and RSS Feed")
+
+framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
+
+widgetExample = Example(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=200, height=150, padding = 2)
+
 
 # Colores
 WHITE = (255, 255, 255)
@@ -108,6 +115,7 @@ scroll_speed = 1  # Velocidad de desplazamiento
 # Bucle principal
 running = True
 while running:
+
     # Manejar eventos
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -115,6 +123,7 @@ while running:
 
     # Dibujar en la pantalla
     screen.fill(BLACK)
+
 
     # Dibujar previsión del tiempo en la parte superior
     if weather_data:
@@ -151,6 +160,17 @@ while running:
     scroll_y -= scroll_speed
     if scroll_y + len(rss_titles) * 30 < 0:
         scroll_y = RESOLUTION[1] - 100
+
+    framebuffer_global.fill((0, 0, 0))
+    widgetExample.refresh(True)
+    screen.blit(framebuffer_global, (0, 0))
+
+
+    fps = clock.get_fps()
+
+    fps_text = font.render(f"FPS: {fps:.2f}", True, (255, 255, 255))
+
+    screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 10, 10))
 
     # Actualizar pantalla
     pygame.display.flip()
