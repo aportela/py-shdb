@@ -17,7 +17,7 @@ class RSSFeed:
         :param max_items: Maximum number of items to return per refresh.
         """
         self._url = url
-        self._default_refresh_time = default_seconds_refresh_time
+        self._default_seconds_refresh_time = default_seconds_refresh_time
         self._max_items = max_items
         self._last_refresh_timestamp = time.time()
         self._feed_entries = []
@@ -28,8 +28,8 @@ class RSSFeed:
         return self._url
 
     @property
-    def default_refresh_time(self) -> int:
-        return self._default_refresh_time
+    def default_seconds_refresh_time(self) -> int:
+        return self._default_seconds_refresh_time
 
     @property
     def max_items(self) -> int:
@@ -65,7 +65,7 @@ class RSSFeed:
             "articles": []     # Empty list of articles initially
         }
 
-        if force or current_time - self._last_refresh_timestamp >= self._default_refresh_time:
+        if force or current_time - self._last_refresh_timestamp >= self._default_seconds_refresh_time:
             try:
                 # Using requests to fetch the RSS feed
                 headers = {
