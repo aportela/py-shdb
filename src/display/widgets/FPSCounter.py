@@ -4,9 +4,9 @@ from .Widget import Widget
 
 class FPSCounter(Widget):
 
-    def __init__(self, surface: pygame.Surface, debug: bool = False, x_offset: int = 0, y_offset: int = 0, width: int = 0, height: int = 0, padding: int = 0, clock: pygame.time.Clock = pygame.time.Clock(), font_family: str = "monospace", font_size: int = 12, position: str = "none"):
+    def __init__(self, surface: pygame.Surface, debug: bool = False, x: int = 0, y: int = 0, width: int = 0, height: int = 0, padding: int = 0, clock: pygame.time.Clock = pygame.time.Clock(), font_family: str = "monospace", font_size: int = 12, position: str = "none"):
         # Llamada al constructor de la clase base
-        super().__init__(surface=surface, debug=debug, x_offset=x_offset, y_offset=y_offset, width=width, height=height, padding=padding)
+        super().__init__(surface=surface, debug=debug, x=x, y=y, width=width, height=height, padding=padding)
         self._clock = clock
         self._previousFPS = 0
         self._font = pygame.font.SysFont(font_family, font_size)
