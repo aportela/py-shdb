@@ -1,9 +1,10 @@
 import sys
 import configparser
 import pygame
-
+import locale
 
 from src.display.widgets.Example import Example
+from src.display.widgets.date_widget import DateWidget
 from src.display.widgets.rss_widget import RSSWidget
 
 # Crear un objeto ConfigParser
@@ -12,6 +13,8 @@ config = configparser.ConfigParser()
 # Leer el archivo de configuración
 config.read('config.ini')
 
+
+locale.setlocale(locale.LC_TIME, config.get('app', 'locale', fallback="en_EN.UTF-8"))
 # Inicializar Pygame
 pygame.init()
 
@@ -33,12 +36,14 @@ def add_widget(widget):
 
 widgets = []
 
-widgetExample = Example(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=200, height=150, padding = 2)
+widgetExample = Example(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 500, y_offset = 10, width=200, height=150, padding = 2)
 
 add_widget(widgetExample)
-rsswiget = RSSWidget(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 200, width=455, height=300, padding = 2, font_family = "monospace", font_size = 12, url = "https://meneame.net/rss2.php", default_seconds_refresh_time= 600, max_items=8)
-add_widget(rsswiget)
+rsswidget = RSSWidget(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 200, width=455, height=300, padding = 2, font_family = "monospace", font_size = 12, url = "https://meneame.net/rss2.php", default_seconds_refresh_time= 600, max_items=8)
+add_widget(rsswidget)
 
+datewidget = DateWidget(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=300, height=40, padding = 2, font_family = "monospace", font_size = 24)
+add_widget(datewidget)
 #fpsCounter = FPSCounter(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=200, height=150, padding = 2)
 
 # add_widget(fpsCounter)
