@@ -5,6 +5,7 @@ import locale
 
 from src.display.widgets.Example import Example
 from src.display.widgets.date_widget import DateWidget
+from src.display.widgets.time_widget import TimeWidget
 from src.display.widgets.rss_widget import RSSWidget
 
 # Crear un objeto ConfigParser
@@ -44,6 +45,11 @@ add_widget(rsswidget)
 
 datewidget = DateWidget(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=300, height=40, padding = 2, font_family = "monospace", font_size = 24)
 add_widget(datewidget)
+
+timewidget = TimeWidget(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 60, width=400, height=100, padding = 2, font_family = "monospace", font_size = 80)
+add_widget(timewidget)
+
+
 #fpsCounter = FPSCounter(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=200, height=150, padding = 2)
 
 # add_widget(fpsCounter)
