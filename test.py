@@ -4,6 +4,7 @@ import pygame
 
 
 from src.display.widgets.Example import Example
+from src.display.widgets.rss_widget import RSSWidget
 
 # Crear un objeto ConfigParser
 config = configparser.ConfigParser()
@@ -35,6 +36,8 @@ widgets = []
 widgetExample = Example(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=200, height=150, padding = 2)
 
 add_widget(widgetExample)
+rsswiget = RSSWidget(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 200, width=255, height=300, padding = 2, font_family = "monospace", font_size = 12, url = "https://meneame.net/rss2.php", default_seconds_refresh_time= 600, max_items=4)
+add_widget(rsswiget)
 
 #fpsCounter = FPSCounter(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=200, height=150, padding = 2)
 
@@ -149,17 +152,6 @@ while running:
         error_text = font.render("Error fetching weather data.", True, RED)
         screen.blit(error_text, (50, 50))
 
-    # Dibujar los títulos del RSS en la parte inferior izquierda
-    y = scroll_y
-    for title in rss_titles:
-        title_text = small_font.render(title, True, WHITE)
-        screen.blit(title_text, (20, y))
-        y += 30  # Espaciado entre títulos
-
-    # Actualizar la posición para el desplazamiento
-    scroll_y -= scroll_speed
-    if scroll_y + len(rss_titles) * 30 < 0:
-        scroll_y = RESOLUTION[1] - 100
 
     framebuffer_global.fill((0, 0, 0))
 
