@@ -21,7 +21,13 @@ class RSSWidget(Widget):
         if (force or data["changed"]):
             self.clear()
             title_text = self._font.render(data["title"], True, (255, 255, 0))
-            self._tmp_surface.blit(title_text, (self._padding, self._padding))
+            y = self._padding
+            self._tmp_surface.blit(title_text, (self._padding, y))
+            y += title_text.get_height() + 4
+            for item in data["items"]:
+                item_text = self._font.render(item["title"], True, (255, 255, 0))
+                self._tmp_surface.blit(item_text, (self._padding, y))
+                y += title_text.get_height() + 4
             super().blit()
             return True
         else:

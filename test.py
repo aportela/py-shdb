@@ -36,7 +36,7 @@ widgets = []
 widgetExample = Example(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=200, height=150, padding = 2)
 
 add_widget(widgetExample)
-rsswiget = RSSWidget(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 200, width=255, height=300, padding = 2, font_family = "monospace", font_size = 12, url = "https://meneame.net/rss2.php", default_seconds_refresh_time= 600, max_items=4)
+rsswiget = RSSWidget(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 200, width=455, height=300, padding = 2, font_family = "monospace", font_size = 12, url = "https://meneame.net/rss2.php", default_seconds_refresh_time= 600, max_items=8)
 add_widget(rsswiget)
 
 #fpsCounter = FPSCounter(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=200, height=150, padding = 2)
