@@ -2,14 +2,14 @@ import pygame
 from abc import ABC, abstractmethod
 
 class Widget(ABC):
-    def __init__(self, surface: pygame.Surface, debug: bool = False, x_offset: int = 0, y_offset: int = 0, width: int = 0, height: int = 0, padding: int = 1):
+    def __init__(self, surface: pygame.Surface, debug: bool = False, x: int = 0, y: int = 0, width: int = 0, height: int = 0, padding: int = 1):
         if width < 0 or height < 0 or padding < 0:
             raise ValueError("Invalid width/height/padding")
 
         self._debug = debug
         self._surface = surface
-        self._x_offset = x_offset
-        self._y_offset = y_offset
+        self._x = x
+        self._y = y
         self._width = width
         self._height = height
         self._padding = padding
@@ -29,7 +29,7 @@ class Widget(ABC):
             # add border (for debug sizes/offsets)
             pygame.draw.rect(self._tmp_surface, (255, 100, 50), (0, 0, self._width , self._height), 1)
         # dump surface
-        self._surface.blit(self._tmp_surface, (self._x_offset, self._y_offset))
+        self._surface.blit(self._tmp_surface, (self._x, self._y))
 
     @abstractmethod
     def refresh(self, force: bool = False) -> bool:
