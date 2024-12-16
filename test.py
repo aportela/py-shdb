@@ -1,11 +1,8 @@
-import pygame
 import sys
-import requests
-import feedparser
-
 import configparser
+import pygame
 
-#from src.display.widgets.FPSCounter import FPSCounter
+
 from src.display.widgets.Example import Example
 
 # Crear un objeto ConfigParser
@@ -54,8 +51,6 @@ small_font = pygame.font.Font(None, 24)
 icon_font = pygame.font.Font("resources/fonts/fa-solid-900.ttf", 32)  # Ruta a tu fuente de íconos (fontawesome)
 
 # fuente para fps
-
-
 fps_font = pygame.font.SysFont("monospace", 12)
 
 # Reloj para controlar el FPS
@@ -114,33 +109,19 @@ def get_weather_icon(code):
     else:
         return weather_icons[1]
 
-# Obtener los títulos del feed RSS
-def fetch_rss_titles(url, max_items=16):
-    try:
-        feed = feedparser.parse(url)
-        return [entry["title"] for entry in feed.entries[:max_items]]
-    except Exception as e:
-        print("Error fetching RSS feed:", e)
-        return ["Error loading RSS feed."]
 
 # Datos iniciales
 weather_data = fetch_weather()
-rss_titles = fetch_rss_titles(RSS_URL)
 
-# Variables para animar los títulos del RSS
-scroll_y = RESOLUTION[1] - 100  # Punto inicial de los títulos
-scroll_speed = 1  # Velocidad de desplazamiento
-
-# Bucle principal
 running = True
 while running:
 
-    # Manejar eventos
+    # check for exit
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             running = False
 
-    # Dibujar en la pantalla
+    # clear old screen TODO: only if there are changes
     screen.fill(BLACK)
 
 
@@ -194,19 +175,7 @@ while running:
     fps = int(clock.get_fps())
 
     fps_text = fps_font.render(f"FPS: {fps:03d}", True, (255, 255, 0))
-
-    match config.get('app', 'fps_counter', fallback="none"):
-        case "top_left":
-            screen.blit(fps_text, (8, 8))
-        case "top_right":
-            screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, 8))
-        case "bottom_left":
-            screen.blit(fps_text, (8, screen.get_height() - fps_text.get_height() - 8))
-        case "bottom_right":
-            screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, 8))
-            screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, screen.get_height() - fps_text.get_height() - 8))
-
-    # screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, 8))
+    screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, 8))
 
     # Actualizar pantalla
     pygame.display.flip()
@@ -217,4 +186,5 @@ while running:
 
 # Salir de Pygame
 pygame.quit()
+
 sys.exit()
