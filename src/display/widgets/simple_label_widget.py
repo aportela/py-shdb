@@ -1,6 +1,6 @@
 import pygame
 
-from .Widget import Widget
+from .widget import Widget
 
 class SimpleLabelWidget(Widget):
 

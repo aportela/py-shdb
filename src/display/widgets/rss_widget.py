@@ -1,6 +1,6 @@
 import pygame
 
-from .Widget import Widget
+from .widget import Widget
 from ...modules.rss.rss_feed import RSSFeed
 
 class RSSWidget(Widget):
