@@ -4,6 +4,12 @@ python smart home dashboard
 
 # dependencies
 
+## pyyaml (configuration parse)
+
+```
+pip install pyyaml
+```
+
 ## pygame
 
 ```
