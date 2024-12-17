@@ -28,7 +28,7 @@ widgets:
     type: "date"
     x: 8
     y: 38
-    width: 512
+    width: 750
     height: 34
     padding: 2
     font_family: "monospace"
@@ -41,10 +41,10 @@ widgets:
     type: "time"
     x: 8
     y: 76
-    width: 512
+    width: 750
     height: 170
     padding: 2
     font_family: "monospace"
     font_size: 150
     font_color: [255, 255, 255]
-    format_mask: "%I:%M"
+    format_mask: "%H:%M %p"
