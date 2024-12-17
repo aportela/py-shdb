@@ -1,17 +1,16 @@
 import pygame
 from .widget import Widget
+from .widget_font import WidgetFont
 
 SEPARATOR = "#"
 
 class HorizontalTickerWidget(Widget):
 
-    def __init__(self, name: str, x: int , y: int, width: int, height: int, padding: int, surface: pygame.Surface, debug: bool, font_family: str, font_size: int, font_color: tuple, text: str, speed: int):
+    def __init__(self, name: str, x: int , y: int, width: int, height: int, padding: int, surface: pygame.Surface, debug: bool, font: WidgetFont, text: str, speed: int):
         super().__init__(name=name, surface=surface, debug=debug, x=x, y=y, width=width, height=height, padding=padding)
-
-        self._font = pygame.font.SysFont(font_family, font_size, bold=True)  # TODO: Add bold/italic as params
-        self._font_color = font_color
+        self._font = font
         self._text = text
-        self._text_surface = self._font.render(f"{self._text} {SEPARATOR} ", True, self._font_color)
+        self._text_surface = self._font.render(f"{self._text} {SEPARATOR} ")
         self._speed = speed
         self._x_offset = 0
         self._y_offset = (self._height - self._text_surface.get_height()) // 2
