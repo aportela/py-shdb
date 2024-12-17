@@ -72,3 +72,17 @@ widgets:
     text: ""
     rss_url: "http://meneame.net/rss2.php"
     speed: 1
+
+  calendar1:
+    visible: true
+    type: "month_calendar"
+    x: 8
+    y: 500
+    width: 360
+    height: 210
+    padding: 2
+    font_family: "monospace"
+    font_size: 16
+    font_color: [255, 255, 255]
+    font_style_bold: True
+    font_style_italic: False

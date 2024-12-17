@@ -4,11 +4,13 @@ import yaml
 import pygame
 import locale
 
+from src.modules.rss.rss_feed import RSSFeed
+
 from src.display.widgets.simple_label_widget import SimpleLabelWidget
 from src.display.widgets.date_widget import DateWidget
 from src.display.widgets.time_widget import TimeWidget
 from src.display.widgets.horizontal_ticker_widget import HorizontalTickerWidget
-from src.modules.rss.rss_feed import RSSFeed
+from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.widget_font import WidgetFont
 
 configuration_file_path = "config.yaml"
@@ -137,6 +139,26 @@ def load_widgets():
                         ),
                         text = text or "TODO",
                         speed = widget_config.get( 'speed', 1)
+                    )
+                )
+            elif (widget_config.get("type", "") == "month_calendar"):
+                widgets.append(
+                    MonthCalendarWidget(
+                        name = widget_name,
+                        surface=framebuffer_global,
+                        debug = debug,
+                        x = widget_config.get('x', 0),
+                        y = widget_config.get( 'y', 0),
+                        width=widget_config.get( 'width', 0),
+                        height=widget_config.get( 'height', 0),
+                        padding = widget_config.get( 'padding', 0),
+                        font = WidgetFont(
+                            font_family=widget_config.get( 'font_family', None),
+                            font_size = widget_config.get( 'font_size', 30),
+                            font_color = widget_config.get( 'font_color', [255, 255, 255]),
+                            font_style_bold = widget_config.get( 'font_style_bold', False),
+                            font_style_italic = widget_config.get( 'font_style_italic', False)
+                        )
                     )
                 )
 
