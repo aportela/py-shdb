@@ -30,9 +30,9 @@ class RSSFeed:
         else:
             self._cache = None
             self.__log.debug("Cache is disabled")
-        self._feed_title = ''
+        self._feed_title = None
         self._feed_items = []
-        self._feed_hash = ''
+        self._feed_hash = None
 
     def __regenerate_feed_entries_hash(self, feed_entries) -> str:
         """
