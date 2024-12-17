@@ -13,6 +13,7 @@ from src.display.widgets.date_widget import DateWidget
 from src.display.widgets.time_widget import TimeWidget
 from src.display.widgets.horizontal_ticker_widget import HorizontalTickerWidget
 from src.display.widgets.month_calendar_widget import MonthCalendarWidget
+from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.widget_font import WidgetFont
 
 configuration_file_path = "config.yaml"
@@ -174,6 +175,20 @@ def load_widgets():
                             font_style_bold = widget_config.get( 'font_style_bold', False),
                             font_style_italic = widget_config.get( 'font_style_italic', False)
                         )
+                    )
+                )
+            elif (widget_config.get("type", "") == "local_image"):
+                widgets.append(
+                    ImageWidget(
+                        name = widget_name,
+                        surface=framebuffer_global,
+                        debug = debug_widgets,
+                        x = widget_config.get('x', 0),
+                        y = widget_config.get( 'y', 0),
+                        width=widget_config.get( 'width', 0),
+                        height=widget_config.get( 'height', 0),
+                        padding = widget_config.get( 'padding', 0),
+                        path = widget_config.get( 'path', None)
                     )
                 )
     logger.debug(f"Total widgets: {len(widgets)}")

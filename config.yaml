@@ -87,3 +87,13 @@ widgets:
     font_color: [255, 255, 255]
     font_style_bold: True
     font_style_italic: False
+
+  image1:
+    visible: true
+    type: "local_image"
+    x: 800
+    y: 500
+    width: 300
+    height: 300
+    padding: 2
+    path: "resources/images/business-cat.jpg"
