@@ -25,6 +25,7 @@ config = load_config()
 debug = config.get('app', {}).get('debug', False)
 max_fps = config.get('app', {}).get('max_fps', 30)
 show_fps = config.get('app', {}).get('show_fps', False)
+cache_path = config.get('app', {}).get('cache_path', None)
 background_color = config.get('app', {}).get('background_color', [0, 0, 0])
 
 locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
@@ -115,7 +116,7 @@ def load_widgets():
                 if text == None or text == "":
                     rss_url = widget_config.get('rss_url', "")
                     if (rss_url != None and rss_url != ""):
-                        feed = RSSFeed(rss_url, 600, 1)
+                        feed = RSSFeed(url = rss_url, max_items=1, default_seconds_refresh_time= 600,cache_path = cache_path)
                         text = " # ".join(f"[{item['published']}] - {item['title']}" for item in feed.get()['items'])
                 widgets.append(
                     HorizontalTickerWidget(

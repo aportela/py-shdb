@@ -1,11 +1,14 @@
 import time
+import os
+import pickle
 from typing import Dict, List
 import hashlib
 import requests
 import feedparser
+import logging
 
 class RSSFeed:
-    def __init__(self, url, max_items=5, default_seconds_refresh_time=3600):
+    def __init__(self, url, max_items=5, default_seconds_refresh_time=3600, cache_path: str = None):
         """
         Initializes the RSSFeed object with the URL of the RSS feed and other configurations.
 
@@ -17,9 +20,14 @@ class RSSFeed:
         self._max_items = max_items
         self._default_seconds_refresh_time = default_seconds_refresh_time
         self._last_refresh_timestamp = 0
+        if cache_path != None:
+            self._cache_path = f"{cache_path}/rss/{hashlib.sha256(self._url.encode('utf-8')).hexdigest()}.rss"
+        else:
+            self._cache_path = None
         self._feed_title = ''
         self._feed_items = []
         self._feed_hash = ''
+        logging.basicConfig(level=logging.INFO)
 
     def _regenerate_feed_entries_hash(self, feed_entries) -> str:
         """
@@ -33,6 +41,33 @@ class RSSFeed:
             feed_hash.update(entry.get("link", "").encode('utf-8'))  # Update the hash with the entry's link
         return feed_hash.hexdigest()  # Return the hex digest of the hash
 
+    def _save_cache(self, data):
+        try:
+            os.makedirs(os.path.dirname(self._cache_path), exist_ok=True)
+            with open(self._cache_path, "wb") as cache_file:
+                pickle.dump(data, cache_file)
+            logging.info(f"Cache saved to {self._cache_path}")
+        except Exception as e:
+            print(f"Error saving cache: {e}")
+
+    def _load_cache(self):
+        if os.path.exists(self._cache_path):
+            try:
+                if time.time() - os.path.getmtime(self._cache_path) < self._default_seconds_refresh_time:
+                    with open(self._cache_path, "rb") as cache_file:
+                        data = pickle.load(cache_file)
+                    logging.info(f"Cache loaded successfully from {self._cache_path}")
+                    return data
+                else:
+                    logging.info(f"Cache expired {self._cache_path}")
+                    return None
+            except Exception as e:
+                logging.error(f"Error loading cache from {self._cache_path}: {e}")
+                return None
+        else:
+            logging.warning(f"Cache file does not exist at {self._cache_path}")
+            return None
+
     def _refresh(self, force: bool = False) -> bool:
         """
         Refreshes the RSS feed by fetching it from the provided URL and parsing the entries.
@@ -40,17 +75,27 @@ class RSSFeed:
         :param force: Whether to force refresh the feed (ignoring the refresh time).
         :return: True if the feed was updated, False if the feed is unchanged.
         """
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:112.0) Gecko/20100101 Firefox/112.0'
-        }
 
-        try:
-            response = requests.get(self._url, headers=headers, timeout=10)  # Fetch the feed with a timeout
-            response.raise_for_status()  # Raise an error for bad status codes (4xx, 5xx)
-        except requests.exceptions.RequestException as e:
-            raise RuntimeError(f"Error while fetching RSS feed: {str(e)}")
+        parsed_feed = None
+        if self._cache_path != None:
+            parsed_feed = self._load_cache()
 
-        parsed_feed = feedparser.parse(response.text)
+        if parsed_feed == None:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:112.0) Gecko/20100101 Firefox/112.0'
+            }
+
+            try:
+                response = requests.get(self._url, headers=headers, timeout=10)  # Fetch the feed with a timeout
+                response.raise_for_status()  # Raise an error for bad status codes (4xx, 5xx)
+            except requests.exceptions.RequestException as e:
+                raise RuntimeError(f"Error while fetching RSS feed: {str(e)}")
+
+            parsed_feed = feedparser.parse(response.text)
+
+            if self._cache_path != None:
+                self._save_cache(parsed_feed)
+
         self._feed_title = parsed_feed.feed.title  # Store the feed title
         self._feed_items = []  # Reset the feed items
 
@@ -85,6 +130,7 @@ class RSSFeed:
         :param force: Whether to force refresh the feed even if the refresh time hasn't passed.
         :return: A dictionary containing the feed status, title, and items.
         """
+
         changed = False
         current_time = time.time()  # Get the current time in seconds since the epoch
         if force or current_time - self._last_refresh_timestamp >= self._default_seconds_refresh_time:

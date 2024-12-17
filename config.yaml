@@ -8,6 +8,7 @@ app:
   show_fps: true
   locale: "es_ES.UTF-8"
   background_color: [0, 0, 0]
+  cache_path: "tmp/cache"
 
 widgets:
   label1:
