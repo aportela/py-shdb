@@ -5,43 +5,46 @@ general:
 app:
   debug: true
   max_fps: 60
-  fps_counter: "top_right" # top_left | top_right | bottom_left | bottom_right | none
+  show_fps: true
   locale: "es_ES.UTF-8"
+  background_color: [0, 0, 0]
 
 widgets:
   label1:
     visible: true
     type: "simple_label"
-    x: 500
-    y: 500
-    width: 64
-    height: 64
+    x: 8
+    y: 8
+    width: 276
+    height: 25
     padding: 2
     font_family: "monospace"
     font_size: 16
     font_color: [255, 255, 255]
-    text: "foobar"
+    text: "Python Smart Home Dashboard"
 
-  date1:
+  label2:
     visible: true
     type: "date"
-    x: 10
-    y: 10
-    width: 315
+    x: 8
+    y: 38
+    width: 512
     height: 34
     padding: 2
     font_family: "monospace"
     font_size: 24
+    font_color: [255, 255, 255]
     format_mask: "%A, %d de %B"
 
-  time1:
+  label3:
     visible: true
     type: "time"
-    x: 10
-    y: 60
-    width: 318
-    height: 80
+    x: 8
+    y: 76
+    width: 512
+    height: 170
     padding: 2
     font_family: "monospace"
-    font_size: 84
-    format_mask: "%I:%M %p"
+    font_size: 150
+    font_color: [255, 255, 255]
+    format_mask: "%I:%M"

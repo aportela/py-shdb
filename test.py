@@ -1,21 +1,30 @@
 import sys
-import configparser
+import os
+import yaml
 import pygame
 import locale
 
-from src.display.widgets.Example import Example
+from src.display.widgets.simple_label_widget import SimpleLabelWidget
 from src.display.widgets.date_widget import DateWidget
 from src.display.widgets.time_widget import TimeWidget
-from src.display.widgets.rss_widget import RSSWidget
 
-# Crear un objeto ConfigParser
-config = configparser.ConfigParser()
+configuration_file_path = "config.yaml"
 
-# Leer el archivo de configuración
-config.read('config.ini')
+def load_config():
+    with open(configuration_file_path, 'r') as file:
+        return yaml.safe_load(file)
+
+last_modified_time = os.path.getmtime(configuration_file_path)
+
+config = load_config()
 
 
-locale.setlocale(locale.LC_TIME, config.get('app', 'locale', fallback="en_EN.UTF-8"))
+debug = config.get('app', {}).get('debug', False)
+max_fps = config.get('app', {}).get('max_fps', 30)
+show_fps = config.get('app', {}).get('show_fps', False)
+background_color = config.get('app', {}).get('background_color', [0, 0, 0])
+
+locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
 # Inicializar Pygame
 pygame.init()
 
@@ -24,40 +33,70 @@ screen_info = pygame.display.Info()
 RESOLUTION = (screen_info.current_w, screen_info.current_h)
 
 # Configurar pantalla completa
-screen = pygame.display.set_mode(RESOLUTION, pygame.FULLSCREEN)
+screen = pygame.display.set_mode(RESOLUTION, pygame.NOFRAME)
 pygame.display.set_caption("Weather Forecast and RSS Feed")
 
 framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
 
-def add_widget(widget):
-    for w in widgets:
-        if w.__class__.__name__ == widget.__class__.__name__:
-            print(f"Warning, duplicated widget ('{widget.name}') found")
-    widgets.append(widget)
-
 widgets = []
 
-widgetExample = Example(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 500, y_offset = 10, width=200, height=150, padding = 2)
+def load_widgets():
+    widgets.clear()
+    for widget_name, widget_config in config.get("widgets", {}).items():
+        if (widget_config.get("visible", False)):
+            if (widget_config.get("type", "") == "simple_label"):
+                widgets.append(
+                    SimpleLabelWidget(
+                        name = widget_name,
+                        surface=framebuffer_global,
+                        debug = debug,
+                        x = widget_config.get('x', 0),
+                        y = widget_config.get( 'y', 0),
+                        width=widget_config.get( 'width', 0),
+                        height=widget_config.get( 'height', 0),
+                        padding = widget_config.get( 'padding', 0),
+                        font_family = widget_config.get( 'font_family', "monospace"),
+                        font_size = widget_config.get( 'font_size', 0),
+                        font_color = widget_config.get( 'font_color', [255, 255, 255]),
+                        text = widget_config.get( 'text', "")
+                    )
+                )
+            elif (widget_config.get("type", "") == "date"):
+                widgets.append(
+                    DateWidget(
+                        name = widget_name,
+                        surface=framebuffer_global,
+                        debug = debug,
+                        x = widget_config.get('x', 0),
+                        y = widget_config.get( 'y', 0),
+                        width=widget_config.get( 'width', 0),
+                        height=widget_config.get( 'height', 0),
+                        padding = widget_config.get( 'padding', 0),
+                        font_family = widget_config.get( 'font_family', "monospace"),
+                        font_size = widget_config.get( 'font_size', 0),
+                        font_color = widget_config.get( 'font_color', [255, 255, 255]),
+                        format_mask = widget_config.get( 'format_mask', "%A, %d de %B"),
+                    )
+                )
+            elif (widget_config.get("type", "") == "time"):
+                widgets.append(
+                    TimeWidget(
+                        name = widget_name,
+                        surface=framebuffer_global,
+                        debug = debug,
+                        x = widget_config.get('x', 0),
+                        y = widget_config.get( 'y', 0),
+                        width=widget_config.get( 'width', 0),
+                        height=widget_config.get( 'height', 0),
+                        padding = widget_config.get( 'padding', 0),
+                        font_family = widget_config.get( 'font_family', "monospace"),
+                        font_size = widget_config.get( 'font_size', 0),
+                        font_color = widget_config.get( 'font_color', [255, 255, 255]),
+                        format_mask = widget_config.get( 'format_mask', "%I:%M %p"),
+                    )
+                )
 
-add_widget(widgetExample)
-rsswidget = RSSWidget(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 200, width=455, height=300, padding = 2, font_family = "monospace", font_size = 12, url = "https://meneame.net/rss2.php", default_seconds_refresh_time= 600, max_items=8)
-add_widget(rsswidget)
-
-datewidget = DateWidget(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=300, height=40, padding = 2, font_family = "monospace", font_size = 24)
-add_widget(datewidget)
-
-timewidget = TimeWidget(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 60, width=400, height=100, padding = 2, font_family = "monospace", font_size = 80)
-add_widget(timewidget)
-
-
-#fpsCounter = FPSCounter(surface=framebuffer_global, debug=config.get('app', 'debug', fallback=False), x_offset = 10, y_offset = 10, width=200, height=150, padding = 2)
-
-# add_widget(fpsCounter)
-
-# Colores
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-BLACK = (0, 0, 0)
+load_widgets()
 
 # Fuente para texto e íconos
 font = pygame.font.Font(None, 36)
@@ -70,64 +109,11 @@ fps_font = pygame.font.SysFont("monospace", 12)
 # Reloj para controlar el FPS
 clock = pygame.time.Clock()
 
-# URL de la API del tiempo
-API_URL = "https://api.open-meteo.com/v1/forecast"
-LAT, LON = 40.4168, -3.7038  # Coordenadas de Madrid (puedes cambiarlo)
-PARAMS = {
-    "latitude": LAT,
-    "longitude": LON,
-    "daily": "temperature_2m_max,temperature_2m_min,weathercode",
-    "timezone": "auto"
-}
-
-# URL del feed RSS
-RSS_URL = "https://www.meneame.net/rss2.php"
-
-# Obtener datos meteorológicos desde la API
-def fetch_weather():
-    try:
-        response = requests.get(API_URL, params=PARAMS)
-        response.raise_for_status()
-        data = response.json()
-        forecast = data["daily"]
-        return [
-            {
-                "day": i,
-                "temp_max": forecast["temperature_2m_max"][i],
-                "temp_min": forecast["temperature_2m_min"][i],
-                "weather_code": forecast["weathercode"][i]
-            }
-            for i in range(len(forecast["temperature_2m_max"]))
-        ]
-    except Exception as e:
-        print("Error fetching weather data:", e)
-        return []
-
-# Asignar códigos de clima a íconos (usar Unicode de la fuente)
-weather_icons = {
-    0: "\uf185",  # Soleado (Font Awesome Unicode)
-    1: "\uf0c2",  # Nublado
-    2: "\uf73d",  # Lluvia
-    3: "\uf76c"   # Tormenta
-}
-
-def get_weather_icon(code):
-    if code == 0:
-        return weather_icons[0]
-    elif code in [1, 2]:
-        return weather_icons[1]
-    elif code in [3, 45]:
-        return weather_icons[2]
-    elif code in [95, 96, 99]:
-        return weather_icons[3]
-    else:
-        return weather_icons[1]
-
-
-# Datos iniciales
-weather_data = fetch_weather()
-
 running = True
+
+widgets_changed = True
+previous_fps = -1
+
 while running:
 
     # check for exit
@@ -135,59 +121,42 @@ while running:
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             running = False
 
-    # clear old screen TODO: only if there are changes
-    screen.fill(BLACK)
-
-
-    # Dibujar previsión del tiempo en la parte superior
-    if weather_data:
-        for i, day_data in enumerate(weather_data):
-            x = 50 + i * (RESOLUTION[0] // len(weather_data))
-            y = RESOLUTION[1] // 8
-
-            # Dibujar ícono del clima
-            icon_text = icon_font.render(get_weather_icon(day_data["weather_code"]), True, WHITE)
-            screen.blit(icon_text, (x, y))
-
-            # Dibujar texto con temperatura máxima y mínima
-            temp_text = font.render(
-                f"{day_data['temp_max']}C / {day_data['temp_min']}C", True, WHITE
-            )
-            screen.blit(temp_text, (x, y + 100))
-
-            # Dibujar el día de la semana
-            day_text = font.render(f"Day {day_data['day']+1}", True, WHITE)
-            screen.blit(day_text, (x, y - 50))
-
-    else:
-        error_text = font.render("Error fetching weather data.", True, RED)
-        screen.blit(error_text, (50, 50))
-
-
-    framebuffer_global.fill((0, 0, 0))
-
-    #widgetExample.refresh(True)
+    # DEBUG: check for configuration changes
+    if debug:
+        current_modified_time = os.path.getmtime(configuration_file_path)
+        if current_modified_time != last_modified_time:
+            config = load_config()
+            last_modified_time = current_modified_time
+            load_widgets()
+            framebuffer_global.fill(background_color)
+            widgets_changed = True
 
     for widget in widgets:
-        if(widget.refresh(True)):
-            widget_changes = True
+        if(widget.refresh(False)):
+            widgets_changed = True
 
 
-    screen.blit(framebuffer_global, (0, 0))
+    if show_fps:
+        current_fps = int(clock.get_fps())
+        if current_fps != previous_fps:
+            previous_fps_surface = fps_font.render(f"FPS: {previous_fps:03d}", True, (0, 0, 0))
+            previous_fps_rect = previous_fps_surface.get_rect()
+            previous_fps_rect.topright = (screen.get_width() - 8, 8)
+            framebuffer_global.fill((0, 0, 0), previous_fps_rect)
+            current_fps_surface = fps_font.render(f"FPS: {current_fps:03d}", True, (255, 255, 0))
+            framebuffer_global.blit(current_fps_surface, (screen.get_width() - current_fps_surface.get_width() - 8, 8))
+            previous_fps = current_fps
+            widgets_changed = True
 
-    fps = int(clock.get_fps())
+    if widgets_changed:
+        screen.blit(framebuffer_global, (0, 0))
+        widgets_changed = False
 
-    fps_text = fps_font.render(f"FPS: {fps:03d}", True, (255, 255, 0))
-    screen.blit(fps_text, (screen.get_width() - fps_text.get_width() - 8, 8))
-
-    # Actualizar pantalla
     pygame.display.flip()
 
-    # Controlar FPS
+    # limit FPS
+    clock.tick(max_fps)
 
-    clock.tick(int(config.get('app', 'max_fps', fallback=60)))
-
-# Salir de Pygame
 pygame.quit()
 
 sys.exit()
