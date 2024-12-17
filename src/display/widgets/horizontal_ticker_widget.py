@@ -2,7 +2,6 @@ import pygame
 from .widget import Widget
 
 SEPARATOR = "#"
-SPEED = 1
 
 class HorizontalTickerWidget(Widget):
 
