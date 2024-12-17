@@ -34,7 +34,7 @@ class RSSFeed:
         self._feed_items = []
         self._feed_hash = ''
 
-    def _regenerate_feed_entries_hash(self, feed_entries) -> str:
+    def __regenerate_feed_entries_hash(self, feed_entries) -> str:
         """
         Generates a consistent hash based on the unique identifiers (e.g., 'link' or 'guid') of the feed entries.
 
@@ -46,7 +46,7 @@ class RSSFeed:
             feed_hash.update(entry.get("link", "").encode('utf-8'))  # Update the hash with the entry's link
         return feed_hash.hexdigest()  # Return the hex digest of the hash
 
-    def _refresh(self, force: bool = False) -> bool:
+    def __refresh(self, force: bool = False) -> bool:
         """
         Refreshes the RSS feed by fetching it from the provided URL and parsing the entries.
 
@@ -93,7 +93,7 @@ class RSSFeed:
             raise ValueError("The RSS feed does not contain valid entries.")
 
         # Generate a hash for the current feed items
-        current_feed_hash = self._regenerate_feed_entries_hash(self._feed_items)
+        current_feed_hash = self.__regenerate_feed_entries_hash(self._feed_items)
 
         # Compare the new hash with the previous hash to check if the feed content has changed
         if current_feed_hash != self._feed_hash:
@@ -116,7 +116,7 @@ class RSSFeed:
         if force or current_time - self._last_refresh_timestamp >= self._default_seconds_refresh_time:
             self.__log.debug("Forcing new refresh")
             try:
-                changed = self._refresh(force)  # Refresh the feed and check if it changed
+                changed = self.__refresh(force)  # Refresh the feed and check if it changed
                 self._last_refresh_timestamp = current_time  # Update the timestamp of the last refresh
             except Exception as e:
                 raise RuntimeError(f"Error while refreshing RSS feed: {str(e)}")
