@@ -16,7 +16,9 @@ class SimpleLabelWidget(Widget):
         if force or self._render_required:
             self._render_required = False
             self.clear()
-            text = self._font.render(self._text, True, self._font_color)
-            self._tmp_surface.blit(text, (self._padding, self._padding))
+            self._tmp_surface.blit(
+                self._font.render(self._text, True, self._font_color),
+                (self._padding, self._padding)
+            )
             super().render()
         return False
