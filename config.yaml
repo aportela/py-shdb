@@ -71,7 +71,7 @@ widgets:
     font_style_bold: True
     font_style_italic: False
     text: ""
-    rss_url: "http://meneame.net/rss2.php"
+    rss_url: "https://www.meneame.net/rss2.php"
     speed: 1
 
   calendar1:
