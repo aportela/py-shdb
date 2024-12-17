@@ -36,6 +36,8 @@ widgets:
     font_family: "monospace"
     font_size: 24
     font_color: [255, 255, 255]
+    font_style_bold: True
+    font_style_italic: False
     format_mask: "%A, %d de %B"
 
   label3:
@@ -49,19 +51,23 @@ widgets:
     font_family: "monospace"
     font_size: 150
     font_color: [255, 255, 255]
+    font_style_bold: True
+    font_style_italic: False
     format_mask: "%I:%M %p"
 
   hticker1:
     visible: true
     type: "horizontal_ticker"
     x: 8
-    y: 1400
-    width: 2546
+    y: 900
+    width: 1920
     height: 25
     padding: 2
     font_family: "monospace"
     font_size: 16
     font_color: [255, 255, 255]
+    font_style_bold: True
+    font_style_italic: False
     text: ""
     rss_url: "http://meneame.net/rss2.php"
     speed: 1
