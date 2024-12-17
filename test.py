@@ -7,6 +7,8 @@ import locale
 from src.display.widgets.simple_label_widget import SimpleLabelWidget
 from src.display.widgets.date_widget import DateWidget
 from src.display.widgets.time_widget import TimeWidget
+from src.display.widgets.horizontal_ticker_widget import HorizontalTickerWidget
+from src.modules.rss.rss_feed import RSSFeed
 
 configuration_file_path = "config.yaml"
 
@@ -93,6 +95,31 @@ def load_widgets():
                         font_size = widget_config.get( 'font_size', 0),
                         font_color = widget_config.get( 'font_color', [255, 255, 255]),
                         format_mask = widget_config.get( 'format_mask', "%I:%M %p"),
+                    )
+                )
+            elif (widget_config.get("type", "") == "horizontal_ticker"):
+                text = widget_config.get('text', None)
+                if text == None or text == "":
+                    rss_url = widget_config.get('rss_url', "")
+                    if (rss_url != None and rss_url != ""):
+                        #feed = RSSFeed(rss_url, 600, 1)
+                        #text = "#".join(f"{item['published']} - {item['title']}" for item in feed.get().items)
+                        text = rss_url
+                widgets.append(
+                    HorizontalTickerWidget(
+                        name = widget_name,
+                        surface=framebuffer_global,
+                        debug = debug,
+                        x = widget_config.get('x', 0),
+                        y = widget_config.get( 'y', 0),
+                        width=widget_config.get( 'width', 0),
+                        height=widget_config.get( 'height', 0),
+                        padding = widget_config.get( 'padding', 0),
+                        font_family = widget_config.get( 'font_family', "monospace"),
+                        font_size = widget_config.get( 'font_size', 0),
+                        font_color = widget_config.get( 'font_color', [255, 255, 255]),
+                        text = text or "TODO",
+                        speed = widget_config.get( 'speed', 1)
                     )
                 )
 
