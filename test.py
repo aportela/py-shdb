@@ -23,8 +23,7 @@ last_modified_time = os.path.getmtime(configuration_file_path)
 
 config = load_config()
 
-
-debug = config.get('app', {}).get('debug', False)
+debug_widgets = config.get('app', {}).get('debug_widgets', False)
 max_fps = config.get('app', {}).get('max_fps', 30)
 show_fps = config.get('app', {}).get('show_fps', False)
 cache_path = config.get('app', {}).get('cache_path', None)
@@ -55,7 +54,7 @@ def load_widgets():
                     SimpleLabelWidget(
                         name = widget_name,
                         surface=framebuffer_global,
-                        debug = debug,
+                        debug = debug_widgets,
                         x = widget_config.get('x', 0),
                         y = widget_config.get( 'y', 0),
                         width=widget_config.get( 'width', 0),
@@ -76,7 +75,7 @@ def load_widgets():
                     DateWidget(
                         name = widget_name,
                         surface=framebuffer_global,
-                        debug = debug,
+                        debug = debug_widgets,
                         x = widget_config.get('x', 0),
                         y = widget_config.get( 'y', 0),
                         width=widget_config.get( 'width', 0),
@@ -97,7 +96,7 @@ def load_widgets():
                     TimeWidget(
                         name = widget_name,
                         surface=framebuffer_global,
-                        debug = debug,
+                        debug = debug_widgets,
                         x = widget_config.get('x', 0),
                         y = widget_config.get( 'y', 0),
                         width=widget_config.get( 'width', 0),
@@ -124,7 +123,7 @@ def load_widgets():
                     HorizontalTickerWidget(
                         name = widget_name,
                         surface=framebuffer_global,
-                        debug = debug,
+                        debug = debug_widgets,
                         x = widget_config.get('x', 0),
                         y = widget_config.get( 'y', 0),
                         width=widget_config.get( 'width', 0),
@@ -146,7 +145,7 @@ def load_widgets():
                     MonthCalendarWidget(
                         name = widget_name,
                         surface=framebuffer_global,
-                        debug = debug,
+                        debug = debug_widgets,
                         x = widget_config.get('x', 0),
                         y = widget_config.get( 'y', 0),
                         width=widget_config.get( 'width', 0),
@@ -188,7 +187,7 @@ while running:
             running = False
 
     # DEBUG: check for configuration changes
-    if debug:
+    if debug_widgets:
         current_modified_time = os.path.getmtime(configuration_file_path)
         if current_modified_time != last_modified_time:
             config = load_config()
