@@ -4,16 +4,14 @@ import logging
 import time
 from typing import Any
 
-# Flag to control whether to purge expired caches
-PURGE_EXPIRED_CACHES = True
-
 class ModuleCache:
-    def __init__(self, cache_path: str = None, expire_seconds: int = 3600):
+    def __init__(self, cache_path: str = None, expire_seconds: int = 3600, purge_expired: bool = True):
         """
         Initializes the cache module. Creates the cache directory if necessary.
 
         :param cache_path: Path to store the cache file. If None, caching is disabled.
         :param expire_seconds: Time in seconds for cache expiration. Default is 3600 seconds (1 hour).
+        :param purge_expired: Flag to control whether to purge expired caches.
         """
         if cache_path:
             self._cache_path = cache_path
@@ -30,6 +28,7 @@ class ModuleCache:
             self._cache_path = None
 
         self._expire_seconds = expire_seconds
+        self._purge_expired = purge_expired
 
     def save(self, data: Any):
         """
@@ -64,7 +63,7 @@ class ModuleCache:
                         return data
                     else:
                         logging.info(f"Cache expired ({self._cache_path})")
-                        if PURGE_EXPIRED_CACHES:
+                        if self._purge_expired:
                             logging.info(f"Removing expired cache ({self._cache_path})")
                             os.remove(self._cache_path)
                         return None

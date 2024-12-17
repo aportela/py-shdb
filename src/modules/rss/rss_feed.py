@@ -22,7 +22,7 @@ class RSSFeed:
         self._default_seconds_refresh_time = default_seconds_refresh_time
         self._last_refresh_timestamp = 0
         if cache_path != None:
-            self._cache = ModuleCache(f"{cache_path}/rss/{hashlib.sha256(self._url.encode('utf-8')).hexdigest()}.rss", default_seconds_refresh_time)
+            self._cache = ModuleCache(cache_path = f"{cache_path}/rss/{hashlib.sha256(self._url.encode('utf-8')).hexdigest()}.rss",  expire_seconds = default_seconds_refresh_time, purge_expired = True)
         else:
             self._cache = None
         self._feed_title = ''
