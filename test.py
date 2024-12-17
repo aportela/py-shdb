@@ -4,6 +4,8 @@ import yaml
 import pygame
 import locale
 
+from src.utils.logger import Logger
+
 from src.modules.rss.rss_feed import RSSFeed
 
 from src.display.widgets.simple_label_widget import SimpleLabelWidget
@@ -23,33 +25,47 @@ last_modified_time = os.path.getmtime(configuration_file_path)
 
 config = load_config()
 
+app_name = config.get('general', {}).get('app_name', "Python Smart Home Dashboard")
 debug_widgets = config.get('app', {}).get('debug_widgets', False)
 max_fps = config.get('app', {}).get('max_fps', 30)
 show_fps = config.get('app', {}).get('show_fps', False)
 cache_path = config.get('app', {}).get('cache_path', None)
 background_color = config.get('app', {}).get('background_color', [0, 0, 0])
 
+Logger.configure_global(
+    level = Logger.parse_level(
+        config.get('app', {}).get('logger_level', None)
+    )
+)
+
 locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
 # Inicializar Pygame
 pygame.init()
 
+logger = Logger("py-shdb")
+
 # Obtener la resolución actual de la pantalla
 screen_info = pygame.display.Info()
+
+logger.debug(f"Current screen resolution: {screen_info.current_w}x{screen_info.current_h}")
+
 RESOLUTION = (screen_info.current_w, screen_info.current_h)
 
 # Configurar pantalla completa
 screen = pygame.display.set_mode(RESOLUTION, pygame.NOFRAME)
-pygame.display.set_caption("Weather Forecast and RSS Feed")
+pygame.display.set_caption(app_name)
 
 framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
 
 widgets = []
 
 def load_widgets():
+    logger.info("Loading widgets")
     widgets.clear()
     for widget_name, widget_config in config.get("widgets", {}).items():
         if (widget_config.get("visible", False)):
             if (widget_config.get("type", "") == "simple_label"):
+                logger.debug(f"Adding widget: {widget_name} (SimpleLabelWidget)")
                 widgets.append(
                     SimpleLabelWidget(
                         name = widget_name,
@@ -160,7 +176,7 @@ def load_widgets():
                         )
                     )
                 )
-
+    logger.debug(f"Total widgets: {len(widgets)}")
 load_widgets()
 
 # Fuente para texto e íconos
@@ -184,12 +200,14 @@ while running:
     # check for exit
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
+            logger.info("See you next time!")
             running = False
 
     # DEBUG: check for configuration changes
     if debug_widgets:
         current_modified_time = os.path.getmtime(configuration_file_path)
         if current_modified_time != last_modified_time:
+            logger.info("Configuration file changes detected, reloading widgets")
             config = load_config()
             last_modified_time = current_modified_time
             load_widgets()
@@ -199,7 +217,6 @@ while running:
     for widget in widgets:
         if(widget.refresh(False)):
             widgets_changed = True
-
 
     if show_fps:
         current_fps = int(clock.get_fps())

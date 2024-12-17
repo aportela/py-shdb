@@ -3,6 +3,7 @@ general:
   version: 0.1
 
 app:
+  logger_level: DEBUG
   debug_widgets: true
   max_fps: 60
   show_fps: true
