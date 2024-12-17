@@ -2,6 +2,7 @@ import pygame
 
 from .widget import Widget
 import datetime
+import locale
 
 class DateWidget(Widget):
 
@@ -14,12 +15,12 @@ class DateWidget(Widget):
 
     def refresh(self, force: bool = False) -> bool:
         now = datetime.datetime.now()
-        new_str = now.strftime(self._format_mask)
+        new_str = now.strftime(self._format_mask).title()
         if (force or self._str != new_str):
             self._str == new_str
             self.clear()
             self._tmp_surface.blit(
-                self._font.render(new_str.title(), True, self._font_color),
+                self._font.render(new_str, True, self._font_color),
                 (self._padding, self._padding)
             )
             super().render()
