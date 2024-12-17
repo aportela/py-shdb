@@ -1,34 +1,27 @@
+from typing import Any
 import os
 import pickle
-import logging
 import time
-from typing import Any
+from ..utils.logger import Logger
 
 class ModuleCache:
     def __init__(self, cache_path: str = None, expire_seconds: int = 3600, purge_expired: bool = True):
-        """
-        Initializes the cache module. Creates the cache directory if necessary.
-
-        :param cache_path: Path to store the cache file. If None, caching is disabled.
-        :param expire_seconds: Time in seconds for cache expiration. Default is 3600 seconds (1 hour).
-        :param purge_expired: Flag to control whether to purge expired caches.
-        """
+        self.__log = Logger()
         if cache_path:
-            self._cache_path = cache_path
-            directory_path = os.path.dirname(self._cache_path)
-
+            self.__cache_path = cache_path
+            directory_path = os.path.dirname(self.__cache_path)
             try:
                 if not os.path.exists(directory_path):
-                    logging.warning(f"Cache directory path ({directory_path}) not found. Creating it.")
+                    self.__log.warning(f"Cache directory path ({directory_path}) not found. Creating it.")
                     os.makedirs(directory_path, exist_ok=True)
             except Exception as e:
-                logging.error(f"Error creating cache directory path ({directory_path}): {e}")
+                self.__log.error(f"Error creating cache directory path ({directory_path}): {e}")
         else:
-            logging.warning("Cache path is empty. Disabling cache.")
-            self._cache_path = None
+            self.__log.warning("Cache path is empty. Disabling cache.")
+            self.__cache_path = None
 
-        self._expire_seconds = expire_seconds
-        self._purge_expired = purge_expired
+        self.__expire_seconds = expire_seconds
+        self.__purge_expired = purge_expired
 
     def save(self, data: Any):
         """
@@ -36,15 +29,15 @@ class ModuleCache:
 
         :param data: The data object to be cached. This can be any Python object.
         """
-        if self._cache_path:
+        if self.__cache_path:
             try:
-                with open(self._cache_path, "wb") as cache_file:
+                with open(self.__cache_path, "wb") as cache_file:
                     pickle.dump(data, cache_file)
-                logging.info(f"Cache saved to ({self._cache_path})")
+                self.__log.info(f"Cache saved to ({self.__cache_path})")
             except Exception as e:
-                logging.error(f"Error saving cache to ({self._cache_path}): {e}")
+                self.__log.error(f"Error saving cache to ({self.__cache_path}): {e}")
         else:
-            logging.warning("No cache path set. Cannot save cache.")
+            self.__log.warning("No cache path set. Cannot save cache.")
 
     def load(self) -> Any:
         """
@@ -52,27 +45,27 @@ class ModuleCache:
 
         :return: The cached data if available and valid, otherwise None.
         """
-        if self._cache_path:
-            if os.path.exists(self._cache_path):
+        if self.__cache_path:
+            if os.path.exists(self.__cache_path):
                 try:
                     # Check if the cache has expired
-                    if time.time() - os.path.getmtime(self._cache_path) < self._expire_seconds:
-                        with open(self._cache_path, "rb") as cache_file:
+                    if time.time() - os.path.getmtime(self.__cache_path) < self.__expire_seconds:
+                        with open(self.__cache_path, "rb") as cache_file:
                             data = pickle.load(cache_file)
-                        logging.info(f"Cache loaded from ({self._cache_path})")
+                        self.__log.info(f"Cache loaded from ({self.__cache_path})")
                         return data
                     else:
-                        logging.info(f"Cache expired ({self._cache_path})")
-                        if self._purge_expired:
-                            logging.info(f"Removing expired cache ({self._cache_path})")
-                            os.remove(self._cache_path)
+                        self.__log.info(f"Cache expired ({self.__cache_path})")
+                        if self.__purge_expired:
+                            self.__log.info(f"Removing expired cache ({self.__cache_path})")
+                            os.remove(self.__cache_path)
                         return None
                 except Exception as e:
-                    logging.error(f"Error loading cache from ({self._cache_path}): {e}")
+                    self.__log.error(f"Error loading cache from ({self.__cache_path}): {e}")
                     return None
             else:
-                logging.warning(f"Cache file not found ({self._cache_path})")
+                self.__log.warning(f"Cache file not found ({self.__cache_path})")
                 return None
         else:
-            logging.warning("Cache path is not set. Cannot load cache.")
+            self.__log.warning("Cache path is not set. Cannot load cache.")
             return None

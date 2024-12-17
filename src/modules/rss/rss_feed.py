@@ -5,8 +5,8 @@ from typing import Dict, List
 import hashlib
 import requests
 import feedparser
-import logging
 from ..module_cache import ModuleCache
+from ...utils.logger import Logger
 
 class RSSFeed:
     def __init__(self, url, max_items=5, default_seconds_refresh_time=3600, cache_path: str = None):
@@ -17,18 +17,22 @@ class RSSFeed:
         :param max_items: The maximum number of items to retrieve from the feed (default is 5).
         :param default_seconds_refresh_time: The time in seconds between feed refreshes (default is 3600 seconds = 1 hour).
         """
+        self.__log = Logger()
+        self.__log.debug(f"Using {max_items} items from url: {url} (expire time = {default_seconds_refresh_time} seconds)")
         self._url = url
         self._max_items = max_items
         self._default_seconds_refresh_time = default_seconds_refresh_time
         self._last_refresh_timestamp = 0
         if cache_path != None:
-            self._cache = ModuleCache(cache_path = f"{cache_path}/rss/{hashlib.sha256(self._url.encode('utf-8')).hexdigest()}.rss",  expire_seconds = default_seconds_refresh_time, purge_expired = True)
+            path = f"{cache_path}/rss/{hashlib.sha256(self._url.encode('utf-8')).hexdigest()}.rss"
+            self._cache = ModuleCache(cache_path = path,  expire_seconds = default_seconds_refresh_time, purge_expired = True)
+            self.__log.debug(f"Cache is enabled: {path}")
         else:
             self._cache = None
+            self.__log.debug("Cache is disabled")
         self._feed_title = ''
         self._feed_items = []
         self._feed_hash = ''
-        logging.basicConfig(level=logging.INFO)
 
     def _regenerate_feed_entries_hash(self, feed_entries) -> str:
         """
@@ -55,6 +59,7 @@ class RSSFeed:
             parsed_feed = self._cache.load()
 
         if parsed_feed == None:
+            self.__log.info("Requesting remote data")
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:112.0) Gecko/20100101 Firefox/112.0'
             }
@@ -93,6 +98,7 @@ class RSSFeed:
         # Compare the new hash with the previous hash to check if the feed content has changed
         if current_feed_hash != self._feed_hash:
             self._feed_hash = current_feed_hash  # Update the feed hash if it's different
+            self.__log.info("New feed data available!")
             return True  # Return True to indicate the feed has changed
         else:
             return False  # Return False to indicate no change in the feed
@@ -108,6 +114,7 @@ class RSSFeed:
         changed = False
         current_time = time.time()  # Get the current time in seconds since the epoch
         if force or current_time - self._last_refresh_timestamp >= self._default_seconds_refresh_time:
+            self.__log.debug("Forcing new refresh")
             try:
                 changed = self._refresh(force)  # Refresh the feed and check if it changed
                 self._last_refresh_timestamp = current_time  # Update the timestamp of the last refresh
