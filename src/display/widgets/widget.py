@@ -30,7 +30,9 @@ class Widget(ABC):
     def _clear(self):
         self._tmp_surface.fill((0, 0, 0))
 
-    def _blit(self, surface: pygame.Surface, dest: tuple[int, int] = (0, 0)):
+    def _blit(self, surface: pygame.Surface, dest: tuple[int, int] = None):
+        if dest is None:
+            dest = (self._padding, self._padding)
         self._tmp_surface.blit(surface, dest)
 
     # dump temporal widget surface on main surface
