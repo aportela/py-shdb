@@ -177,7 +177,7 @@ def load_widgets():
                         )
                     )
                 )
-            elif (widget_config.get("type", "") == "local_image"):
+            elif (widget_config.get("type", "") == "image"):
                 widgets.append(
                     ImageWidget(
                         name = widget_name,
@@ -188,7 +188,9 @@ def load_widgets():
                         width=widget_config.get( 'width', 0),
                         height=widget_config.get( 'height', 0),
                         padding = widget_config.get( 'padding', 0),
-                        path = widget_config.get( 'path', None)
+                        path = widget_config.get( 'path', None),
+                        url = widget_config.get( 'url', None),
+                        cache_path = cache_path
                     )
                 )
     logger.debug(f"Total widgets: {len(widgets)}")

@@ -90,10 +90,11 @@ widgets:
 
   image1:
     visible: true
-    type: "local_image"
+    type: "image"
     x: 800
     y: 500
     width: 300
     height: 300
     padding: 2
-    path: "resources/images/business-cat.jpg"
+    #path: "resources/images/business-cat.jpg"
+    url: "https://i.kym-cdn.com/photos/images/newsfeed/000/176/107/business-cat.jpg"
