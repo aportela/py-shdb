@@ -1,14 +1,16 @@
 import pygame
 from abc import ABC, abstractmethod
+from ...utils.logger import Logger
 
 WIDGET_BORDER_COLOR=(255, 105, 180)
 
 class Widget(ABC):
-    def __init__(self, name: str, x: int , y: int, width: int, height: int, padding: int, surface: pygame.Surface, debug: bool):
+    def __init__(self, name: str, x: int , y: int, width: int, height: int, padding: int, border: bool = False, surface: pygame.Surface = None):
+        self._log = Logger()
         if width < 0 or height < 0 or padding < 0:
             raise ValueError("Invalid width/height/padding")
-        self._name = name
-        self._debug = debug
+        self.__name = name
+        self.__border = border
         self._surface = surface
         self._x = x
         self._y = y
@@ -22,15 +24,18 @@ class Widget(ABC):
 
     @property
     def name(self) -> str:
-        return self._name
+        return self.__name
 
     # clear temporal widget surface
     def _clear(self):
         self._tmp_surface.fill((0, 0, 0))
 
+    def _blit(self, surface: pygame.Surface, dest: tuple[int, int] = (0, 0)):
+        self._tmp_surface.blit(surface, dest)
+
     # dump temporal widget surface on main surface
     def _render(self):
-        if self._debug:
+        if self.__border:
             # add border (for debug sizes/offsets)
             pygame.draw.rect(self._tmp_surface, WIDGET_BORDER_COLOR, (0, 0, self._width , self._height), 1)
         # dump surface

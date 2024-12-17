@@ -71,7 +71,7 @@ def load_widgets():
                     SimpleLabelWidget(
                         name = widget_name,
                         surface=framebuffer_global,
-                        debug = debug_widgets,
+                        border = debug_widgets,
                         x = widget_config.get('x', 0),
                         y = widget_config.get( 'y', 0),
                         width=widget_config.get( 'width', 0),
@@ -92,7 +92,7 @@ def load_widgets():
                     DateWidget(
                         name = widget_name,
                         surface=framebuffer_global,
-                        debug = debug_widgets,
+                        border = debug_widgets,
                         x = widget_config.get('x', 0),
                         y = widget_config.get( 'y', 0),
                         width=widget_config.get( 'width', 0),
@@ -113,7 +113,7 @@ def load_widgets():
                     TimeWidget(
                         name = widget_name,
                         surface=framebuffer_global,
-                        debug = debug_widgets,
+                        border = debug_widgets,
                         x = widget_config.get('x', 0),
                         y = widget_config.get( 'y', 0),
                         width=widget_config.get( 'width', 0),
@@ -140,7 +140,7 @@ def load_widgets():
                     HorizontalTickerWidget(
                         name = widget_name,
                         surface=framebuffer_global,
-                        debug = debug_widgets,
+                        border = debug_widgets,
                         x = widget_config.get('x', 0),
                         y = widget_config.get( 'y', 0),
                         width=widget_config.get( 'width', 0),
@@ -162,7 +162,7 @@ def load_widgets():
                     MonthCalendarWidget(
                         name = widget_name,
                         surface=framebuffer_global,
-                        debug = debug_widgets,
+                        border = debug_widgets,
                         x = widget_config.get('x', 0),
                         y = widget_config.get( 'y', 0),
                         width=widget_config.get( 'width', 0),
@@ -182,7 +182,7 @@ def load_widgets():
                     ImageWidget(
                         name = widget_name,
                         surface=framebuffer_global,
-                        debug = debug_widgets,
+                        border = debug_widgets,
                         x = widget_config.get('x', 0),
                         y = widget_config.get( 'y', 0),
                         width=widget_config.get( 'width', 0),
