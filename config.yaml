@@ -21,6 +21,8 @@ widgets:
     font_family: "monospace"
     font_size: 16
     font_color: [255, 255, 255]
+    font_style_bold: True
+    font_style_italic: False
     text: "Python Smart Home Dashboard"
 
   label2:

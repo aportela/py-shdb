@@ -9,6 +9,7 @@ from src.display.widgets.date_widget import DateWidget
 from src.display.widgets.time_widget import TimeWidget
 from src.display.widgets.horizontal_ticker_widget import HorizontalTickerWidget
 from src.modules.rss.rss_feed import RSSFeed
+from src.display.widgets.widget_font import WidgetFont
 
 configuration_file_path = "config.yaml"
 
@@ -57,9 +58,13 @@ def load_widgets():
                         width=widget_config.get( 'width', 0),
                         height=widget_config.get( 'height', 0),
                         padding = widget_config.get( 'padding', 0),
-                        font_family = widget_config.get( 'font_family', "monospace"),
-                        font_size = widget_config.get( 'font_size', 0),
-                        font_color = widget_config.get( 'font_color', [255, 255, 255]),
+                        font = WidgetFont(
+                            font_family=widget_config.get( 'font_family', None),
+                            font_size = widget_config.get( 'font_size', 30),
+                            font_color = widget_config.get( 'font_color', [255, 255, 255]),
+                            font_style_bold = widget_config.get( 'font_style_bold', False),
+                            font_style_italic = widget_config.get( 'font_style_italic', False)
+                        ),
                         text = widget_config.get( 'text', "")
                     )
                 )
