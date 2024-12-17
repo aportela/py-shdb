@@ -23,10 +23,8 @@ class ImageWidget(Widget):
             self.__log.debug(f"Using remote url {url}")
             cache_file_path = f"{cache_path}/images/{hashlib.sha256(url.encode('utf-8')).hexdigest()[:64]}.image"
             if os.path.exists(cache_file_path):
-                self.__log.debug("existe cache")
                 self.__load(cache_file_path)
             else:
-                self.__log.debug("no existe cache")
                 try:
                     response = requests.get(url, timeout=10)
                     response.raise_for_status()
@@ -42,9 +40,7 @@ class ImageWidget(Widget):
 
     def __load(self, path: str):
         if os.path.exists(path):
-            self.__log.debug(f"Existe path {path}")
             self._image = pygame.image.load(path)
-            self.__log.debug("Imagen cargada")
             self.__log.debug(self._image)
             original_width, original_height = self._image.get_size()
             # Scale the image to fit the widget size (self._width and self._height)
