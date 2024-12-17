@@ -19,7 +19,7 @@ class RSSWidget(Widget):
         data = self._module.get(False)
 
         if (force or data["changed"]):
-            self.clear()
+            self._clear()
             title_text = self._font.render(data["title"], True, (255, 255, 255))
             y = self._padding
             self._tmp_surface.blit(title_text, (self._padding, y))

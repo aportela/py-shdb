@@ -42,7 +42,7 @@ class MonthCalendarWidget(Widget):
     def refresh(self, force: bool = False) -> bool:
         if force or self._render_required:
             self._render_required = False
-            self.clear()
+            self._clear()
 
             x_offset = self._padding  # Add horizontal padding offset
             y_offset = self._padding  # Add vertical padding offset
@@ -83,7 +83,7 @@ class MonthCalendarWidget(Widget):
                         # Draw the day number at the calculated position
                         self._tmp_surface.blit(day_surface, (x_position, y_position))
 
-            super().render()
+            super()._render()
             return True
         else:
             return False

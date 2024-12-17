@@ -18,7 +18,7 @@ class HorizontalTickerWidget(Widget):
 
     def refresh(self, force: bool = False) -> bool:
         if force or self._render_required:
-            self.clear()
+            self._clear()
 
             # Ancho total del texto
             text_width = self._text_surface.get_width()
@@ -36,5 +36,5 @@ class HorizontalTickerWidget(Widget):
             if self._x_offset < -text_width:
                 self._x_offset += text_width
 
-            super().render()
+            super()._render()
         return True

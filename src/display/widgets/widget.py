@@ -25,11 +25,11 @@ class Widget(ABC):
         return self._name
 
     # clear temporal widget surface
-    def clear(self):
+    def _clear(self):
         self._tmp_surface.fill((0, 0, 0))
 
     # dump temporal widget surface on main surface
-    def render(self):
+    def _render(self):
         if self._debug:
             # add border (for debug sizes/offsets)
             pygame.draw.rect(self._tmp_surface, WIDGET_BORDER_COLOR, (0, 0, self._width , self._height), 1)

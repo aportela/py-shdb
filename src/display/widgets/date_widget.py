@@ -17,12 +17,12 @@ class DateWidget(Widget):
         new_str = now.strftime(self._format_mask).title()
         if (force or self._str != new_str):
             self._str == new_str
-            self.clear()
+            self._clear()
             self._tmp_surface.blit(
                 self._font.render(new_str),
                 (self._padding, self._padding)
             )
-            super().render()
+            super()._render()
             return True
         else:
             return False

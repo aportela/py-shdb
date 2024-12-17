@@ -14,12 +14,12 @@ class SimpleLabelWidget(Widget):
     def refresh(self, force: bool = False) -> bool:
         if force or self._render_required:
             self._render_required = False
-            self.clear()
+            self._clear()
             self._tmp_surface.blit(
                 self._font.render(self._text),
                 (self._padding, self._padding)
             )
-            super().render()
+            super()._render()
             return True
         else:
             return False
