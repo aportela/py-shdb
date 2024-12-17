@@ -9,7 +9,7 @@ from ..module_cache import ModuleCache
 from ...utils.logger import Logger
 
 class RSSFeed:
-    def __init__(self, url, max_items=5, default_seconds_refresh_time=3600, cache_path: str = None):
+    def __init__(self, url: str, max_items: int = 8, default_seconds_refresh_time: int = 3600, cache_path: str = None):
         """
         Initializes the RSSFeed object with the URL of the RSS feed and other configurations.
 
