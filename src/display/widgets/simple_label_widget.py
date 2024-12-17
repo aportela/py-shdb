@@ -11,7 +11,6 @@ class SimpleLabelWidget(Widget):
         self._text = text
         self._render_required = True # this widget has static text (no changes) so only render on first refresh iteration
 
-
     def refresh(self, force: bool = False) -> bool:
         if force or self._render_required:
             self._render_required = False
@@ -21,4 +20,6 @@ class SimpleLabelWidget(Widget):
                 (self._padding, self._padding)
             )
             super().render()
-        return False
+            return True
+        else:
+            return False
