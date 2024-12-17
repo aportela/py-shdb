@@ -14,12 +14,13 @@ class TimeWidget(Widget):
 
     def refresh(self, force: bool = False) -> bool:
         now = datetime.datetime.now()
-        new_str = now.strftime(self._format_mask)
+        # ugly hack because depending your system locale %p (AM/FM) will not work
+        new_str = now.strftime( self._format_mask.replace("%p", "AM" if now.hour < 12 else "PM")).upper()
         if (force or self._str != new_str):
             self._str == new_str
             self.clear()
             self._tmp_surface.blit(
-                self._font.render(new_str.title(), True, self._font_color),
+                self._font.render(new_str, True, self._font_color),
                 (self._padding, self._padding)
             )
             super().render()
