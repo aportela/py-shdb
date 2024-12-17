@@ -6,6 +6,7 @@ import hashlib
 import requests
 import feedparser
 import logging
+from ..module_cache import ModuleCache
 
 class RSSFeed:
     def __init__(self, url, max_items=5, default_seconds_refresh_time=3600, cache_path: str = None):
@@ -21,9 +22,9 @@ class RSSFeed:
         self._default_seconds_refresh_time = default_seconds_refresh_time
         self._last_refresh_timestamp = 0
         if cache_path != None:
-            self._cache_path = f"{cache_path}/rss/{hashlib.sha256(self._url.encode('utf-8')).hexdigest()}.rss"
+            self._cache = ModuleCache(f"{cache_path}/rss/{hashlib.sha256(self._url.encode('utf-8')).hexdigest()}.rss", default_seconds_refresh_time)
         else:
-            self._cache_path = None
+            self._cache = None
         self._feed_title = ''
         self._feed_items = []
         self._feed_hash = ''
@@ -41,33 +42,6 @@ class RSSFeed:
             feed_hash.update(entry.get("link", "").encode('utf-8'))  # Update the hash with the entry's link
         return feed_hash.hexdigest()  # Return the hex digest of the hash
 
-    def _save_cache(self, data):
-        try:
-            os.makedirs(os.path.dirname(self._cache_path), exist_ok=True)
-            with open(self._cache_path, "wb") as cache_file:
-                pickle.dump(data, cache_file)
-            logging.info(f"Cache saved to {self._cache_path}")
-        except Exception as e:
-            print(f"Error saving cache: {e}")
-
-    def _load_cache(self):
-        if os.path.exists(self._cache_path):
-            try:
-                if time.time() - os.path.getmtime(self._cache_path) < self._default_seconds_refresh_time:
-                    with open(self._cache_path, "rb") as cache_file:
-                        data = pickle.load(cache_file)
-                    logging.info(f"Cache loaded successfully from {self._cache_path}")
-                    return data
-                else:
-                    logging.info(f"Cache expired {self._cache_path}")
-                    return None
-            except Exception as e:
-                logging.error(f"Error loading cache from {self._cache_path}: {e}")
-                return None
-        else:
-            logging.warning(f"Cache file does not exist at {self._cache_path}")
-            return None
-
     def _refresh(self, force: bool = False) -> bool:
         """
         Refreshes the RSS feed by fetching it from the provided URL and parsing the entries.
@@ -77,8 +51,8 @@ class RSSFeed:
         """
 
         parsed_feed = None
-        if self._cache_path != None:
-            parsed_feed = self._load_cache()
+        if self._cache != None:
+            parsed_feed = self._cache.load()
 
         if parsed_feed == None:
             headers = {
@@ -93,8 +67,8 @@ class RSSFeed:
 
             parsed_feed = feedparser.parse(response.text)
 
-            if self._cache_path != None:
-                self._save_cache(parsed_feed)
+            if self._cache != None:
+                self._cache.save(parsed_feed)
 
         self._feed_title = parsed_feed.feed.title  # Store the feed title
         self._feed_items = []  # Reset the feed items
