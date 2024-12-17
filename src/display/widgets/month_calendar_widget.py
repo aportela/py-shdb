@@ -7,18 +7,24 @@ from .widget import Widget
 from .widget_font import WidgetFont
 
 class MonthCalendarWidget(Widget):
-    def __init__(self, name: str, x: int, y: int, width: int, height: int, padding: int, surface: pygame.Surface, debug: bool, font: WidgetFont, year: int = None, month: int = None):
-        super().__init__(name=name, surface=surface, debug=debug, x=x, y=y, width=width, height=height, padding=padding)
-        self._font = font
+    def __init__(self, name: str, x: int , y: int, width: int, height: int, padding: int, border: bool = False, surface: pygame.Surface = None, font: WidgetFont = None, year: int = None, month: int = None):
+        # Initialize the parent class (Widget) with the provided parameters
+        super().__init__(name = name, x = x, y = y, width = width, height = height, padding = padding, border = border, surface = surface)
+        # Ensure that the font is provided, otherwise raise an error
+        if font is None:
+            raise RuntimeError("Font not set")  # Font must be provided
+        else:
+            self.__font = font  # Set the font for rendering text
+        if year is None or month is None:
+            raise RuntimeError("Year/month not set")  # Year & month must be provided
         # Set the current month and year if not passed as parameters
         self._current_date = datetime.now() if not year or not month else datetime(year, month, 1)
         self._days_in_month = calendar.monthrange(self._current_date.year, self._current_date.month)[1]
         self._first_day_of_week = calendar.monthrange(self._current_date.year, self._current_date.month)[0]
-        self._render_required = True
         self._calendar_grid = self._generate_calendar_grid()
-
         # Set the current locale and get the week days in the local language
         self._set_locale_days()
+        self._render_required = True
 
     def _set_locale_days(self):
         """Sets the week days based on the current locale"""
@@ -53,7 +59,7 @@ class MonthCalendarWidget(Widget):
                 # Calculate the horizontal position to align the day name to the right
                 day_width = day_surface.get_width()
                 x_position = x_offset + i * (self._width // 7) + (self._width // 7 - day_width)  # Align text to the right
-                self._tmp_surface.blit(day_surface, (x_position, y_offset))
+                self._blit(day_surface, (x_position, y_offset))
 
             y_offset += 30  # Move the Y offset down after drawing the week days
 
@@ -81,7 +87,7 @@ class MonthCalendarWidget(Widget):
                                              (x_offset + col * (self._width // 7), y_offset + row * 30, self._width // 7, 30), 1)  # White border with 1px width
 
                         # Draw the day number at the calculated position
-                        self._tmp_surface.blit(day_surface, (x_position, y_position))
+                        self._blit(day_surface, (x_position, y_position))
 
             super()._render()
             return True
