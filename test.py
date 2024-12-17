@@ -116,7 +116,7 @@ def load_widgets():
                 if text == None or text == "":
                     rss_url = widget_config.get('rss_url', "")
                     if (rss_url != None and rss_url != ""):
-                        feed = RSSFeed(url = rss_url, max_items=1, default_seconds_refresh_time= 600,cache_path = cache_path)
+                        feed = RSSFeed(url = rss_url, max_items=16, default_seconds_refresh_time= 600,cache_path = cache_path)
                         text = " # ".join(f"[{item['published']}] - {item['title']}" for item in feed.get()['items'])
                 widgets.append(
                     HorizontalTickerWidget(
