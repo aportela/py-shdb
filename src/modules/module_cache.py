@@ -39,6 +39,25 @@ class ModuleCache:
         else:
             self.__log.warning("No cache path set. Cannot save cache.")
 
+    def save_bytes(self, data: bytes):
+        """
+        Saves raw bytes data to the cache file.
+
+        :param data: The raw bytes to be cached.
+        """
+        if self.__cache_path:
+            try:
+                # Open the file in write-binary mode and save the raw bytes data
+                with open(self.__cache_path, "wb") as cache_file:
+                    cache_file.write(data)
+                self.__log.info(f"Cache saved to ({self.__cache_path})")
+            except OSError as e:
+                self.__log.error(f"Error saving cache to ({self.__cache_path}): {e}")
+            except Exception as e:
+                self.__log.error(f"Unexpected error occurred: {e}")
+        else:
+            self.__log.warning("No cache path set. Cannot save cache.")
+
     def load(self) -> Any:
         """
         Loads the data from the cache file if it's not expired and exists.
