@@ -7,6 +7,7 @@ import locale
 from src.utils.logger import Logger
 
 from src.modules.rss.rss_feed import RSSFeed
+from src.modules.weather.open_meteo import OpenMeteo,WeatherDataType
 
 from src.display.widgets.simple_label_widget import SimpleLabelWidget
 from src.display.widgets.date_widget import DateWidget
@@ -14,6 +15,7 @@ from src.display.widgets.time_widget import TimeWidget
 from src.display.widgets.horizontal_ticker_widget import HorizontalTickerWidget
 from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
+from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
 
 configuration_file_path = "config.yaml"
@@ -32,12 +34,6 @@ max_fps = config.get('app', {}).get('max_fps', 30)
 show_fps = config.get('app', {}).get('show_fps', False)
 cache_path = config.get('app', {}).get('cache_path', None)
 background_color = config.get('app', {}).get('background_color', [0, 0, 0])
-
-Logger.configure_global(
-    level = Logger.parse_level(
-        config.get('app', {}).get('logger_level', None)
-    )
-)
 
 locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
 # Inicializar Pygame
@@ -200,7 +196,31 @@ def load_widgets():
                         cache_path = cache_path
                     )
                 )
+            elif (widget_config.get("type", "") == "weather_forecast"):
+                widgets.append(
+                    WeatherForecastWidget(
+                        name = widget_name,
+                        surface=framebuffer_global,
+                        border = debug_widgets,
+                        x = widget_config.get('x', 0),
+                        y = widget_config.get( 'y', 0),
+                        width=widget_config.get( 'width', 0),
+                        height=widget_config.get( 'height', 0),
+                        padding = widget_config.get( 'padding', 0),
+                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
+                        font = WidgetFont(
+                            #font_family=widget_config.get( 'font_family', None),
+                            font_file = "resources/fonts/fa-solid-900.ttf",
+                            font_size = widget_config.get( 'font_size', 30),
+                            font_color = widget_config.get( 'font_color', [255, 255, 255]),
+                            font_style_bold = widget_config.get( 'font_style_bold', False),
+                            font_style_italic = widget_config.get( 'font_style_italic', False)
+                        ),
+                        text = widget_config.get( 'text', "\uf6c4")
+                    )
+                )
     logger.debug(f"Total widgets: {len(widgets)}")
+
 load_widgets()
 
 # Fuente para texto e íconos
@@ -270,7 +290,6 @@ while running:
 
     # limit FPS
     clock.tick(max_fps)
-
 
 pygame.quit()
 
