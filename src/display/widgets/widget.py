@@ -5,11 +5,12 @@ from ...utils.logger import Logger
 WIDGET_BORDER_COLOR=(255, 105, 180)
 
 class Widget(ABC):
-    def __init__(self, name: str, x: int , y: int, width: int, height: int, padding: int, border: bool = False, surface: pygame.Surface = None):
+    def __init__(self, name: str, x: int , y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int, int] = (0, 0, 0, 0), border: bool = False, surface: pygame.Surface = None):
         self._log = Logger()
         if width < 0 or height < 0 or padding < 0:
             raise ValueError("Invalid width/height/padding")
         self.__name = name
+        self.__background_color = background_color
         self.__border = border
         self._surface = surface
         self._x = x
@@ -28,7 +29,7 @@ class Widget(ABC):
 
     # clear temporal widget surface
     def _clear(self):
-        self._tmp_surface.fill((0, 0, 0))
+        self._tmp_surface.fill(self.__background_color)
 
     def _blit(self, surface: pygame.Surface, dest: tuple[int, int] = None):
         if dest is None:

@@ -57,6 +57,7 @@ screen = pygame.display.set_mode(RESOLUTION, pygame.NOFRAME)
 pygame.display.set_caption(app_name)
 
 framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
+framebuffer_global.fill(background_color)
 
 widgets = []
 
@@ -77,6 +78,7 @@ def load_widgets():
                         width=widget_config.get( 'width', 0),
                         height=widget_config.get( 'height', 0),
                         padding = widget_config.get( 'padding', 0),
+                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         font = WidgetFont(
                             font_family=widget_config.get( 'font_family', None),
                             font_size = widget_config.get( 'font_size', 30),
@@ -98,6 +100,7 @@ def load_widgets():
                         width=widget_config.get( 'width', 0),
                         height=widget_config.get( 'height', 0),
                         padding = widget_config.get( 'padding', 0),
+                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         font = WidgetFont(
                             font_family=widget_config.get( 'font_family', None),
                             font_size = widget_config.get( 'font_size', 30),
@@ -119,6 +122,7 @@ def load_widgets():
                         width=widget_config.get( 'width', 0),
                         height=widget_config.get( 'height', 0),
                         padding = widget_config.get( 'padding', 0),
+                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         font = WidgetFont(
                             font_family=widget_config.get( 'font_family', None),
                             font_size = widget_config.get( 'font_size', 30),
@@ -146,6 +150,7 @@ def load_widgets():
                         width=widget_config.get( 'width', 0),
                         height=widget_config.get( 'height', 0),
                         padding = widget_config.get( 'padding', 0),
+                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         font = WidgetFont(
                             font_family=widget_config.get( 'font_family', None),
                             font_size = widget_config.get( 'font_size', 30),
@@ -168,6 +173,7 @@ def load_widgets():
                         width=widget_config.get( 'width', 0),
                         height=widget_config.get( 'height', 0),
                         padding = widget_config.get( 'padding', 0),
+                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         font = WidgetFont(
                             font_family=widget_config.get( 'font_family', None),
                             font_size = widget_config.get( 'font_size', 30),
@@ -188,6 +194,7 @@ def load_widgets():
                         width=widget_config.get( 'width', 0),
                         height=widget_config.get( 'height', 0),
                         padding = widget_config.get( 'padding', 0),
+                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         path = widget_config.get( 'path', None),
                         url = widget_config.get( 'url', None),
                         cache_path = cache_path

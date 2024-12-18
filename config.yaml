@@ -8,7 +8,7 @@ app:
   max_fps: 60
   show_fps: true
   locale: "es_ES.UTF-8"
-  background_color: [0, 0, 0]
+  background_color: [10, 20, 30]
   cache_path: "tmp/cache"
 
 widgets:
@@ -20,6 +20,7 @@ widgets:
     width: 276
     height: 25
     padding: 2
+    background_color: [40, 40, 40]
     font_family: "monospace"
     font_size: 16
     font_color: [255, 255, 255]
@@ -35,6 +36,7 @@ widgets:
     width: 750
     height: 34
     padding: 2
+    background_color: [80, 80, 80]
     font_family: "monospace"
     font_size: 24
     font_color: [255, 255, 255]
@@ -50,6 +52,7 @@ widgets:
     width: 750
     height: 170
     padding: 2
+    background_color: [80, 80, 80]
     font_family: "monospace"
     font_size: 150
     font_color: [255, 255, 255]
@@ -65,9 +68,10 @@ widgets:
     width: 1920
     height: 25
     padding: 2
+    background_color: [20, 81, 224]
     font_family: "monospace"
     font_size: 16
-    font_color: [255, 255, 255]
+    font_color: [224, 224, 224]
     font_style_bold: True
     font_style_italic: False
     text: ""

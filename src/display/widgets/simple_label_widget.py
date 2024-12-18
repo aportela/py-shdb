@@ -5,9 +5,9 @@ from .widget_font import WidgetFont
 
 class SimpleLabelWidget(Widget):
 
-    def __init__(self, name: str, x: int, y: int, width: int, height: int, padding: int, border: bool = False, surface: pygame.Surface = None, font: WidgetFont = None, text: str = None):
+    def __init__(self, name: str, x: int, y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int, int] = (0, 0, 0, 0), border: bool = False, surface: pygame.Surface = None, font: WidgetFont = None, text: str = None):
         # Initialize the parent class (Widget) with the provided parameters
-        super().__init__(name=name, x=x, y=y, width=width, height=height, padding=padding, border=border, surface=surface)
+        super().__init__(name = name, x = x, y = y, width = width, height = height, padding = padding, background_color = background_color, border = border, surface = surface)
 
         # Ensure that the font is provided, otherwise raise an error
         if font is None:
