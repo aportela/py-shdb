@@ -216,7 +216,8 @@ def load_widgets():
                             font_style_bold = widget_config.get( 'font_style_bold', False),
                             font_style_italic = widget_config.get( 'font_style_italic', False)
                         ),
-                        text = widget_config.get( 'text', "\uf6c4")
+                        #text = widget_config.get( 'text', "\uf6c4") # cloud
+                        text = widget_config.get( 'text', "\uf863") # fan (wind)
                     )
                 )
     logger.debug(f"Total widgets: {len(widgets)}")

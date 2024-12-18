@@ -22,6 +22,7 @@ class WeatherForecastWidget(Widget):
 
         # Initialize the render flag. This widget has static text (no changes) so only render on the first refresh iteration
         self._render_required = True
+        self.__angle = 0
 
     def refresh(self, force: bool = False) -> bool:
         """
@@ -31,12 +32,14 @@ class WeatherForecastWidget(Widget):
         Otherwise, it won't refresh.
         """
         if force or self._render_required:
-            self._render_required = False  # Set the render flag to False since we are rendering the widget
+            #self._render_required = False  # Set the render flag to False since we are rendering the widget
             self._clear()  # Clear the previous content
 
             # Render the text using the specified font and blit it to the surface
-            self._blit(self.__font.render(self._text))
-
+            self._blit(pygame.transform.rotate(self.__font.render(self._text), self.__angle))
+            self.__angle = self.__angle + 1
+            if self.__angle > 360:
+                self.__angle = 0
             # Call the parent class to handle additional rendering logic
             super()._render()
             return True  # Indicate that the widget was rendered successfully
