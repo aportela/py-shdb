@@ -46,3 +46,7 @@ class TimeWidget(Widget):
             return True  # Indicate that the widget was refreshed successfully
         else:
             return False  # No update required, time has not changed
+
+    def on_click(self):
+        self._log.debug("detected widget click event, forcing refresh")
+        self.refresh(True)

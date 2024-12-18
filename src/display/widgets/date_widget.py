@@ -50,3 +50,7 @@ class DateWidget(Widget):
             return True  # Indicate that the widget was refreshed
         else:
             return False  # No change in the date, so no refresh needed
+
+    def on_click(self):
+        self._log.debug("detected widget click event, forcing refresh")
+        self.refresh(True)

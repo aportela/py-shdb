@@ -102,3 +102,7 @@ class ImageWidget(Widget):
             return True
         else:
             return False
+
+    def on_click(self):
+        self._log.debug("detected widget click event, forcing refresh")
+        self.refresh(True)

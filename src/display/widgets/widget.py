@@ -59,5 +59,6 @@ class Widget(ABC):
         if self.___rect.collidepoint(event.pos):
             self.on_click()
 
+    @abstractmethod
     def on_click(self):
-        self._log.debug("detected widget click event")
+        pass

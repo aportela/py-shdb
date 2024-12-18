@@ -42,3 +42,7 @@ class SimpleLabelWidget(Widget):
             return True  # Indicate that the widget was rendered successfully
         else:
             return False  # Return False if the widget doesn't need a refresh
+
+    def on_click(self):
+        self._log.debug("detected widget click event, forcing refresh")
+        self.refresh(True)

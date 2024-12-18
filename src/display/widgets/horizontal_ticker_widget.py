@@ -73,3 +73,8 @@ class HorizontalTickerWidget(Widget):
             super()._render()
 
         return True
+
+    def on_click(self):
+        self._log.debug("detected widget click event, forcing refresh")
+        self.__x_offset = 0
+        self.refresh(True)
