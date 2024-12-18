@@ -24,7 +24,7 @@ class TimeWidget(Widget):
         if (force or self._str != new_str):
             self._str == new_str
             self._clear()
-            self._blit(self._font.render(new_str))
+            self._blit(self.__font.render(new_str))
             super()._render()
             return True
         else:
