@@ -18,6 +18,7 @@ class Widget(ABC):
         self._width = width
         self._height = height
         self._padding = padding
+        self.___rect = pygame.Rect(x, y, width, height)
 
         # temporal surface for this widget
         self._tmp_surface = pygame.Surface((self._width, self._height))
@@ -53,3 +54,10 @@ class Widget(ABC):
         :return: returns true if widget detect changes
         """
         pass
+
+    def verify_click(self, event):
+        if self.___rect.collidepoint(event.pos):
+            self.on_click()
+
+    def on_click(self):
+        self._log.debug("detected widget click event")

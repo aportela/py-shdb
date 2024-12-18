@@ -219,6 +219,8 @@ running = True
 widgets_changed = True
 previous_fps = -1
 
+click_event = None
+
 while running:
 
     # check for exit
@@ -226,6 +228,8 @@ while running:
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             logger.info("See you next time!")
             running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            click_event = event
 
     # DEBUG: check for configuration changes
     if debug_widgets:
@@ -239,8 +243,12 @@ while running:
             widgets_changed = True
 
     for widget in widgets:
+        if click_event is not None:
+            widget.verify_click(click_event)
         if(widget.refresh(False)):
             widgets_changed = True
+
+    click_event = None
 
     if show_fps:
         current_fps = int(clock.get_fps())
@@ -262,6 +270,7 @@ while running:
 
     # limit FPS
     clock.tick(max_fps)
+
 
 pygame.quit()
 
