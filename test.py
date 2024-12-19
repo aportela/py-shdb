@@ -76,11 +76,11 @@ def load_widgets():
                         padding = widget_config.get( 'padding', 0),
                         background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         font = WidgetFont(
-                            font_family=widget_config.get( 'font_family', None),
-                            font_size = widget_config.get( 'font_size', 30),
-                            font_color = widget_config.get( 'font_color', [255, 255, 255]),
-                            font_style_bold = widget_config.get( 'font_style_bold', False),
-                            font_style_italic = widget_config.get( 'font_style_italic', False)
+                            family = widget_config.get( 'font_family', None),
+                            size = widget_config.get( 'font_size', 30),
+                            color = widget_config.get( 'font_color', [255, 255, 255]),
+                            style_bold = widget_config.get( 'font_style_bold', False),
+                            style_italic = widget_config.get( 'font_style_italic', False)
                         ),
                         text = widget_config.get( 'text', "")
                     )
@@ -98,11 +98,11 @@ def load_widgets():
                         padding = widget_config.get( 'padding', 0),
                         background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         font = WidgetFont(
-                            font_family=widget_config.get( 'font_family', None),
-                            font_size = widget_config.get( 'font_size', 30),
-                            font_color = widget_config.get( 'font_color', [255, 255, 255]),
-                            font_style_bold = widget_config.get( 'font_style_bold', False),
-                            font_style_italic = widget_config.get( 'font_style_italic', False)
+                            family = widget_config.get( 'font_family', None),
+                            size = widget_config.get( 'font_size', 30),
+                            color = widget_config.get( 'font_color', [255, 255, 255]),
+                            style_bold = widget_config.get( 'font_style_bold', False),
+                            style_italic = widget_config.get( 'font_style_italic', False)
                         ),
                         format_mask = widget_config.get( 'format_mask', "%A, %d de %B"),
                     )
@@ -120,11 +120,11 @@ def load_widgets():
                         padding = widget_config.get( 'padding', 0),
                         background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         font = WidgetFont(
-                            font_family=widget_config.get( 'font_family', None),
-                            font_size = widget_config.get( 'font_size', 30),
-                            font_color = widget_config.get( 'font_color', [255, 255, 255]),
-                            font_style_bold = widget_config.get( 'font_style_bold', False),
-                            font_style_italic = widget_config.get( 'font_style_italic', False)
+                            family = widget_config.get( 'font_family', None),
+                            size = widget_config.get( 'font_size', 30),
+                            color = widget_config.get( 'font_color', [255, 255, 255]),
+                            style_bold = widget_config.get( 'font_style_bold', False),
+                            style_italic = widget_config.get( 'font_style_italic', False)
                         ),
                         format_mask = widget_config.get( 'format_mask', "%I:%M %p"),
                     )
@@ -148,11 +148,11 @@ def load_widgets():
                         padding = widget_config.get( 'padding', 0),
                         background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         font = WidgetFont(
-                            font_family=widget_config.get( 'font_family', None),
-                            font_size = widget_config.get( 'font_size', 30),
-                            font_color = widget_config.get( 'font_color', [255, 255, 255]),
-                            font_style_bold = widget_config.get( 'font_style_bold', False),
-                            font_style_italic = widget_config.get( 'font_style_italic', False)
+                            family = widget_config.get( 'font_family', None),
+                            size = widget_config.get( 'font_size', 30),
+                            color = widget_config.get( 'font_color', [255, 255, 255]),
+                            style_bold = widget_config.get( 'font_style_bold', False),
+                            style_italic = widget_config.get( 'font_style_italic', False)
                         ),
                         text = text or "TODO",
                         speed = widget_config.get( 'speed', 1)
@@ -171,11 +171,11 @@ def load_widgets():
                         padding = widget_config.get( 'padding', 0),
                         background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         font = WidgetFont(
-                            font_family=widget_config.get( 'font_family', None),
-                            font_size = widget_config.get( 'font_size', 30),
-                            font_color = widget_config.get( 'font_color', [255, 255, 255]),
-                            font_style_bold = widget_config.get( 'font_style_bold', False),
-                            font_style_italic = widget_config.get( 'font_style_italic', False)
+                            family = widget_config.get( 'font_family', None),
+                            size = widget_config.get( 'font_size', 30),
+                            color = widget_config.get( 'font_color', [255, 255, 255]),
+                            style_bold = widget_config.get( 'font_style_bold', False),
+                            style_italic = widget_config.get( 'font_style_italic', False)
                         )
                     )
                 )
@@ -209,12 +209,12 @@ def load_widgets():
                         padding = widget_config.get( 'padding', 0),
                         background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
                         font = WidgetFont(
-                            #font_family=widget_config.get( 'font_family', None),
-                            font_file = "resources/fonts/fa-solid-900.ttf",
-                            font_size = widget_config.get( 'font_size', 30),
-                            font_color = widget_config.get( 'font_color', [255, 255, 255]),
-                            font_style_bold = widget_config.get( 'font_style_bold', False),
-                            font_style_italic = widget_config.get( 'font_style_italic', False)
+                            #family = widget_config.get( 'font_family', None),
+                            file = "resources/fonts/fa-solid-900.ttf",
+                            size = widget_config.get( 'font_size', 30),
+                            color = widget_config.get( 'font_color', [255, 255, 255]),
+                            style_bold = widget_config.get( 'font_style_bold', False),
+                            style_italic = widget_config.get( 'font_style_italic', False)
                         ),
                         #text = widget_config.get( 'text', "\uf6c4") # cloud
                         text = widget_config.get( 'text', "\uf863") # fan (wind)
