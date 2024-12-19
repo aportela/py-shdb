@@ -31,7 +31,7 @@ class WidgetFont:
         self._update_font()
 
     @property
-    def color(self) -> str:
+    def color(self) -> tuple[int, int, int, int]:
         return self.font_color
 
     def _update_font(self):
