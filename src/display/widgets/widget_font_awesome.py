@@ -31,6 +31,6 @@ class WidgetFontAwesome(WidgetFont):
     def render(self, icon: FontAwesomeIcon, effect: FontAwesomeEffect = FontAwesomeEffect.NONE, effect_speed: FontAwesomeEffectSpeed = FontAwesomeEffectSpeed.MEDIUM, custom_color: tuple = None) -> pygame.Surface:
         """Render the specified text as a pygame.Surface."""
         if (effect != FontAwesomeEffect.NONE):
-            return self.__font.render(icon, True, custom_color or self.__color)
+            return super().render(icon.value, custom_color)
         else:
-            return self.__font.render(icon, True, custom_color or self.__color)
+            return super().render(icon.value, custom_color)
