@@ -30,6 +30,10 @@ class WidgetFont:
         # Choose the font creation method based on whether a TTF file is provided
         self._update_font()
 
+    @property
+    def color(self) -> str:
+        return self.font_color
+
     def _update_font(self):
         """
         Updates the Pygame font object with the current attributes,
