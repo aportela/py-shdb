@@ -43,6 +43,7 @@ class FontAwesomeSpinEffectDirection(Enum):
     REVERSED = 2
 
 
+# TODO: use sprites ?
 class FontAwesomeBaseEffect(WidgetFont):
     def __init__(self, file: str = None, size: int = 30, color: tuple = (255, 255, 255)) -> None:
         # Initialize the parent class (WidgetFont) with the provided parameters
@@ -68,8 +69,11 @@ class FontAwesomeSpinEffect(FontAwesomeBaseEffect):
             self.__angle = 360
         self.__icon_surface = self.render(icon.value, color)
         square_size = max(self.__icon_surface.get_size())
+        self.__sprite_count = 359
         self.__square_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
         self.__center = (self.__icon_surface.get_width() / 2, self.__icon_surface.get_height() / 2)
+
+
 
     def animate(self) -> pygame.Surface:
         x = self.__center[0] + self.__radius * math.cos(math.radians(self.__angle))
