@@ -5,9 +5,18 @@ from .widget_font import WidgetFont
 class FontAwesomeIcon(Enum):
     COG = "\uf013"
 
+# https://docs.fontawesome.com/web/style/animate#_top
 class FontAwesomeEffect(Enum):
     NONE = 0,
-    ROTATE = 1
+    BEAT = 1,
+    FADE = 2,
+    BEAT_AND_FADE = 3,
+    BOUNCE = 4,
+    HORIZONTAL_FLIP = 5,
+    VERTICAL_FLIP = 6,
+    SHAKE = 7,
+    SPIN = 8
+    SPIN_REVERSE = 9
 
 class FontAwesomeEffectSpeed(Enum):
     SLOW = 0,
