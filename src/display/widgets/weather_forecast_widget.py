@@ -1,4 +1,5 @@
 import pygame
+import math
 
 from .widget import Widget
 from .widget_font import WidgetFont
@@ -25,6 +26,7 @@ class WeatherForecastWidget(Widget):
         self.__angle = 0
 
     def refresh(self, force: bool = False) -> bool:
+        radius = 0
         """
         Refreshes the widget by rendering the text if necessary.
         If the 'force' argument is True or if a render is required,
@@ -34,10 +36,19 @@ class WeatherForecastWidget(Widget):
         if force or self._render_required:
             #self._render_required = False  # Set the render flag to False since we are rendering the widget
             self._clear()  # Clear the previous content
+            center = (self._width / 2, self._height / 2)
+
+            icon_surface = self.__font.render(self._text)
+            x = center[0] + radius * math.cos(math.radians(self.__angle))
+            y = center[1] + radius * math.sin(math.radians(self.__angle))
+
+            rotated_icon = pygame.transform.rotate(icon_surface, self.__angle)
+
+            rotated_rect = rotated_icon.get_rect(center=(x, y))
 
             # Render the text using the specified font and blit it to the surface
-            self._blit(pygame.transform.rotate(self.__font.render(self._text), self.__angle))
-            self.__angle = self.__angle + 1
+            self._blit(rotated_icon, rotated_rect)
+            self.__angle = self.__angle + 4
             if self.__angle > 360:
                 self.__angle = 0
             # Call the parent class to handle additional rendering logic
