@@ -17,6 +17,7 @@ from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
+from src.display.widgets.widget_font_awesome import WidgetFontAwesome, FontAwesomeIcon, FontAwesomeEffect, FontAwesomeEffectSpeed, FontAwesomeSpinEffect
 
 configuration_file_path = "config.yaml"
 
@@ -242,6 +243,8 @@ previous_fps = -1
 
 click_event = None
 
+
+wfa = FontAwesomeSpinEffect("resources/fonts/fa-solid-900.ttf", 30, (100, 50, 200))
 while running:
 
     # check for exit
@@ -284,6 +287,7 @@ while running:
             widgets_changed = True
 
     if widgets_changed:
+        framebuffer_global.blit(wfa.render_animation(icon = FontAwesomeIcon.COG), (screen.get_width() - current_fps_surface.get_width() - 100, 50))
         screen.blit(framebuffer_global, (0, 0))
         widgets_changed = False
 
