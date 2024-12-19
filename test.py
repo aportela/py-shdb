@@ -49,7 +49,7 @@ logger.debug(f"Current screen resolution: {screen_info.current_w}x{screen_info.c
 RESOLUTION = (screen_info.current_w, screen_info.current_h)
 
 # Configurar pantalla completa
-screen = pygame.display.set_mode(RESOLUTION, pygame.NOFRAME)
+screen = pygame.display.set_mode(RESOLUTION, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME)
 pygame.display.set_caption(app_name)
 
 framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
@@ -217,7 +217,7 @@ def load_widgets():
                             style_italic = widget_config.get( 'font_style_italic', False)
                         ),
                         #text = widget_config.get( 'text', "\uf6c4") # cloud
-                        text = widget_config.get( 'text', "\uf863") # fan (wind)
+                        text = widget_config.get( 'text', "\uf013") # fan (wind)
                     )
                 )
     logger.debug(f"Total widgets: {len(widgets)}")
