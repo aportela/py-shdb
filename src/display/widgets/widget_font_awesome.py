@@ -19,6 +19,7 @@ class Effect(Enum):
     SHAKE = 7
     SPIN = 8
     SPIN_REVERSE = 9
+
 # https://docs.fontawesome.com/web/style/animate#_top
 class FontAwesomeEffect(Enum):
     NONE = 0
@@ -34,8 +35,8 @@ class FontAwesomeEffect(Enum):
 
 class FontAwesomeEffectSpeed(Enum):
     SLOW = 1
-    MEDIUM = 2
-    FAST = 4
+    MEDIUM = 4
+    FAST = 8
 
 class FontAwesomeSpinEffectDirection(Enum):
     NORMAL = 1,
@@ -49,13 +50,16 @@ class FontAwesomeBaseEffect(WidgetFont):
         self._effect = Effect.NONE
 
     @abstractmethod
-    def render_animation(self, text: str, custom_color: tuple = None) -> pygame.Surface:
+    def animate(self) -> pygame.Surface:
         pass
 
 class FontAwesomeSpinEffect(FontAwesomeBaseEffect):
     def __init__(self, icon: FontAwesomeIcon = None, file: str = None, size: int = 30, color: tuple = (255, 255, 255), speed: FontAwesomeEffectSpeed = FontAwesomeEffectSpeed.MEDIUM, direction: FontAwesomeSpinEffectDirection = FontAwesomeSpinEffectDirection.NORMAL) -> None:
         super().__init__(file = file, size = size, color = color)
-        self._effect = Effect.BEAT
+        if direction == FontAwesomeSpinEffectDirection.NORMAL:
+            self._effect = FontAwesomeEffect.SPIN
+        else:
+            self._effect = FontAwesomeEffect.SPIN_REVERSE
         self.__radius = 0
         self.__speed = speed.value
         self.__angle = 0
@@ -63,11 +67,9 @@ class FontAwesomeSpinEffect(FontAwesomeBaseEffect):
         if (direction == FontAwesomeSpinEffectDirection.REVERSED):
             self.__angle = 360
         self.__icon_surface = self.render(icon.value, color)
-        self.__icon_width, self.__icon_height = self.__icon_surface.get_size()
-        self.__square_size = max(self.__icon_width, self.__icon_height)
-        self.__square_surface = pygame.Surface((self.__square_size, self.__square_size), pygame.SRCALPHA)
+        square_size = max(self.__icon_surface.get_size())
+        self.__square_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
         self.__center = (self.__icon_surface.get_width() / 2, self.__icon_surface.get_height() / 2)
-
 
     def animate(self) -> pygame.Surface:
         x = self.__center[0] + self.__radius * math.cos(math.radians(self.__angle))
@@ -87,7 +89,7 @@ class FontAwesomeSpinEffect(FontAwesomeBaseEffect):
                 self.__angle = 0
         else:
             self.__angle = self.__angle - self.__speed
-            if self.__angle >= 0:
+            if self.__angle <= 0:
                 self.__angle = 360
         return self.__square_surface
 

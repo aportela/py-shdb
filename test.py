@@ -17,7 +17,7 @@ from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
-from src.display.widgets.widget_font_awesome import WidgetFontAwesome, FontAwesomeIcon, FontAwesomeEffect, FontAwesomeEffectSpeed, FontAwesomeSpinEffect
+from src.display.widgets.widget_font_awesome import WidgetFontAwesome, FontAwesomeIcon, FontAwesomeEffect, FontAwesomeEffectSpeed, FontAwesomeSpinEffect, FontAwesomeSpinEffectDirection
 
 configuration_file_path = "config.yaml"
 
@@ -244,7 +244,14 @@ previous_fps = -1
 click_event = None
 
 
-wfa = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200))
+wfa1 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.SLOW, direction = FontAwesomeSpinEffectDirection.NORMAL)
+wfa2 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.MEDIUM, direction = FontAwesomeSpinEffectDirection.NORMAL)
+wfa3 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.FAST, direction = FontAwesomeSpinEffectDirection.NORMAL)
+
+wfa4 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.SLOW, direction = FontAwesomeSpinEffectDirection.REVERSED)
+wfa5 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.MEDIUM, direction = FontAwesomeSpinEffectDirection.REVERSED)
+wfa6 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.FAST, direction = FontAwesomeSpinEffectDirection.REVERSED)
+
 while running:
 
     # check for exit
@@ -287,7 +294,12 @@ while running:
             widgets_changed = True
 
     if widgets_changed:
-        framebuffer_global.blit(wfa.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 50))
+        framebuffer_global.blit(wfa1.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 50))
+        framebuffer_global.blit(wfa2.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 80))
+        framebuffer_global.blit(wfa3.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 110))
+        framebuffer_global.blit(wfa4.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 140))
+        framebuffer_global.blit(wfa5.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 170))
+        framebuffer_global.blit(wfa6.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 200))
         screen.blit(framebuffer_global, (0, 0))
         widgets_changed = False
 
