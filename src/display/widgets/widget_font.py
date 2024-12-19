@@ -43,6 +43,6 @@ class WidgetFont:
 
         self.__font = self.__initialize_font()
 
-    def render(self, text: str) -> pygame.Surface:
+    def render(self, text: str, custom_color: tuple = None) -> pygame.Surface:
         """Render the specified text as a pygame.Surface."""
-        return self.__font.render(text, True, self.__color)
+        return self.__font.render(text, True, custom_color or self.__color)
