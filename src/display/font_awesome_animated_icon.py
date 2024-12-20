@@ -32,7 +32,7 @@ class FontAwesomeAnimationSpinDirection(Enum):
     COUNTERCLOCKWISE = 2
 
 class FontAwesomeIconBaseEffect(FontAwesomeIcon):
-    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False) -> None:
+    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False) -> None:
         super().__init__(file = file, size = size, color = color)
         self._animation_type = FontAwesomeAnimationType.NONE
         self._icon = icon
@@ -50,7 +50,7 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         pass
 
 class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
+    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
         super().__init__(icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.BEAT
         self.__original_size = size
@@ -75,7 +75,7 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
         return icon_surface
 
 class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
+    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
         super().__init__(icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.FADE
         self.__alpha = 0
@@ -100,7 +100,7 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
         return __fade_icon_surface
 
 class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
+    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
         super().__init__(icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
         if direction == FontAwesomeAnimationSpinDirection.CLOCKWISE:
             self._animation_type = FontAwesomeAnimationType.SPIN_CLOCKWISE

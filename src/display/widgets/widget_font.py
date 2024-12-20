@@ -1,7 +1,7 @@
 import pygame
 
 class WidgetFont:
-    def __init__(self, family: str = None, file: str = None, size: int = 30, color: tuple = (255, 255, 255),
+    def __init__(self, family: str = None, file: str = None, size: int = 30, color: tuple[int, int, int] = (255, 255, 255),
                  style_bold: bool = False, style_italic: bool = False) -> None:
         self.__family = family
         self.__file = file
@@ -23,7 +23,7 @@ class WidgetFont:
         else:
             return pygame.font.Font(None, self.__size)
 
-    def update_font(self, family: str = None, file: str = None, size: int = None, color: tuple = None,
+    def update_font(self, family: str = None, file: str = None, size: int = None, color: tuple[int, int, int] = None,
                     style_bold: bool = None, style_italic: bool = None) -> None:
         if family is not None:
             self.__family = family
@@ -40,5 +40,5 @@ class WidgetFont:
 
         self.__font = self.__initialize_font()
 
-    def render(self, text: str, custom_color: tuple = None) -> pygame.Surface:
+    def render(self, text: str, custom_color: tuple[int, int, int] = None) -> pygame.Surface:
         return self.__font.render(text, True, (custom_color if custom_color else self.__color))

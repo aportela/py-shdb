@@ -18,5 +18,5 @@ class FontAwesomeIcon():
     def set_color(self, color: tuple):
         self.__color = color
 
-    def render(self, icon: FontAwesomeUnicodeIcons, custom_color: tuple = None) -> pygame.Surface:
+    def render(self, icon: FontAwesomeUnicodeIcons, custom_color: tuple[int, int, int] = None) -> pygame.Surface:
         return self._font.render(icon, True, (custom_color if custom_color else self.__color))
