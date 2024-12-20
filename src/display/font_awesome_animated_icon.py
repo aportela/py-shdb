@@ -49,6 +49,30 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
     def animate(self) -> pygame.Surface:
         pass
 
+class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
+    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
+        super().__init__(icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+        self._animation_type = FontAwesomeAnimationType.FADE
+        self.__alpha = 0
+        self.__fade_in = True
+        self._cache_values()
+
+    def animate(self) -> pygame.Surface:
+        __icon_surface = super().render(self._icon, (255,255,255))
+        __fade_icon_surface = pygame.Surface(__icon_surface.get_size(), pygame.SRCALPHA)
+        __fade_icon_surface.blit(__icon_surface.copy(), (0, 0))
+        __fade_icon_surface.set_alpha(self.__alpha)
+        if self.__fade_in:
+            if self.__alpha < 255:
+                self.__alpha += 1
+            else:
+                self.__fade_in = False
+        else:
+            if self.__alpha > 0:
+                self.__alpha -= 1
+            else:
+                self.__fade_in = True
+        return __fade_icon_surface
 
 class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
     def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
@@ -80,7 +104,7 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
     def animate(self) -> pygame.Surface:
         x = self.__center[0] + self.__radius * math.cos(math.radians(self.__angle))
         y = self.__center[1] + self.__radius * math.sin(math.radians(self.__angle))
-        self.__square_surface.fill((20, 20, 50))
+        self.__square_surface.fill(self._background_color)
         rotated_icon = pygame.transform.rotate(self.__icon_surface, self.__angle)
         rotated_rect = rotated_icon.get_rect(center = (x, y))
         self.__square_surface.blit(rotated_icon, rotated_rect)
