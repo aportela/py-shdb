@@ -17,7 +17,7 @@ from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
-from src.display.widgets.widget_font_awesome import FontAwesomeIcon, FontAwesomeEffectSpeed, FontAwesomeSpinEffectDirection, FontAwesomeSpinEffect
+from src.display.font_awesome_icon import FontAwesomeIcon, FontAwesomeEffectSpeed, FontAwesomeSpinEffectDirection, FontAwesomeSpinEffect
 
 configuration_file_path = "config.yaml"
 
