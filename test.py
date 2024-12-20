@@ -243,6 +243,7 @@ previous_fps = -1
 click_event = None
 
 wfa0 = FontAwesomeIconBeatEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW)
+wfa0.set_surface(surface = framebuffer_global, x = screen.get_width() - 180, y = 500, width = 80, height = 80, padding = 0, background_color = background_color)
 wfa1 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
 wfa2 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
 wfa3 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.FAST, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
@@ -285,6 +286,7 @@ while running:
             previous_fps_surface = fps_font.render(f"FPS: {previous_fps:03d}", True, background_color)
             previous_fps_rect = previous_fps_surface.get_rect()
             previous_fps_rect.topright = (screen.get_width() - 8, 8)
+            # TODO: previous_fps_rect contains offsets (IS CLEARING ALL ?)
             framebuffer_global.fill(background_color, previous_fps_rect)
             current_fps_surface = fps_font.render(f"FPS: {current_fps:03d}", True, (255, 255, 255), background_color)
             framebuffer_global.blit(current_fps_surface, (screen.get_width() - current_fps_surface.get_width() - 8, 8))
@@ -298,7 +300,9 @@ while running:
         framebuffer_global.blit(wfa4.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 200))
         framebuffer_global.blit(wfa5.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 250))
         framebuffer_global.blit(wfa6.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 300))
-        framebuffer_global.blit(wfa0.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 500))
+        #framebuffer_global.blit(wfa0.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 500))
+        wfa0.animate()
+        wfa0.animate_on_surface()
         screen.blit(framebuffer_global, (0, 0))
         widgets_changed = False
 

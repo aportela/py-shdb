@@ -40,6 +40,26 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         self._background_color = background_color
         self._speed = speed.value
         self._use_sprite_cache = use_sprite_cache
+        self._tmp_surface = None
+
+    def __clear(self):
+        self._tmp_surface.fill(self.__background_color)
+
+    def set_surface(self, surface: pygame.Surface, x: int, y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int, int] = (0, 0, 0, 0)) -> None:
+        self._surface = surface
+        self.__x = x
+        self.__y = y
+        if width < 1 or height < 1 or padding < 0:
+            raise ValueError("Invalid width/height/padding.")
+        self.__width = width
+        self.__height = height
+        self.__padding = padding
+        self.__background_color = background_color
+
+    def animate_on_surface(self) -> None:
+        if self._surface and self._tmp_surface:
+            self._surface.blit(self._tmp_surface, (self.__x, self.__y))
+            self.__clear()
 
     @abstractmethod
     def _cache_values(self) -> None:
@@ -61,6 +81,7 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
 
     def animate(self) -> pygame.Surface:
         icon_surface = super().render(self._icon, self._color)
+        self._tmp_surface = pygame.Surface(icon_surface.get_size())
         if (self.__increase_size):
             if self.__current_size < self.__max_size:
                 self.__current_size += 1
@@ -72,6 +93,9 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
             else:
                 self.__increase_size = True
         self.set_size(self.__current_size)
+        if self._surface and self._tmp_surface:
+            self._tmp_surface.blit(icon_surface.copy(), (0, 0))
+
         return icon_surface
 
 class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
@@ -84,9 +108,9 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
 
     def animate(self) -> pygame.Surface:
         __icon_surface = super().render(self._icon, self._color)
-        __fade_icon_surface = pygame.Surface(__icon_surface.get_size(), pygame.SRCALPHA)
+        __fade_icon_surface = pygame.Surface(__icon_surface.get_size())
         __fade_icon_surface.blit(__icon_surface.copy(), (0, 0))
-        __fade_icon_surface.set_alpha(self.__alpha)
+        #__fade_icon_surface.set_alpha(self.__alpha)
         if self.__fade_in:
             if self.__alpha < 255:
                 self.__alpha += 1
@@ -97,6 +121,8 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
                 self.__alpha -= 1
             else:
                 self.__fade_in = True
+        if self.__surface and self.__tmp_surface:
+            self.__tmp_surface.blit(__fade_icon_surface.copy(), (0, 0))
         return __fade_icon_surface
 
 class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
