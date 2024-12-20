@@ -1,20 +1,16 @@
 import pygame
 from typing import List, Optional
 
-from .widget import Widget
+from .widget import Widget, DEFAULT_WIDGET_BORDER_COLOR
 from .widget_font import WidgetFont
 
 class ListGroupWidget(Widget):
 
-    def __init__(self, name: str, x: int, y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int, int] = (0, 0, 0, 0), border: bool = False, surface: pygame.Surface = None, title_font: WidgetFont = None, title_text: str = None, items_font: WidgetFont = None, items_text: Optional[List[str]] = None):
-        # Initialize the parent class (Widget) with the provided parameters
-        super().__init__(name = name, x = x, y = y, width = width, height = height, padding = padding, background_color = background_color, border = border, surface = surface)
-
-        # Ensure that the font is provided, otherwise raise an error
-        if font is None:
-            raise RuntimeError("Font not set")  # Font must be provided
-        else:
-            self.__font = font  # Set the font for rendering text
+    def __init__(self, name: str, x: int, y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int, int] = (0, 0, 0, 0), border: bool = False, surface: pygame.Surface = None, title_font: WidgetFont = None, title_text: str = None, items_font: WidgetFont = None, items_text: Optional[List[str]] = None) -> None:
+        super().__init__(surface = surface, name = name, x = x, y = y, width = width, height = height, padding = padding, background_color = background_color, border = border, border_color = border_color)
+        if not font:
+            raise RuntimeError("Font not set")
+        self.__font = font
 
         # Ensure that the text is provided, otherwise raise an error
         if text is None:
@@ -33,7 +29,7 @@ class ListGroupWidget(Widget):
         """
         if force or self._render_required:
             self._render_required = False  # Set the render flag to False since we are rendering the widget
-            self._clear()  # Clear the previous content
+            super()._clear()  # Clear the previous content
 
             # Render the text using the specified font and blit it to the surface
             self._blit(self.__font.render(self._text))
