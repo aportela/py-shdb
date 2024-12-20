@@ -17,7 +17,7 @@ from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
-from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect #, FontAwesomeIconFadeEffect, FontAwesomeIconSpinEffect
+from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect #, FontAwesomeIconFadeEffect, FontAwesomeIconSpinEffect
 from src.display.font_awesome_unicode_icons import FontAwesomeUnicodeIcons
 
 configuration_file_path = "config.yaml"
@@ -242,10 +242,25 @@ previous_fps = -1
 
 click_event = None
 
-
-wfa0 = FontAwesomeIconBeatEffect(surface = framebuffer_global, x = screen.get_width() - 150 , y = 50, icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size = 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW, use_sprite_cache = False, max_size = 36)
-wfa1 = FontAwesomeIconBeatEffect(surface = framebuffer_global, x = screen.get_width() - 100 , y = 50, icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size = 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache = False, max_size = 36)
-wfa2 = FontAwesomeIconBeatEffect(surface = framebuffer_global, x = screen.get_width() - 50 , y = 50, icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size = 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.FAST, use_sprite_cache = False, max_size = 36)
+speeds = [ FontAwesomeAnimationSpeed.FAST, FontAwesomeAnimationSpeed.MEDIUM, FontAwesomeAnimationSpeed.SLOW ]
+icon_names = [ FontAwesomeUnicodeIcons.ICON_SUN, FontAwesomeUnicodeIcons.ICON_COG ]
+colors = [ (255, 234, 0), (155, 234, 0), (55, 34, 200) ]
+icons = []
+x = 50
+y = 30
+for j in range(len(icon_names)):
+    for i in range(len(speeds)):
+        if j == 0:
+            icons.append(
+                FontAwesomeIconBeatEffect(surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, max_size = 36)
+            )
+        elif j == 1:
+            icons.append(
+                FontAwesomeIconBounceEffect(surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, max_size = 36)
+            )
+        x += 50
+    y += 80
+    x = 50
 
 while running:
 
@@ -290,9 +305,8 @@ while running:
             widgets_changed = True
 
     if widgets_changed:
-        wfa0.animate()
-        wfa1.animate()
-        wfa2.animate()
+        for i in range(len(icons)):
+            icons[i].animate()
         screen.blit(framebuffer_global, (0, 0))
         widgets_changed = False
 

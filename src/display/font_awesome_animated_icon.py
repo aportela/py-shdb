@@ -58,7 +58,7 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
     def _background_color(self):
         return self.__background_color
 
-    def _animation_frame_changed(self) -> bool:
+    def _animation_frame_change_required(self) -> bool:
         render_required = False
         last_animation_timestamp = datetime.datetime.now().timestamp()
         timestamp_diff = datetime.datetime.now().timestamp() - self._last_animation_timestamp
@@ -79,18 +79,26 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
 
         return render_required
 
+    def _clear(self) -> None:
+        self._tmp_surface.fill(self.__background_color)
+
+    def _blit(self, surface: pygame.Surface, dest: tuple[int, int]) -> None:
+        self._tmp_surface.fill(self.__background_color)
+        self._tmp_surface.blit(surface, dest)
+
     def animate(self) -> bool:
         if self._tmp_surface is not None:
-            self._animate()
-            self._surface.blit(self._tmp_surface, (self.__x, self.__y))
-            self._tmp_surface.fill(self.__background_color)
-            return True
+            if self._animate():
+                self._surface.blit(self._tmp_surface, (self.__x, self.__y))
+                return True
+            else:
+                return False
         else:
-            self._log.warning("Temporal surface not set")
+            self._log.warning("Temporal surface not set.")
             return False
 
-    def _animate(self) -> None:
-        raise ValueError("_animate method not declared")
+    def _animate(self) -> bool:
+        raise ValueError("Missing _animate method.")
 
 class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
     def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, max_size: int = 0) -> None:
@@ -109,28 +117,62 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
         # restore original (start) size
         super().set_size(self.__original_size)
 
-    def _animate(self) -> None:
-        if True:
-            draw_new_frame = self._animation_frame_changed()
+    def _animate(self) -> bool:
+        if self._animation_frame_change_required():
             animation_unit = 1
             icon_surface = super().render(self._icon, self._color)
-            if (self.__increase_size):
+            if self.__increase_size:
                 if self.__current_size < self.__max_size:
-                    if draw_new_frame:
-                        self.__current_size += animation_unit
+                    self.__current_size += animation_unit
                 else:
                     self.__increase_size = False
             else:
                 if self.__current_size > self.__original_size:
-                    if draw_new_frame:
-                        self.__current_size -= animation_unit
+                    self.__current_size -= animation_unit
                 else:
                     self.__increase_size = True
             super().set_size(self.__current_size)
-            if self._surface and self._tmp_surface:
-                x = (self._tmp_surface.get_width() - icon_surface.get_width()) // 2
-                y = (self._tmp_surface.get_height() - icon_surface.get_height()) // 2
-                self._tmp_surface.blit(icon_surface, (x, y))
+            x = (self._tmp_surface.get_width() - icon_surface.get_width()) // 2
+            y = (self._tmp_surface.get_height() - icon_surface.get_height()) // 2
+            self._blit(icon_surface, (x, y))
+            return True
+        else:
+            return False
+
+class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
+    def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, max_size: int = 0) -> None:
+        super().__init__(surface = surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+        self._animation_type = FontAwesomeAnimationType.BOUNCE
+        self.__icon_surface = super().render(self._icon, self._color)
+        total_height = self.__icon_surface.get_height() + (self.__icon_surface.get_height() // 2)
+        self._tmp_surface = pygame.Surface((self.__icon_surface.get_width(), total_height))
+        self.__x = 0
+        self.__y = 0
+        self.__min_y = 0
+        self.__max_y = total_height - self.__icon_surface.get_height()
+        self.__falling = True
+
+    def _animate(self) -> bool:
+        if self._animation_frame_change_required():
+            animation_unit = 2
+            if self.__min_y < self.__max_y:
+                if self.__falling:
+                    if self.__y < self.__max_y:
+                        self.__y += animation_unit
+                    else:
+                        self.__falling = False
+                        self.__min_y += animation_unit
+                else:
+                    if self.__y > self.__min_y:
+                        self.__y -= animation_unit
+                    else:
+                        self.__falling = True
+                self._blit(self.__icon_surface, (self.__x, self.__y))
+                return True
+            else:
+                return False
+        else:
+            return False
 
 """
 class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
