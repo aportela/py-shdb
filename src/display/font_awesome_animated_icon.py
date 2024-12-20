@@ -22,31 +22,31 @@ class FontAwesomeAnimationSpeed(Enum):
     MEDIUM = 4
     FAST = 8
 
-class FontAwesomeFlipEffectAxis(Enum):
+class FontAwesomeAnimationFlipAxis(Enum):
     X = 1
     Y = 2
 
-class FontAwesomeSpinEffectDirection(Enum):
+class FontAwesomeAnimationSpinDirection(Enum):
     CLOCKWISE = 1
     COUNTERCLOCKWISE = 2
 
 class FontAwesomeIconBaseEffect(FontAwesomeIcon):
     def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM) -> None:
         super().__init__(file = file, size = size, color = color)
-        self._animation = FontAwesomeAnimationType.NONE
+        self._animation_type = FontAwesomeAnimationType.NONE
         self._icon = icon
         self._color = color
         self._background_color = background_color
         self._speed = speed.value
 
 class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeSpinEffectDirection = FontAwesomeSpinEffectDirection.CLOCKWISE) -> None:
-        super().__init__(icon = icon, file = file, size = size, color = color, speed = speed)
-        if direction == FontAwesomeSpinEffectDirection.CLOCKWISE:
-            self._animation = FontAwesomeAnimationType.SPIN_CLOCKWISE
+    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
+        super().__init__(icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+        if direction == FontAwesomeAnimationSpinDirection.CLOCKWISE:
+            self._animation_type = FontAwesomeAnimationType.SPIN_CLOCKWISE
             self.__angle = 0
         else:
-            self._animation = FontAwesomeAnimationType.SPIN_COUNTERCLOCKWISE
+            self._animation_type = FontAwesomeAnimationType.SPIN_COUNTERCLOCKWISE
             self.__angle = 360
         self.__radius = 0
         self.__direction = direction
@@ -69,7 +69,7 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
         rotated_icon = pygame.transform.rotate(self.__icon_surface, self.__angle)
         rotated_rect = rotated_icon.get_rect(center=(x, y))
         self.__square_surface.blit(rotated_icon, rotated_rect)
-        if self.__direction == FontAwesomeSpinEffectDirection.CLOCKWISE:
+        if self.__direction == FontAwesomeAnimationSpinDirection.CLOCKWISE:
             self.__angle = self.__angle - self._speed
             if self.__angle <= 0:
                 self.__angle = 360
