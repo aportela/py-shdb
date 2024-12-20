@@ -2,23 +2,9 @@ from abc import ABC, abstractmethod
 from enum import Enum
 import math
 import pygame
-from .widget_font import WidgetFont
 
 class FontAwesomeIcon(Enum):
     COG = "\uf013"
-
-# https://docs.fontawesome.com/web/style/animate#_top
-class Effect(Enum):
-    NONE = 0
-    BEAT = 1
-    FADE = 2
-    BEAT_AND_FADE = 3
-    BOUNCE = 4
-    HORIZONTAL_FLIP = 5
-    VERTICAL_FLIP = 6
-    SHAKE = 7
-    SPIN = 8
-    SPIN_REVERSE = 9
 
 # https://docs.fontawesome.com/web/style/animate#_top
 class FontAwesomeEffect(Enum):
@@ -30,8 +16,8 @@ class FontAwesomeEffect(Enum):
     HORIZONTAL_FLIP = 5
     VERTICAL_FLIP = 6
     SHAKE = 7
-    SPIN = 8
-    SPIN_REVERSE = 9
+    SPIN_CLOCKWISE = 8
+    SPIN_COUNTERCLOCKWISE = 9
 
 class FontAwesomeEffectSpeed(Enum):
     SLOW = 1
@@ -39,72 +25,57 @@ class FontAwesomeEffectSpeed(Enum):
     FAST = 8
 
 class FontAwesomeSpinEffectDirection(Enum):
-    NORMAL = 1,
-    REVERSED = 2
-
+    CLOCKWISE = 1,
+    COUNTERCLOCKWISE = 2
 
 # TODO: use sprites ?
-class FontAwesomeBaseEffect(WidgetFont):
+class FontAwesomeBaseEffect():
     def __init__(self, file: str = None, size: int = 30, color: tuple = (255, 255, 255)) -> None:
-        # Initialize the parent class (WidgetFont) with the provided parameters
-        super().__init__(file = file, size = size, color = color, style_bold = False, style_italic = False)
-        self._effect = Effect.NONE
+        self._effect = FontAwesomeEffect.NONE
+        self.__font = pygame.font.Font(file, size)
+        self.__color = color
+
+    def render(self, text: str, custom_color: tuple = None) -> pygame.Surface:
+        return self.__font.render(text,  True, (custom_color if custom_color else self.__color))
 
     @abstractmethod
     def animate(self) -> pygame.Surface:
         pass
 
 class FontAwesomeSpinEffect(FontAwesomeBaseEffect):
-    def __init__(self, icon: FontAwesomeIcon = None, file: str = None, size: int = 30, color: tuple = (255, 255, 255), speed: FontAwesomeEffectSpeed = FontAwesomeEffectSpeed.MEDIUM, direction: FontAwesomeSpinEffectDirection = FontAwesomeSpinEffectDirection.NORMAL) -> None:
+    def __init__(self, icon: FontAwesomeIcon = None, file: str = None, size: int = 30, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeEffectSpeed = FontAwesomeEffectSpeed.MEDIUM, direction: FontAwesomeSpinEffectDirection = FontAwesomeSpinEffectDirection.CLOCKWISE) -> None:
         super().__init__(file = file, size = size, color = color)
-        if direction == FontAwesomeSpinEffectDirection.NORMAL:
-            self._effect = FontAwesomeEffect.SPIN
+        if direction == FontAwesomeSpinEffectDirection.CLOCKWISE:
+            self._effect = FontAwesomeEffect.SPIN_CLOCKWISE
+            self.__angle = 0
         else:
-            self._effect = FontAwesomeEffect.SPIN_REVERSE
+            self._effect = FontAwesomeEffect.SPIN_COUNTERCLOCKWISE
+            self.__angle = 360
         self.__radius = 0
         self.__speed = speed.value
-        self.__angle = 0
         self.__direction = direction
-        if (direction == FontAwesomeSpinEffectDirection.REVERSED):
-            self.__angle = 360
         self.__icon_surface = self.render(icon.value, color)
         square_size = max(self.__icon_surface.get_size())
         self.__sprite_count = 359
-        self.__square_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
+        if len(background_color) == 4:
+            self.__square_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
+        else:
+            self.__square_surface = pygame.Surface((square_size, square_size))
         self.__center = (self.__icon_surface.get_width() / 2, self.__icon_surface.get_height() / 2)
-
-
 
     def animate(self) -> pygame.Surface:
         x = self.__center[0] + self.__radius * math.cos(math.radians(self.__angle))
         y = self.__center[1] + self.__radius * math.sin(math.radians(self.__angle))
-
-        self.__square_surface.fill((0,0,0))
-
+        self.__square_surface.fill((20, 20, 50))
         rotated_icon = pygame.transform.rotate(self.__icon_surface, self.__angle)
         rotated_rect = rotated_icon.get_rect(center=(x, y))
-
-        # Render the text using the specified font and blit it to the surface
         self.__square_surface.blit(rotated_icon, rotated_rect)
-
-        if self.__direction == FontAwesomeSpinEffectDirection.NORMAL:
-            self.__angle = self.__angle + self.__speed
-            if self.__angle > 360:
-                self.__angle = 0
-        else:
+        if self.__direction == FontAwesomeSpinEffectDirection.CLOCKWISE:
             self.__angle = self.__angle - self.__speed
             if self.__angle <= 0:
                 self.__angle = 360
-        return self.__square_surface
-
-class WidgetFontAwesome(WidgetFont):
-    def __init__(self, file: str = None, size: int = 30, color: tuple = (255, 255, 255)) -> None:
-        # Initialize the parent class (WidgetFont) with the provided parameters
-        super().__init__(file = file, size = size, color = color, style_bold = False, style_italic = False)
-
-    def render(self, icon: FontAwesomeIcon, effect: FontAwesomeEffect = FontAwesomeEffect.NONE, effect_speed: FontAwesomeEffectSpeed = FontAwesomeEffectSpeed.MEDIUM, custom_color: tuple = None) -> pygame.Surface:
-        """Render the specified text as a pygame.Surface."""
-        if (effect == FontAwesomeEffect.BEAT):
-            return super().render(icon.value, custom_color)
         else:
-            return super().render(icon.value, custom_color)
+            self.__angle = self.__angle + self.__speed
+            if self.__angle > 360:
+                self.__angle = 0
+        return self.__square_surface
