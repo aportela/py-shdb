@@ -89,7 +89,7 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
             self._log.warning("Temporal surface not set")
             return False
 
-    def _animate(self) -> pygame.Surface:
+    def _animate(self) -> None:
         raise ValueError("_animate method not declared")
 
 class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
