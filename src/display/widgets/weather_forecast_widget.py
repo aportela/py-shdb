@@ -1,44 +1,29 @@
 import pygame
 import math
 
-from .widget import Widget
+from .widget import Widget, DEFAULT_WIDGET_BORDER_COLOR
 from .widget_font import WidgetFont
 
 class WeatherForecastWidget(Widget):
 
-    def __init__(self, name: str, x: int, y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int, int] = (0, 0, 0, 0), border: bool = False, surface: pygame.Surface = None, font: WidgetFont = None, text: str = None):
-        # Initialize the parent class (Widget) with the provided parameters
-        super().__init__(name = name, x = x, y = y, width = width, height = height, padding = padding, background_color = background_color, border = border, surface = surface)
-
-        # Ensure that the font is provided, otherwise raise an error
-        if font is None:
-            raise RuntimeError("Font not set")  # Font must be provided
-        else:
-            self.__font = font  # Set the font for rendering text
-
-        # Ensure that the text is provided, otherwise raise an error
-        if text is None:
-            raise RuntimeError("Text not set")  # Text must be provided
-        self._text = text
-
-        # Initialize the render flag. This widget has static text (no changes) so only render on the first refresh iteration
+    def __init__(self, surface: pygame.Surface, name: str, x: int , y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int, int] = (0, 0, 0, 0), border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, font: WidgetFont = None, text: str = None) -> None:
+        super().__init__(surface = surface, name = name, x = x, y = y, width = width, height = height, padding = padding, background_color = background_color, border = border, border_color = border_color)
+        if not font:
+            raise RuntimeError("Font not set")
+        self.__font = font
+        if not text:
+            raise RuntimeError("Text not set")
+        self.__text = text
         self._render_required = True
         self.__angle = 0
 
     def refresh(self, force: bool = False) -> bool:
         radius = 0
-        """
-        Refreshes the widget by rendering the text if necessary.
-        If the 'force' argument is True or if a render is required,
-        the widget will be rendered.
-        Otherwise, it won't refresh.
-        """
         if force or self._render_required:
-            #self._render_required = False  # Set the render flag to False since we are rendering the widget
-            self._clear()  # Clear the previous content
-            center = (self._width / 2, self._height / 2)
+            super()._clear()  # Clear the previous content
+            center = (self.width / 2, self.height / 2)
 
-            icon_surface = self.__font.render(self._text)
+            icon_surface = self.__font.render(self.__text)
             x = center[0] + radius * math.cos(math.radians(self.__angle))
             y = center[1] + radius * math.sin(math.radians(self.__angle))
 
@@ -47,7 +32,7 @@ class WeatherForecastWidget(Widget):
             rotated_rect = rotated_icon.get_rect(center=(x, y))
 
             # Render the text using the specified font and blit it to the surface
-            self._blit(rotated_icon, rotated_rect)
+            super()._blit(rotated_icon, rotated_rect)
             self.__angle = self.__angle + 4
             if self.__angle > 360:
                 self.__angle = 0
