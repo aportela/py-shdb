@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from enum import Enum
 import math
 import pygame
@@ -39,6 +40,10 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         self._background_color = background_color
         self._speed = speed.value
         self._use_sprite_cache = use_sprite_cache
+    @abstractmethod
+    def animate(self) -> pygame.Surface:
+        pass
+
 
 class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
     def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
