@@ -291,11 +291,8 @@ while running:
 
     if widgets_changed:
         wfa0.animate()
-        wfa0.animate_on_surface()
         wfa1.animate()
-        wfa1.animate_on_surface()
         wfa2.animate()
-        wfa2.animate_on_surface()
         screen.blit(framebuffer_global, (0, 0))
         widgets_changed = False
 

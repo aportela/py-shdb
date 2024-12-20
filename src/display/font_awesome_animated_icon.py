@@ -79,8 +79,9 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
 
         return render_required
 
-    def animate_on_surface(self) -> bool:
+    def animate(self) -> bool:
         if self._tmp_surface is not None:
+            self._animate()
             self._surface.blit(self._tmp_surface, (self.__x, self.__y))
             self._tmp_surface.fill(self.__background_color)
             return True
@@ -88,9 +89,8 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
             self._log.warning("Temporal surface not set")
             return False
 
-    @abstractmethod
-    def animate(self) -> pygame.Surface:
-        pass
+    def _animate(self) -> pygame.Surface:
+        raise ValueError("_animate method not declared")
 
 class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
     def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, max_size: int = 0) -> None:
@@ -109,7 +109,7 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
         # restore original (start) size
         super().set_size(self.__original_size)
 
-    def animate(self) -> None:
+    def _animate(self) -> None:
         if True:
             draw_new_frame = self._animation_frame_changed()
             animation_unit = 1
