@@ -2,7 +2,7 @@ import pygame
 
 class WidgetFont:
     def __init__(self, family: str = None, file: str = None, size: int = 30, color: tuple = (255, 255, 255),
-                 style_bold: bool = False, style_italic: bool = False):
+                 style_bold: bool = False, style_italic: bool = False) -> None:
         self.__family = family
         self.__file = file
         self.__size = size
@@ -41,4 +41,4 @@ class WidgetFont:
         self.__font = self.__initialize_font()
 
     def render(self, text: str, custom_color: tuple = None) -> pygame.Surface:
-        return self.__font.render( text,  True, (custom_color if custom_color else self.__color))
+        return self.__font.render(text, True, (custom_color if custom_color else self.__color))
