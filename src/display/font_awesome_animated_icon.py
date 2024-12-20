@@ -56,6 +56,10 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         self.__padding = padding
         self.__background_color = background_color
 
+    def set_surface_size(self, width: int, height: int):
+        self.__width = width
+        self.__height = height
+
     def animate_on_surface(self) -> None:
         if self._surface and self._tmp_surface:
             self._surface.blit(self._tmp_surface, (self.__x, self.__y))
@@ -74,10 +78,18 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
         super().__init__(icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.BEAT
         self.__original_size = size
-        self.__max_size = size + 4
+        self.__max_size = size *2
         self.__current_size = size
         self.__increase_size = True
         self._cache_values()
+
+    def _cache_values(self) -> None:
+        # set surface size at max Beat width/height
+        self.set_size(self.__max_size)
+        icon_surface = super().render(self._icon, self._color)
+        self.set_surface_size(icon_surface.get_width(), icon_surface.get_height())
+        # restore original (start) size
+        self.set_size(self.__original_size)
 
     def animate(self) -> pygame.Surface:
         icon_surface = super().render(self._icon, self._color)
