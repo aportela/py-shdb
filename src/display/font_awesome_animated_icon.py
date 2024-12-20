@@ -1,7 +1,9 @@
 from abc import abstractmethod
 from enum import Enum
 import math
+import datetime
 import pygame
+
 from .font_awesome_unicode_icons import FontAwesomeUnicodeIcons
 from .font_awesome_icon import FontAwesomeIcon
 from ..utils.logger import Logger
@@ -44,9 +46,10 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         self._color = color
         self.__background_color = background_color
         self.__transparent = len(background_color) == 4
-        self._speed = speed.value
+        self._speed = speed
         self._use_sprite_cache = use_sprite_cache
-        self._animation_type = FontAwesomeAnimationType.NONE
+        self._animation_type = FontAwesomeAnimationType.NONE,
+        self._last_animation_timestamp = datetime.datetime.now().timestamp()
 
     def _transparent(self) -> bool:
         return self.__transparent
@@ -54,6 +57,27 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
     # TODO: REMOVE
     def _background_color(self):
         return self.__background_color
+
+    def _animation_frame_changed(self) -> bool:
+        render_required = False
+        last_animation_timestamp = datetime.datetime.now().timestamp()
+        timestamp_diff = datetime.datetime.now().timestamp() - self._last_animation_timestamp
+        if self._speed == FontAwesomeAnimationSpeed.FAST:
+            if timestamp_diff > 0.01:
+                render_required = True
+                self._last_animation_timestamp = last_animation_timestamp
+        elif self._speed == FontAwesomeAnimationSpeed.MEDIUM:
+            if timestamp_diff > 0.05:
+                render_required = True
+                self._last_animation_timestamp = last_animation_timestamp
+        elif self._speed == FontAwesomeAnimationSpeed.SLOW:
+            if timestamp_diff > 0.10:
+                render_required = True
+                self._last_animation_timestamp = last_animation_timestamp
+        else:
+            raise ValueError("Invalid animation speed.")
+
+        return render_required
 
     def animate_on_surface(self) -> bool:
         if self._tmp_surface is not None:
@@ -86,22 +110,27 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
         super().set_size(self.__original_size)
 
     def animate(self) -> None:
-        icon_surface = super().render(self._icon, self._color)
-        if (self.__increase_size):
-            if self.__current_size < self.__max_size:
-                self.__current_size += 1
+        if True:
+            draw_new_frame = self._animation_frame_changed()
+            animation_unit = 1
+            icon_surface = super().render(self._icon, self._color)
+            if (self.__increase_size):
+                if self.__current_size < self.__max_size:
+                    if draw_new_frame:
+                        self.__current_size += animation_unit
+                else:
+                    self.__increase_size = False
             else:
-                self.__increase_size = False
-        else:
-            if self.__current_size > self.__original_size:
-                self.__current_size -= 1
-            else:
-                self.__increase_size = True
-        super().set_size(self.__current_size)
-        if self._surface and self._tmp_surface:
-            x = (self._tmp_surface.get_width() - icon_surface.get_width()) // 2
-            y = (self._tmp_surface.get_height() - icon_surface.get_height()) // 2
-            self._tmp_surface.blit(icon_surface, (x, y))
+                if self.__current_size > self.__original_size:
+                    if draw_new_frame:
+                        self.__current_size -= animation_unit
+                else:
+                    self.__increase_size = True
+            super().set_size(self.__current_size)
+            if self._surface and self._tmp_surface:
+                x = (self._tmp_surface.get_width() - icon_surface.get_width()) // 2
+                y = (self._tmp_surface.get_height() - icon_surface.get_height()) // 2
+                self._tmp_surface.blit(icon_surface, (x, y))
 
 """
 class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
