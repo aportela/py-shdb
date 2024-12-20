@@ -42,6 +42,10 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         self._use_sprite_cache = use_sprite_cache
 
     @abstractmethod
+    def _cache_values(self) -> None:
+        pass
+
+    @abstractmethod
     def animate(self) -> pygame.Surface:
         pass
 
@@ -57,9 +61,9 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
             self.__angle = 360
         self.__radius = 0
         self.__direction = direction
-        self.cache_values()
+        self._cache_values()
 
-    def cache_values(self) -> None:
+    def _cache_values(self) -> None:
         if self._use_sprite_cache:
             self.__sprite_count = 359
             raise ValueError("TODO")
