@@ -17,7 +17,7 @@ from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
-from src.display.widgets.widget_font_awesome import WidgetFontAwesome, FontAwesomeIcon, FontAwesomeEffect, FontAwesomeEffectSpeed, FontAwesomeSpinEffect, FontAwesomeSpinEffectDirection
+from src.display.widgets.widget_font_awesome import FontAwesomeIcon, FontAwesomeEffectSpeed, FontAwesomeSpinEffectDirection, FontAwesomeSpinEffect
 
 configuration_file_path = "config.yaml"
 
@@ -34,13 +34,14 @@ debug_widgets = config.get('app', {}).get('debug_widgets', False)
 max_fps = config.get('app', {}).get('max_fps', 30)
 show_fps = config.get('app', {}).get('show_fps', False)
 cache_path = config.get('app', {}).get('cache_path', None)
-background_color = config.get('app', {}).get('background_color', [0, 0, 0])
+background_color = config.get('app', {}).get('background_color', [0, 0, 0, 0])
 
 locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
 # Inicializar Pygame
 pygame.init()
 
 logger = Logger("py-shdb")
+logger.configure_global(logger.DEBUG)
 
 # Obtener la resolución actual de la pantalla
 screen_info = pygame.display.Info()
@@ -53,7 +54,11 @@ RESOLUTION = (screen_info.current_w, screen_info.current_h)
 screen = pygame.display.set_mode(RESOLUTION, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME)
 pygame.display.set_caption(app_name)
 
-framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
+if len(background_color) == 4:
+    framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h), pygame.SRCALPHA)
+else:
+    framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
+
 framebuffer_global.fill(background_color)
 
 widgets = []
@@ -67,21 +72,21 @@ def load_widgets():
                 logger.debug(f"Adding widget: {widget_name} (SimpleLabelWidget)")
                 widgets.append(
                     SimpleLabelWidget(
+                        surface = framebuffer_global,
                         name = widget_name,
-                        surface=framebuffer_global,
-                        border = debug_widgets,
                         x = widget_config.get('x', 0),
-                        y = widget_config.get( 'y', 0),
-                        width=widget_config.get( 'width', 0),
-                        height=widget_config.get( 'height', 0),
-                        padding = widget_config.get( 'padding', 0),
-                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
+                        y = widget_config.get('y', 0),
+                        width = widget_config.get('width', 0),
+                        height = widget_config.get('height', 0),
+                        padding = widget_config.get('padding', 0),
+                        background_color = widget_config.get('background_color', (0, 0, 0, 0)),
+                        border = debug_widgets,
                         font = WidgetFont(
-                            family = widget_config.get( 'font_family', None),
-                            size = widget_config.get( 'font_size', 30),
-                            color = widget_config.get( 'font_color', [255, 255, 255]),
-                            style_bold = widget_config.get( 'font_style_bold', False),
-                            style_italic = widget_config.get( 'font_style_italic', False)
+                            family = widget_config.get('font_family', None),
+                            size = widget_config.get('font_size', 30),
+                            color = widget_config.get('font_color', [255, 255, 255]),
+                            style_bold = widget_config.get('font_style_bold', False),
+                            style_italic = widget_config.get('font_style_italic', False)
                         ),
                         text = widget_config.get( 'text', "")
                     )
@@ -89,45 +94,45 @@ def load_widgets():
             elif (widget_config.get("type", "") == "date"):
                 widgets.append(
                     DateWidget(
+                        surface = framebuffer_global,
                         name = widget_name,
-                        surface=framebuffer_global,
-                        border = debug_widgets,
                         x = widget_config.get('x', 0),
-                        y = widget_config.get( 'y', 0),
-                        width=widget_config.get( 'width', 0),
-                        height=widget_config.get( 'height', 0),
-                        padding = widget_config.get( 'padding', 0),
-                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
+                        y = widget_config.get('y', 0),
+                        width = widget_config.get('width', 0),
+                        height = widget_config.get('height', 0),
+                        padding = widget_config.get('padding', 0),
+                        background_color = widget_config.get('background_color', (0, 0, 0, 0)),
+                        border = debug_widgets,
                         font = WidgetFont(
-                            family = widget_config.get( 'font_family', None),
-                            size = widget_config.get( 'font_size', 30),
-                            color = widget_config.get( 'font_color', [255, 255, 255]),
-                            style_bold = widget_config.get( 'font_style_bold', False),
-                            style_italic = widget_config.get( 'font_style_italic', False)
+                            family = widget_config.get('font_family', None),
+                            size = widget_config.get('font_size', 30),
+                            color = widget_config.get('font_color', [255, 255, 255]),
+                            style_bold = widget_config.get('font_style_bold', False),
+                            style_italic = widget_config.get('font_style_italic', False)
                         ),
-                        format_mask = widget_config.get( 'format_mask', "%A, %d de %B"),
+                        format_mask = widget_config.get('format_mask', "%A, %d de %B"),
                     )
                 )
             elif (widget_config.get("type", "") == "time"):
                 widgets.append(
                     TimeWidget(
+                        surface = framebuffer_global,
                         name = widget_name,
-                        surface=framebuffer_global,
-                        border = debug_widgets,
                         x = widget_config.get('x', 0),
-                        y = widget_config.get( 'y', 0),
-                        width=widget_config.get( 'width', 0),
-                        height=widget_config.get( 'height', 0),
-                        padding = widget_config.get( 'padding', 0),
-                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
+                        y = widget_config.get('y', 0),
+                        width = widget_config.get('width', 0),
+                        height = widget_config.get('height', 0),
+                        padding = widget_config.get('padding', 0),
+                        background_color = widget_config.get('background_color', (0, 0, 0, 0)),
+                        border = debug_widgets,
                         font = WidgetFont(
-                            family = widget_config.get( 'font_family', None),
-                            size = widget_config.get( 'font_size', 30),
-                            color = widget_config.get( 'font_color', [255, 255, 255]),
-                            style_bold = widget_config.get( 'font_style_bold', False),
-                            style_italic = widget_config.get( 'font_style_italic', False)
+                            family = widget_config.get('font_family', None),
+                            size = widget_config.get('font_size', 30),
+                            color = widget_config.get('font_color', [255, 255, 255]),
+                            style_bold = widget_config.get('font_style_bold', False),
+                            style_italic = widget_config.get('font_style_italic', False)
                         ),
-                        format_mask = widget_config.get( 'format_mask', "%I:%M %p"),
+                        format_mask = widget_config.get('format_mask', "%I:%M %p"),
                     )
                 )
             elif (widget_config.get("type", "") == "horizontal_ticker"):
@@ -139,83 +144,83 @@ def load_widgets():
                         text = " # ".join(f"[{item['published']}] - {item['title']}" for item in feed.get()['items'])
                 widgets.append(
                     HorizontalTickerWidget(
+                        surface = framebuffer_global,
                         name = widget_name,
-                        surface=framebuffer_global,
-                        border = debug_widgets,
                         x = widget_config.get('x', 0),
-                        y = widget_config.get( 'y', 0),
-                        width=widget_config.get( 'width', 0),
-                        height=widget_config.get( 'height', 0),
-                        padding = widget_config.get( 'padding', 0),
-                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
+                        y = widget_config.get('y', 0),
+                        width = widget_config.get('width', 0),
+                        height = widget_config.get('height', 0),
+                        padding = widget_config.get('padding', 0),
+                        background_color = widget_config.get('background_color', (0, 0, 0, 0)),
+                        border = debug_widgets,
                         font = WidgetFont(
-                            family = widget_config.get( 'font_family', None),
-                            size = widget_config.get( 'font_size', 30),
-                            color = widget_config.get( 'font_color', [255, 255, 255]),
-                            style_bold = widget_config.get( 'font_style_bold', False),
-                            style_italic = widget_config.get( 'font_style_italic', False)
+                            family = widget_config.get('font_family', None),
+                            size = widget_config.get('font_size', 30),
+                            color = widget_config.get('font_color', [255, 255, 255]),
+                            style_bold = widget_config.get('font_style_bold', False),
+                            style_italic = widget_config.get('font_style_italic', False)
                         ),
                         text = text or "TODO",
-                        speed = widget_config.get( 'speed', 1)
+                        speed = widget_config.get('speed', 1)
                     )
                 )
             elif (widget_config.get("type", "") == "month_calendar"):
                 widgets.append(
                     MonthCalendarWidget(
+                        surface = framebuffer_global,
                         name = widget_name,
-                        surface=framebuffer_global,
-                        border = debug_widgets,
                         x = widget_config.get('x', 0),
-                        y = widget_config.get( 'y', 0),
-                        width=widget_config.get( 'width', 0),
-                        height=widget_config.get( 'height', 0),
-                        padding = widget_config.get( 'padding', 0),
-                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
+                        y = widget_config.get('y', 0),
+                        width = widget_config.get('width', 0),
+                        height = widget_config.get('height', 0),
+                        padding = widget_config.get('padding', 0),
+                        background_color = widget_config.get('background_color', (0, 0, 0, 0)),
+                        border = debug_widgets,
                         font = WidgetFont(
-                            family = widget_config.get( 'font_family', None),
-                            size = widget_config.get( 'font_size', 30),
-                            color = widget_config.get( 'font_color', [255, 255, 255]),
-                            style_bold = widget_config.get( 'font_style_bold', False),
-                            style_italic = widget_config.get( 'font_style_italic', False)
+                            family = widget_config.get('font_family', None),
+                            size = widget_config.get('font_size', 30),
+                            color = widget_config.get('font_color', [255, 255, 255]),
+                            style_bold = widget_config.get('font_style_bold', False),
+                            style_italic = widget_config.get('font_style_italic', False)
                         )
                     )
                 )
             elif (widget_config.get("type", "") == "image"):
                 widgets.append(
                     ImageWidget(
+                        surface = framebuffer_global,
                         name = widget_name,
-                        surface=framebuffer_global,
-                        border = debug_widgets,
                         x = widget_config.get('x', 0),
-                        y = widget_config.get( 'y', 0),
-                        width=widget_config.get( 'width', 0),
-                        height=widget_config.get( 'height', 0),
-                        padding = widget_config.get( 'padding', 0),
-                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
-                        path = widget_config.get( 'path', None),
-                        url = widget_config.get( 'url', None),
+                        y = widget_config.get('y', 0),
+                        width = widget_config.get('width', 0),
+                        height = widget_config.get('height', 0),
+                        padding = widget_config.get('padding', 0),
+                        background_color = widget_config.get('background_color', (0, 0, 0, 0)),
+                        border = debug_widgets,
+                        path = widget_config.get('path', None),
+                        url = widget_config.get('url', None),
                         cache_path = cache_path
                     )
                 )
             elif (widget_config.get("type", "") == "weather_forecast"):
                 widgets.append(
                     WeatherForecastWidget(
+                        surface = framebuffer_global,
                         name = widget_name,
-                        surface=framebuffer_global,
-                        border = debug_widgets,
                         x = widget_config.get('x', 0),
-                        y = widget_config.get( 'y', 0),
-                        width=widget_config.get( 'width', 0),
-                        height=widget_config.get( 'height', 0),
-                        padding = widget_config.get( 'padding', 0),
-                        background_color = widget_config.get( 'background_color', (0, 0, 0, 0)),
+                        y = widget_config.get('y', 0),
+                        width = widget_config.get('width', 0),
+                        height = widget_config.get('height', 0),
+                        padding = widget_config.get('padding', 0),
+                        background_color = widget_config.get('background_color', (0, 0, 0, 0)),
+                        border = debug_widgets,
                         font = WidgetFont(
-                            #family = widget_config.get( 'font_family', None),
+                            #family = widget_config.get('font_family', None),
                             file = "resources/fonts/fa-solid-900.ttf",
-                            size = widget_config.get( 'font_size', 30),
-                            color = widget_config.get( 'font_color', [255, 255, 255]),
-                            style_bold = widget_config.get( 'font_style_bold', False),
-                            style_italic = widget_config.get( 'font_style_italic', False)
+                            size = widget_config.get('font_size', 30),
+                            color = widget_config.get('font_color', [255, 255, 255]),
+                            style_bold = widget_config.get('font_style_bold', False),
+                            style_italic = widget_config.get('font_style_italic', False)
                         ),
                         #text = widget_config.get( 'text', "\uf6c4") # cloud
                         text = widget_config.get( 'text', "\uf013") # fan (wind)
@@ -228,7 +233,7 @@ load_widgets()
 # Fuente para texto e íconos
 font = pygame.font.Font(None, 36)
 small_font = pygame.font.Font(None, 24)
-icon_font = pygame.font.Font("resources/fonts/fa-solid-900.ttf", 32)  # Ruta a tu fuente de íconos (fontawesome)
+icon_font = pygame.font.Font("resources/fonts/fa-solid-900.ttf", 32)
 
 # fuente para fps
 fps_font = pygame.font.SysFont("monospace", 12)
@@ -244,13 +249,12 @@ previous_fps = -1
 click_event = None
 
 
-wfa1 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.SLOW, direction = FontAwesomeSpinEffectDirection.NORMAL)
-wfa2 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.MEDIUM, direction = FontAwesomeSpinEffectDirection.NORMAL)
-wfa3 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.FAST, direction = FontAwesomeSpinEffectDirection.NORMAL)
-
-wfa4 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.SLOW, direction = FontAwesomeSpinEffectDirection.REVERSED)
-wfa5 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.MEDIUM, direction = FontAwesomeSpinEffectDirection.REVERSED)
-wfa6 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), speed = FontAwesomeEffectSpeed.FAST, direction = FontAwesomeSpinEffectDirection.REVERSED)
+wfa1 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.SLOW, direction = FontAwesomeSpinEffectDirection.CLOCKWISE)
+wfa2 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.MEDIUM, direction = FontAwesomeSpinEffectDirection.CLOCKWISE)
+wfa3 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.FAST, direction = FontAwesomeSpinEffectDirection.CLOCKWISE)
+wfa4 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.SLOW, direction = FontAwesomeSpinEffectDirection.COUNTERCLOCKWISE)
+wfa5 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.MEDIUM, direction = FontAwesomeSpinEffectDirection.COUNTERCLOCKWISE)
+wfa6 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.FAST, direction = FontAwesomeSpinEffectDirection.COUNTERCLOCKWISE)
 
 while running:
 
@@ -284,22 +288,22 @@ while running:
     if show_fps:
         current_fps = int(clock.get_fps())
         if current_fps != previous_fps:
-            previous_fps_surface = fps_font.render(f"FPS: {previous_fps:03d}", True, (0, 0, 0))
+            previous_fps_surface = fps_font.render(f"FPS: {previous_fps:03d}", True, background_color)
             previous_fps_rect = previous_fps_surface.get_rect()
             previous_fps_rect.topright = (screen.get_width() - 8, 8)
-            framebuffer_global.fill((0, 0, 0), previous_fps_rect)
-            current_fps_surface = fps_font.render(f"FPS: {current_fps:03d}", True, (255, 255, 0))
+            framebuffer_global.fill(background_color, previous_fps_rect)
+            current_fps_surface = fps_font.render(f"FPS: {current_fps:03d}", True, (255, 255, 255), background_color)
             framebuffer_global.blit(current_fps_surface, (screen.get_width() - current_fps_surface.get_width() - 8, 8))
             previous_fps = current_fps
             widgets_changed = True
 
     if widgets_changed:
         framebuffer_global.blit(wfa1.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 50))
-        framebuffer_global.blit(wfa2.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 80))
-        framebuffer_global.blit(wfa3.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 110))
-        framebuffer_global.blit(wfa4.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 140))
-        framebuffer_global.blit(wfa5.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 170))
-        framebuffer_global.blit(wfa6.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 200))
+        framebuffer_global.blit(wfa2.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 100))
+        framebuffer_global.blit(wfa3.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 150))
+        framebuffer_global.blit(wfa4.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 200))
+        framebuffer_global.blit(wfa5.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 250))
+        framebuffer_global.blit(wfa6.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 300))
         screen.blit(framebuffer_global, (0, 0))
         widgets_changed = False
 
