@@ -49,6 +49,31 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
     def animate(self) -> pygame.Surface:
         pass
 
+class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
+    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
+        super().__init__(icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+        self._animation_type = FontAwesomeAnimationType.BEAT
+        self.__original_size = size
+        self.__max_size = size + 4
+        self.__current_size = size
+        self.__increase_size = True
+        self._cache_values()
+
+    def animate(self) -> pygame.Surface:
+        icon_surface = super().render(self._icon, self._color)
+        if (self.__increase_size):
+            if self.__current_size < self.__max_size:
+                self.__current_size += 1
+            else:
+                self.__increase_size = False
+        else:
+            if self.__current_size > self.__original_size:
+                self.__current_size -= 1
+            else:
+                self.__increase_size = True
+        self.set_size(self.__current_size)
+        return icon_surface
+
 class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
     def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
         super().__init__(icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
@@ -58,7 +83,7 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
         self._cache_values()
 
     def animate(self) -> pygame.Surface:
-        __icon_surface = super().render(self._icon, (255,255,255))
+        __icon_surface = super().render(self._icon, self._color)
         __fade_icon_surface = pygame.Surface(__icon_surface.get_size(), pygame.SRCALPHA)
         __fade_icon_surface.blit(__icon_surface.copy(), (0, 0))
         __fade_icon_surface.set_alpha(self.__alpha)

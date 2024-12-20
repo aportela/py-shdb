@@ -17,7 +17,7 @@ from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
-from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconFadeEffect, FontAwesomeIconSpinEffect
+from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconFadeEffect, FontAwesomeIconSpinEffect
 from src.display.font_awesome_unicode_icons import FontAwesomeUnicodeIcons
 
 configuration_file_path = "config.yaml"
@@ -242,7 +242,7 @@ previous_fps = -1
 
 click_event = None
 
-wfa0 = FontAwesomeIconFadeEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW)
+wfa0 = FontAwesomeIconBeatEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW)
 wfa1 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
 wfa2 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
 wfa3 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.FAST, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
