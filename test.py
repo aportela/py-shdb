@@ -17,7 +17,8 @@ from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
-from src.display.font_awesome_icon import FontAwesomeIcon, FontAwesomeEffectSpeed, FontAwesomeSpinEffectDirection, FontAwesomeSpinEffect
+from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeSpinEffectDirection, FontAwesomeIconSpinEffect
+from src.display.font_awesome_unicode_icons import FontAwesomeUnicodeIcons
 
 configuration_file_path = "config.yaml"
 
@@ -230,15 +231,8 @@ def load_widgets():
 
 load_widgets()
 
-# Fuente para texto e íconos
-font = pygame.font.Font(None, 36)
-small_font = pygame.font.Font(None, 24)
-icon_font = pygame.font.Font("resources/fonts/fa-solid-900.ttf", 32)
-
-# fuente para fps
 fps_font = pygame.font.SysFont("monospace", 12)
 
-# Reloj para controlar el FPS
 clock = pygame.time.Clock()
 
 running = True
@@ -248,13 +242,12 @@ previous_fps = -1
 
 click_event = None
 
-
-wfa1 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.SLOW, direction = FontAwesomeSpinEffectDirection.CLOCKWISE)
-wfa2 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.MEDIUM, direction = FontAwesomeSpinEffectDirection.CLOCKWISE)
-wfa3 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.FAST, direction = FontAwesomeSpinEffectDirection.CLOCKWISE)
-wfa4 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.SLOW, direction = FontAwesomeSpinEffectDirection.COUNTERCLOCKWISE)
-wfa5 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.MEDIUM, direction = FontAwesomeSpinEffectDirection.COUNTERCLOCKWISE)
-wfa6 = FontAwesomeSpinEffect(icon = FontAwesomeIcon.COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeEffectSpeed.FAST, direction = FontAwesomeSpinEffectDirection.COUNTERCLOCKWISE)
+wfa1 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW, direction = FontAwesomeSpinEffectDirection.CLOCKWISE)
+wfa2 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, direction = FontAwesomeSpinEffectDirection.CLOCKWISE)
+wfa3 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.FAST, direction = FontAwesomeSpinEffectDirection.CLOCKWISE)
+wfa4 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW, direction = FontAwesomeSpinEffectDirection.COUNTERCLOCKWISE)
+wfa5 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, direction = FontAwesomeSpinEffectDirection.COUNTERCLOCKWISE)
+wfa6 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.FAST, direction = FontAwesomeSpinEffectDirection.COUNTERCLOCKWISE)
 
 while running:
 
