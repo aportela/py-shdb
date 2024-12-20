@@ -27,8 +27,8 @@ class FontAwesomeAnimationSpeed(Enum):
     FAST = 8
 
 class FontAwesomeAnimationFlipAxis(Enum):
-    X = 1
-    Y = 2
+    HORIZONTAL = 1
+    VERTICAL = 2
 
 class FontAwesomeAnimationSpinDirection(Enum):
     CLOCKWISE = 1
@@ -50,11 +50,18 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         self._use_sprite_cache = use_sprite_cache
         self._animation_type = FontAwesomeAnimationType.NONE,
         self._last_animation_timestamp = datetime.datetime.now().timestamp()
+        # TODO
+        #self._total_frames = 0
+        #self._skip_frames = 0
 
     def _transparent(self) -> bool:
         return self.__transparent
 
+    def _create_tmp_surface(self, size: tuple[int, int]) -> None:
+        raise ValueError("TODO.")
+
     def _animation_frame_change_required(self) -> bool:
+        # TODO: use _total_frames && _skip_frames to fill animation_unit
         render_required = False
         last_animation_timestamp = datetime.datetime.now().timestamp()
         timestamp_diff = datetime.datetime.now().timestamp() - self._last_animation_timestamp
@@ -209,7 +216,6 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
             self._animation_type = FontAwesomeAnimationType.SPIN_COUNTERCLOCKWISE
             self.__angle = 360
         self.__radius = 0
-        self.__direction = direction
         self._cache_values()
 
     def _cache_values(self) -> None:
@@ -221,10 +227,8 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
             self.__icon_surface = super().render(self._icon, self._color)
             square_size = max(self.__icon_surface.get_size())
             if self._transparent:
-                self.__square_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
                 self._tmp_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
             else:
-                self.__square_surface = pygame.Surface((square_size, square_size))
                 self._tmp_surface = pygame.Surface((square_size, square_size))
             self.__center = (self.__icon_surface.get_width() // 2, self.__icon_surface.get_height() // 2)
 
@@ -236,7 +240,7 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
             rotated_rect = rotated_icon.get_rect(center = (x, y))
             self._blit(rotated_icon, rotated_rect)
             animation_unit = (self._speed.value * 2)
-            if self.__direction == FontAwesomeAnimationSpinDirection.CLOCKWISE:
+            if self._animation_type == FontAwesomeAnimationType.SPIN_CLOCKWISE:
                 self.__angle = self.__angle - animation_unit
                 if self.__angle <= 0:
                     self.__angle = 360
@@ -244,6 +248,53 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
                 self.__angle = self.__angle + animation_unit
                 if self.__angle > 360:
                     self.__angle = 0
+            return True
+        else:
+            return False
+
+class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
+    def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, axis: FontAwesomeAnimationFlipAxis = FontAwesomeAnimationFlipAxis.HORIZONTAL) -> None:
+        super().__init__(surface = surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+        if axis == FontAwesomeAnimationFlipAxis.HORIZONTAL:
+            self._animation_type = FontAwesomeAnimationType.HORIZONTAL_FLIP
+        else:
+            self._animation_type = FontAwesomeAnimationType.VERTICAL_FLIP
+        self.__shrinking = True
+        self.__flip = False
+        self._cache_values()
+
+    def _cache_values(self) -> None:
+        if self._use_sprite_cache:
+            raise ValueError("TODO")
+        else:
+            self.__icon_surface = super().render(self._icon, self._color)
+            self.__width = self.__icon_surface.get_width()
+            self.__current_width = self.__width
+            self.__height = self.__icon_surface.get_height()
+            if self._transparent:
+                self._tmp_surface = pygame.Surface((self.__width, self.__height), pygame.SRCALPHA)
+            else:
+                self._tmp_surface = pygame.Surface((self.__width, self.__height))
+
+    def _animate(self) -> bool:
+        if self._animation_frame_change_required():
+            streched_icon = pygame.transform.scale(self.__icon_surface, (self.__current_width, self.__height))
+            self._blit(streched_icon, ((self.__width - self.__current_width) // 2, 0))
+            if self.__flip:
+                self.__icon_surface = pygame.transform.flip(self.__icon_surface,  self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP, self._animation_type == FontAwesomeAnimationType.VERTICAL_FLIP)
+                self.__flip = not self.__flip
+            animation_unit = self._speed.value / 2
+            if self.__shrinking:
+                self.__current_width -= animation_unit
+                if self.__current_width < 1:
+                    self.__current_width = 1
+                    self.__shrinking = False
+                    self.__flip = not self.__flip
+            else:
+                self.__current_width += animation_unit
+                if self.__current_width >= self.__width:
+                    self.__current_width = self.__width
+                    self.__shrinking = True
             return True
         else:
             return False
