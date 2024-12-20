@@ -106,7 +106,7 @@ widgets:
     url: "https://i.kym-cdn.com/photos/images/newsfeed/000/176/107/business-cat.jpg"
 
   weather1:
-    visible: true
+    visible: false
     type: "weather_forecast"
     provider: "open_meteo"
     x: 1500

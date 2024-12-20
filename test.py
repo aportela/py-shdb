@@ -17,7 +17,7 @@ from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
-from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconFadeEffect, FontAwesomeIconSpinEffect
+from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect #, FontAwesomeIconFadeEffect, FontAwesomeIconSpinEffect
 from src.display.font_awesome_unicode_icons import FontAwesomeUnicodeIcons
 
 configuration_file_path = "config.yaml"
@@ -242,14 +242,14 @@ previous_fps = -1
 
 click_event = None
 
-wfa0 = FontAwesomeIconBeatEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW)
-wfa0.set_surface(surface = framebuffer_global, x = screen.get_width() - 180, y = 500, width = 80, height = 80, padding = 0, background_color = background_color)
-wfa1 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
-wfa2 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
-wfa3 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.FAST, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
-wfa4 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW, direction = FontAwesomeAnimationSpinDirection.COUNTERCLOCKWISE)
-wfa5 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, direction = FontAwesomeAnimationSpinDirection.COUNTERCLOCKWISE)
-wfa6 = FontAwesomeIconSpinEffect(icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.FAST, direction = FontAwesomeAnimationSpinDirection.COUNTERCLOCKWISE)
+
+wfa0 = FontAwesomeIconBeatEffect(surface = framebuffer_global, x = screen.get_width() - 80 , y = 50, icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size = 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW, use_sprite_cache = False, max_size = 36)
+#wfa1 = FontAwesomeIconSpinEffect(surface = framebuffer_global, x = screen.get_width() - 180 , y = 550, icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
+#wfa2 = FontAwesomeIconSpinEffect(surface = framebuffer_global, x = screen.get_width() - 180 , y = 600, icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
+#wfa3 = FontAwesomeIconSpinEffect(surface = framebuffer_global, x = screen.get_width() - 180 , y = 650, icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.FAST, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
+#wfa4 = FontAwesomeIconSpinEffect(surface = framebuffer_global, x = screen.get_width() - 180 , y = 700, icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.SLOW, direction = FontAwesomeAnimationSpinDirection.COUNTERCLOCKWISE)
+#wfa5 = FontAwesomeIconSpinEffect(surface = framebuffer_global, x = screen.get_width() - 180 , y = 750, icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, direction = FontAwesomeAnimationSpinDirection.COUNTERCLOCKWISE)
+#wfa6 = FontAwesomeIconSpinEffect(surface = framebuffer_global, x = screen.get_width() - 180 , y = 800, icon = FontAwesomeUnicodeIcons.ICON_COG, file= "resources/fonts/fa-solid-900.ttf", size= 30, color = (100, 50, 200), background_color = background_color, speed = FontAwesomeAnimationSpeed.FAST, direction = FontAwesomeAnimationSpinDirection.COUNTERCLOCKWISE)
 
 while running:
 
@@ -294,15 +294,24 @@ while running:
             widgets_changed = True
 
     if widgets_changed:
-        framebuffer_global.blit(wfa1.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 50))
-        framebuffer_global.blit(wfa2.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 100))
-        framebuffer_global.blit(wfa3.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 150))
-        framebuffer_global.blit(wfa4.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 200))
-        framebuffer_global.blit(wfa5.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 250))
-        framebuffer_global.blit(wfa6.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 300))
-        #framebuffer_global.blit(wfa0.animate(), (screen.get_width() - current_fps_surface.get_width() - 100, 500))
         wfa0.animate()
         wfa0.animate_on_surface()
+        """
+        wfa1.animate()
+        wfa1.animate_on_surface()
+        wfa2.animate()
+        wfa2.animate_on_surface()
+        wfa3.animate()
+        wfa3.animate_on_surface()
+        wfa4.animate()
+        wfa4.animate_on_surface()
+        wfa5.animate()
+        wfa5.animate_on_surface()
+        wfa6.animate()
+        wfa6.animate_on_surface()
+        wfa6.animate()
+        wfa6.animate_on_surface()
+        """
         screen.blit(framebuffer_global, (0, 0))
         widgets_changed = False
 
