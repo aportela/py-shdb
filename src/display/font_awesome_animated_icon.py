@@ -54,10 +54,6 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
     def _transparent(self) -> bool:
         return self.__transparent
 
-    # TODO: REMOVE
-    def _background_color(self):
-        return self.__background_color
-
     def _animation_frame_change_required(self) -> bool:
         render_required = False
         last_animation_timestamp = datetime.datetime.now().timestamp()
@@ -140,7 +136,7 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
             return False
 
 class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, max_size: int = 0) -> None:
+    def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False) -> None:
         super().__init__(surface = surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.BOUNCE
         self.__icon_surface = super().render(self._icon, self._color)
@@ -202,6 +198,7 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
             self._tmp_surface.blit(__fade_icon_surface, (0, 0))
         return __fade_icon_surface
 
+"""
 class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
     def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
         super().__init__(surface = surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
@@ -225,26 +222,28 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
             square_size = max(self.__icon_surface.get_size())
             if self._transparent:
                 self.__square_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
+                self._tmp_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
             else:
                 self.__square_surface = pygame.Surface((square_size, square_size))
-            self.__center = (self.__icon_surface.get_width() / 2, self.__icon_surface.get_height() / 2)
+                self._tmp_surface = pygame.Surface((square_size, square_size))
+            self.__center = (self.__icon_surface.get_width() // 2, self.__icon_surface.get_height() // 2)
 
-    def animate(self) -> pygame.Surface:
-        x = self.__center[0] + self.__radius * math.cos(math.radians(self.__angle))
-        y = self.__center[1] + self.__radius * math.sin(math.radians(self.__angle))
-        # TODO
-        # self.__square_surface.fill(self._background_color)
-        rotated_icon = pygame.transform.rotate(self.__icon_surface, self.__angle)
-        rotated_rect = rotated_icon.get_rect(center = (x, y))
-        self.__square_surface.blit(rotated_icon, rotated_rect)
-        if self.__direction == FontAwesomeAnimationSpinDirection.CLOCKWISE:
-            self.__angle = self.__angle - self._speed
-            if self.__angle <= 0:
-                self.__angle = 360
+    def _animate(self) -> bool:
+        if self._animation_frame_change_required():
+            x = self.__center[0] + self.__radius * math.cos(math.radians(self.__angle))
+            y = self.__center[1] + self.__radius * math.sin(math.radians(self.__angle))
+            rotated_icon = pygame.transform.rotate(self.__icon_surface, self.__angle)
+            rotated_rect = rotated_icon.get_rect(center = (x, y))
+            self._blit(rotated_icon, rotated_rect)
+            animation_unit = (self._speed.value * 2)
+            if self.__direction == FontAwesomeAnimationSpinDirection.CLOCKWISE:
+                self.__angle = self.__angle - animation_unit
+                if self.__angle <= 0:
+                    self.__angle = 360
+            else:
+                self.__angle = self.__angle + animation_unit
+                if self.__angle > 360:
+                    self.__angle = 0
+            return True
         else:
-            self.__angle = self.__angle + self._speed
-            if self.__angle > 360:
-                self.__angle = 0
-        return self.__square_surface
-
-"""
+            return False

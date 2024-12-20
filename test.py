@@ -17,7 +17,7 @@ from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
-from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect #, FontAwesomeIconFadeEffect, FontAwesomeIconSpinEffect
+from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect, FontAwesomeIconSpinEffect
 from src.display.font_awesome_unicode_icons import FontAwesomeUnicodeIcons
 
 configuration_file_path = "config.yaml"
@@ -243,7 +243,7 @@ previous_fps = -1
 click_event = None
 
 speeds = [ FontAwesomeAnimationSpeed.FAST, FontAwesomeAnimationSpeed.MEDIUM, FontAwesomeAnimationSpeed.SLOW ]
-icon_names = [ FontAwesomeUnicodeIcons.ICON_SUN, FontAwesomeUnicodeIcons.ICON_COG ]
+icon_names = [ FontAwesomeUnicodeIcons.ICON_BASKETBALL, FontAwesomeUnicodeIcons.ICON_SUN, FontAwesomeUnicodeIcons.ICON_COG ]
 colors = [ (255, 234, 0), (155, 234, 0), (55, 34, 200) ]
 icons = []
 x = 50
@@ -252,11 +252,15 @@ for j in range(len(icon_names)):
     for i in range(len(speeds)):
         if j == 0:
             icons.append(
-                FontAwesomeIconBeatEffect(surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, max_size = 36)
+                FontAwesomeIconBounceEffect(surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False)
             )
         elif j == 1:
             icons.append(
-                FontAwesomeIconBounceEffect(surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, max_size = 36)
+                FontAwesomeIconBeatEffect(surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, max_size = 36)
+            )
+        elif j == 2:
+            icons.append(
+                FontAwesomeIconSpinEffect(surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
             )
         x += 50
     y += 80
