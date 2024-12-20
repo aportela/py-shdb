@@ -31,13 +31,14 @@ class FontAwesomeAnimationSpinDirection(Enum):
     COUNTERCLOCKWISE = 2
 
 class FontAwesomeIconBaseEffect(FontAwesomeIcon):
-    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM) -> None:
+    def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False) -> None:
         super().__init__(file = file, size = size, color = color)
         self._animation_type = FontAwesomeAnimationType.NONE
         self._icon = icon
         self._color = color
         self._background_color = background_color
         self._speed = speed.value
+        self._use_sprite_cache = use_sprite_cache
 
 class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
     def __init__(self, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple = (255, 255, 255), background_color: tuple = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
@@ -53,21 +54,25 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
         self.cache_values()
 
     def cache_values(self) -> None:
-        self.__icon_surface = super().render(self._icon, self._color)
-        square_size = max(self.__icon_surface.get_size())
-        #self.__sprite_count = 359
-        if len(self._background_color) == 4:
-            self.__square_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
+        if self._use_sprite_cache:
+            self.__sprite_count = 359
+            raise ValueError("TODO")
         else:
-            self.__square_surface = pygame.Surface((square_size, square_size))
-        self.__center = (self.__icon_surface.get_width() / 2, self.__icon_surface.get_height() / 2)
+            # TODO: cached SPRITES better than ?
+            self.__icon_surface = super().render(self._icon, self._color)
+            square_size = max(self.__icon_surface.get_size())
+            if len(self._background_color) == 4:
+                self.__square_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
+            else:
+                self.__square_surface = pygame.Surface((square_size, square_size))
+            self.__center = (self.__icon_surface.get_width() / 2, self.__icon_surface.get_height() / 2)
 
     def animate(self) -> pygame.Surface:
         x = self.__center[0] + self.__radius * math.cos(math.radians(self.__angle))
         y = self.__center[1] + self.__radius * math.sin(math.radians(self.__angle))
         self.__square_surface.fill((20, 20, 50))
         rotated_icon = pygame.transform.rotate(self.__icon_surface, self.__angle)
-        rotated_rect = rotated_icon.get_rect(center=(x, y))
+        rotated_rect = rotated_icon.get_rect(center = (x, y))
         self.__square_surface.blit(rotated_icon, rotated_rect)
         if self.__direction == FontAwesomeAnimationSpinDirection.CLOCKWISE:
             self.__angle = self.__angle - self._speed
