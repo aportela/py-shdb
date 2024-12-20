@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from enum import Enum
 import math
 import pygame
@@ -40,6 +40,7 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         self._background_color = background_color
         self._speed = speed.value
         self._use_sprite_cache = use_sprite_cache
+
     @abstractmethod
     def animate(self) -> pygame.Surface:
         pass
