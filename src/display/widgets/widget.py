@@ -11,7 +11,7 @@ class Widget(ABC):
         if not name:
             raise ValueError("Name cannot be None or empty.")
         self.__name = name
-        self.__x =    x
+        self.__x = x
         self.__y = y
         if width < 1 or height < 1 or padding < 0:
             raise ValueError("Invalid width/height/padding.")
@@ -21,7 +21,7 @@ class Widget(ABC):
         self.__background_color = background_color
         self.__border = border
         self.__border_color = border_color
-        self.___rect = pygame.Rect(x, y, width, height)
+        self.__rect = pygame.Rect(x, y, width, height)
         if len(background_color) == 4:
             self._tmp_surface = pygame.Surface((self.__width, self.__height), pygame.SRCALPHA)
         else:
@@ -61,7 +61,7 @@ class Widget(ABC):
         pass
 
     def verify_click(self, event):
-        if self.___rect.collidepoint(event.pos):
+        if self.__rect.collidepoint(event.pos):
             self.on_click()
 
     def on_click(self):
