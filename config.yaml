@@ -20,7 +20,7 @@ widgets:
     width: 276
     height: 25
     padding: 2
-    background_color: [0, 0, 0, 0]
+    background_color: [20, 20, 50]
     font_family: "monospace"
     font_size: 16
     font_color: [255, 255, 255]
@@ -36,7 +36,7 @@ widgets:
     width: 750
     height: 34
     padding: 2
-    background_color: [0, 0, 0, 0]
+    background_color: [20, 20, 50]
     font_family: "monospace"
     font_size: 24
     font_color: [255, 255, 255]
@@ -52,7 +52,7 @@ widgets:
     width: 750
     height: 170
     padding: 2
-    background_color: [0, 0, 0, 0]
+    background_color: [20, 20, 50]
     font_family: "monospace"
     font_size: 150
     font_color: [255, 255, 255]
@@ -86,7 +86,7 @@ widgets:
     width: 360
     height: 210
     padding: 2
-    background_color: [0, 0, 0, 0]
+    background_color: [20, 20, 50]
     font_family: "monospace"
     font_size: 16
     font_color: [255, 255, 255]
@@ -101,7 +101,7 @@ widgets:
     width: 300
     height: 300
     padding: 2
-    background_color: [0, 0, 0, 0]
+    background_color: [20, 20, 50]
     #path: "resources/images/business-cat.jpg"
     url: "https://i.kym-cdn.com/photos/images/newsfeed/000/176/107/business-cat.jpg"
 
