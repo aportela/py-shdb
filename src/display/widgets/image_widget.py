@@ -12,12 +12,13 @@ class ImageWidget(Widget):
         super().__init__(surface = surface, name = name, x = x, y = y, width = width, height = height, padding = padding, background_color = background_color, border = border, border_color = border_color)
         self.__image = None
         if path is not None:
-            self._log.debug(f"Using local path {path}.")
+            self._log.debug(f"Using local path {path}")
             self.__load(path)
         elif url is not None:
-            self._log.debug(f"Using remote url {url}.")
+            self._log.debug(f"Using remote url {url}")
             cache_file_path = f"{cache_path}/images/{hashlib.sha256(url.encode('utf-8')).hexdigest()[:64]}.image"
             if os.path.exists(cache_file_path):
+                self._log.debug(f"Remote url image cache found on {cache_file_path}")
                 self.__load(cache_file_path)
             else:
                 try:
@@ -28,9 +29,10 @@ class ImageWidget(Widget):
                     cache = ModuleCache(cache_file_path)
                     if cache.save_bytes(response.content) is False:
                         raise ValueError("Error saving cache of remote image.")
+                    else:
+                        self.__load(cache_file_path)
                 except requests.exceptions.RequestException as e:
                     raise ValueError(f"Error fetching image from URL: {e}")
-            self.__load(cache_file_path)
         else:
             raise ValueError("Image path/url not set")
         self._render_required = True
