@@ -35,7 +35,7 @@ class FontAwesomeAnimationSpinDirection(Enum):
     COUNTERCLOCKWISE = 2
 
 class FontAwesomeIconBaseEffect(FontAwesomeIcon):
-    def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False) -> None:
+    def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), animation_total_frames: int = 0, use_sprite_cache: bool = False) -> None:
         super().__init__(file = file, size = size, color = color)
         self._log = Logger()
         self._surface = surface
@@ -47,20 +47,45 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         self.__background_color = background_color
         self.__transparent = len(background_color) == 4
         self._speed = speed
+        self._set_animation_duration_coefficients(animation_duration_coefficients)
         if use_sprite_cache:
             raise ValueError("TODO")
         self._use_sprite_cache = use_sprite_cache
         self._sprite_count = 0
         self._animation_type = FontAwesomeAnimationType.NONE,
+        self.__animation_total_frames = animation_total_frames
         self._last_animation_timestamp = datetime.datetime.now().timestamp()
-        self.__animation_duration = 0
 
     def _transparent(self) -> bool:
         return self.__transparent
 
-    def _get_frame_skip(self, animation_total_frames: int) -> float:
+    def _create_temporal_surface(self, size: tuple [int, int]) -> None:
+        if self._transparent:
+            self._tmp_surface = pygame.Surface(size, pygame.SRCALPHA)
+        else:
+            self._tmp_surface = pygame.Surface(size)
+
+    def _set_animation_total_frames(self, total_frames: int) -> None:
+        self.__animation_total_frames = total_frames
+
+    def _set_animation_duration_coefficients(self, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4)) -> None:
+        self.__animation_duration_coefficients = animation_duration_coefficients
+        self.__animation_duration = 0
+
+    def __set_animation_duration(self, current_fps: int, speed: FontAwesomeAnimationSpeed) -> None:
+        if speed == FontAwesomeAnimationSpeed.FAST:
+            return current_fps * self.__animation_duration_coefficients[0]
+        elif speed == FontAwesomeAnimationSpeed.MEDIUM:
+            return current_fps * self.__animation_duration_coefficients[1]
+        elif speed == FontAwesomeAnimationSpeed.SLOW:
+            return current_fps * self.__animation_duration_coefficients[2]
+        else:
+            raise ValueError("")
+
+    @property
+    def _frame_skip(self) -> float:
         if self.__animation_duration > 0:
-            return animation_total_frames / self.__animation_duration
+            return self.__animation_total_frames / self.__animation_duration
         else:
             return 0
 
@@ -98,13 +123,7 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
 
     def animate(self, current_fps: int) -> bool:
         if self._tmp_surface is not None:
-            self._current_fps = current_fps
-            if self._speed == FontAwesomeAnimationSpeed.FAST:
-                self.__animation_duration = current_fps
-            elif self._speed == FontAwesomeAnimationSpeed.MEDIUM:
-                self.__animation_duration = current_fps * 2
-            else: # SLOW
-                self.__animation_duration = current_fps * 4
+            self.__animation_duration = self.__set_animation_duration(current_fps, self._speed)
             if self._animate():
                 self._surface.blit(self._tmp_surface, (self.__x, self.__y))
                 return True
@@ -269,8 +288,8 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
             return False
 
 class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
-        super().__init__(surface = surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+    def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), use_sprite_cache: bool = False, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
+        super().__init__(surface = surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed, animation_duration_coefficients = animation_duration_coefficients, animation_total_frames = 359)
         if direction == FontAwesomeAnimationSpinDirection.CLOCKWISE:
             self._animation_type = FontAwesomeAnimationType.SPIN_CLOCKWISE
             self.__angle = 0
@@ -279,31 +298,26 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
             self.__angle = 360
         self.__last_angle = self.__angle
         self.__radius = 0
-        # TODO: cached SPRITES better than ?
         self.__icon_surface = super().render(self._icon, self._color)
         square_size = max(self.__icon_surface.get_size())
-        if self._transparent:
-            self._tmp_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
-        else:
-            self._tmp_surface = pygame.Surface((square_size, square_size))
-        self.__center = (self.__icon_surface.get_width() // 2, self.__icon_surface.get_height() // 2)
-        self.__animation_total_frames = 359
+        self._create_temporal_surface((square_size, square_size))
+        self.__icon_surface_center_cache = (self.__icon_surface.get_width() // 2, self.__icon_surface.get_height() // 2)
         self.__refresh_required = True
 
     def _animate(self) -> bool:
         if self.__refresh_required:
-            x = self.__center[0] + self.__radius * math.cos(math.radians(self.__angle))
-            y = self.__center[1] + self.__radius * math.sin(math.radians(self.__angle))
+            x = self.__icon_surface_center_cache[0] + self.__radius * math.cos(math.radians(self.__angle))
+            y = self.__icon_surface_center_cache[1] + self.__radius * math.sin(math.radians(self.__angle))
             rotated_icon = pygame.transform.rotate(self.__icon_surface, self.__angle)
             rotated_rect = rotated_icon.get_rect(center = (x, y))
             self._blit(rotated_icon, rotated_rect)
             self.__last_angle = int(self.__angle)
             if self._animation_type == FontAwesomeAnimationType.SPIN_CLOCKWISE:
-                self.__angle -= self._get_frame_skip(self.__animation_total_frames)
+                self.__angle -= self._frame_skip
                 if self.__angle <= 0:
                     self.__angle = 360
             else:
-                self.__angle += self._get_frame_skip(self.__animation_total_frames)
+                self.__angle += self._frame_skip
                 if self.__angle > 360:
                     self.__angle = 0
             return self.__last_angle != int(self.__angle)
