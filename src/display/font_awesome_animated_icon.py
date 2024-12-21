@@ -47,7 +47,10 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         self.__background_color = background_color
         self.__transparent = len(background_color) == 4
         self._speed = speed
+        if use_sprite_cache:
+            raise ValueError("TODO")
         self._use_sprite_cache = use_sprite_cache
+        self._sprite_count = 0
         self._animation_type = FontAwesomeAnimationType.NONE,
         self._last_animation_timestamp = datetime.datetime.now().timestamp()
         # TODO
@@ -177,35 +180,37 @@ class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
         else:
             return False
 
-"""
 class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
     def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
         super().__init__(surface = surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.FADE
         self.__alpha = 0
         self.__fade_in = True
-        self._cache_values()
-
-    def animate(self) -> pygame.Surface:
-        __icon_surface = super().render(self._icon, self._color)
-        __fade_icon_surface = pygame.Surface(__icon_surface.get_size())
-        __fade_icon_surface.blit(__icon_surface.copy(), (0, 0))
-        #__fade_icon_surface.set_alpha(self.__alpha)
-        if self.__fade_in:
-            if self.__alpha < 255:
-                self.__alpha += 1
-            else:
-                self.__fade_in = False
+        self.__icon_surface = super().render(self._icon, self._color)
+        if self._transparent:
+            self._tmp_surface = pygame.Surface(self.__icon_surface.get_size(), pygame.SRCALPHA)
         else:
-            if self.__alpha > 0:
-                self.__alpha -= 1
-            else:
-                self.__fade_in = True
-        if self._tmp_surface is not None:
-            self._tmp_surface.blit(__fade_icon_surface, (0, 0))
-        return __fade_icon_surface
+            self._tmp_surface = pygame.Surface(self.__icon_surface.get_size())
 
-"""
+    def _animate(self) -> bool:
+        if self._animation_frame_change_required():
+            self.__icon_surface.set_alpha(self.__alpha)
+            self._blit(self.__icon_surface, (0, 0))
+            animation_unit = 10
+            if self.__fade_in:
+                if self.__alpha < 255:
+                    self.__alpha += animation_unit
+                else:
+                    self.__fade_in = False
+            else:
+                if self.__alpha > 0:
+                    self.__alpha -= animation_unit
+                else:
+                    self.__fade_in = True
+            return True
+        else:
+            return False
+
 class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
     def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
         super().__init__(surface = surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
@@ -216,21 +221,14 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
             self._animation_type = FontAwesomeAnimationType.SPIN_COUNTERCLOCKWISE
             self.__angle = 360
         self.__radius = 0
-        self._cache_values()
-
-    def _cache_values(self) -> None:
-        if self._use_sprite_cache:
-            self.__sprite_count = 359
-            raise ValueError("TODO")
+        # TODO: cached SPRITES better than ?
+        self.__icon_surface = super().render(self._icon, self._color)
+        square_size = max(self.__icon_surface.get_size())
+        if self._transparent:
+            self._tmp_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
         else:
-            # TODO: cached SPRITES better than ?
-            self.__icon_surface = super().render(self._icon, self._color)
-            square_size = max(self.__icon_surface.get_size())
-            if self._transparent:
-                self._tmp_surface = pygame.Surface((square_size, square_size), pygame.SRCALPHA)
-            else:
-                self._tmp_surface = pygame.Surface((square_size, square_size))
-            self.__center = (self.__icon_surface.get_width() // 2, self.__icon_surface.get_height() // 2)
+            self._tmp_surface = pygame.Surface((square_size, square_size))
+        self.__center = (self.__icon_surface.get_width() // 2, self.__icon_surface.get_height() // 2)
 
     def _animate(self) -> bool:
         if self._animation_frame_change_required():
@@ -261,22 +259,16 @@ class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
             self._animation_type = FontAwesomeAnimationType.VERTICAL_FLIP
         self.__shrinking = True
         self.__flip = False
-        self._cache_values()
-
-    def _cache_values(self) -> None:
-        if self._use_sprite_cache:
-            raise ValueError("TODO")
+        self.__icon_surface = super().render(self._icon, self._color)
+        self.__icon_surface_flipped = pygame.transform.flip(self.__icon_surface, self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP, self._animation_type == FontAwesomeAnimationType.VERTICAL_FLIP)
+        self.__width = self.__icon_surface.get_width()
+        self.__current_width = self.__width
+        self.__height = self.__icon_surface.get_height()
+        self.__current_height = self.__height
+        if self._transparent:
+            self._tmp_surface = pygame.Surface((self.__width, self.__height), pygame.SRCALPHA)
         else:
-            self.__icon_surface = super().render(self._icon, self._color)
-            self.__icon_surface_flipped = pygame.transform.flip(self.__icon_surface, self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP, self._animation_type == FontAwesomeAnimationType.VERTICAL_FLIP)
-            self.__width = self.__icon_surface.get_width()
-            self.__current_width = self.__width
-            self.__height = self.__icon_surface.get_height()
-            self.__current_height = self.__height
-            if self._transparent:
-                self._tmp_surface = pygame.Surface((self.__width, self.__height), pygame.SRCALPHA)
-            else:
-                self._tmp_surface = pygame.Surface((self.__width, self.__height))
+            self._tmp_surface = pygame.Surface((self.__width, self.__height))
 
     def _animate(self) -> bool:
         if self._animation_frame_change_required():
