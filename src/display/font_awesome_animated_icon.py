@@ -39,7 +39,7 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         super().__init__(file = file, size = size, color = color)
         self._log = Logger()
         self._surface = surface
-        self._tmp_surface = None
+        self.__tmp_surface = None
         self.__x = x
         self.__y = y
         self._icon = icon
@@ -61,9 +61,21 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
 
     def _create_temporal_surface(self, size: tuple [int, int]) -> None:
         if self._transparent:
-            self._tmp_surface = pygame.Surface(size, pygame.SRCALPHA)
+            self.__tmp_surface = pygame.Surface(size, pygame.SRCALPHA)
         else:
-            self._tmp_surface = pygame.Surface(size)
+            self.__tmp_surface = pygame.Surface(size)
+
+    def _get_temporal_surface_width(self) -> int:
+        if self.__tmp_surface is not None:
+            return self.__tmp_surface.get_width()
+        else:
+            return 0
+
+    def _get_temporal_surface_height(self) -> int:
+        if self.__tmp_surface is not None:
+            return self.__tmp_surface.get_height()
+        else:
+            return 0
 
     def _set_animation_total_frames(self, total_frames: int) -> None:
         self.__animation_total_frames = total_frames
@@ -115,17 +127,17 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         return render_required
 
     def _clear(self) -> None:
-        self._tmp_surface.fill(self.__background_color)
+        self.__tmp_surface.fill(self.__background_color)
 
     def _blit(self, surface: pygame.Surface, dest: tuple[int, int]) -> None:
-        self._tmp_surface.fill(self.__background_color)
-        self._tmp_surface.blit(surface, dest)
+        self.__tmp_surface.fill(self.__background_color)
+        self.__tmp_surface.blit(surface, dest)
 
     def animate(self, current_fps: int) -> bool:
-        if self._tmp_surface is not None:
+        if self.__tmp_surface is not None:
             self.__animation_duration = self.__set_animation_duration(current_fps, self._speed)
             if self._animate():
-                self._surface.blit(self._tmp_surface, (self.__x, self.__y))
+                self._surface.blit(self.__tmp_surface, (self.__x, self.__y))
                 return True
             else:
                 return False
@@ -149,7 +161,7 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
         # set temporal font size at max Beat width/height for creating temporal surface with required size
         super().set_size(self.__max_size)
         icon_surface = super().render(self._icon, self._color)
-        self._tmp_surface = pygame.Surface((icon_surface.get_width(), icon_surface.get_height()))
+        super()._create_temporal_surface(icon_surface.get_size())
         # restore original size
         super().set_size(self.__original_size)
 
@@ -168,8 +180,8 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
                 else:
                     self.__increase_size = True
             super().set_size(self.__current_size)
-            x = (self._tmp_surface.get_width() - icon_surface.get_width()) // 2
-            y = (self._tmp_surface.get_height() - icon_surface.get_height()) // 2
+            x = (self._get_temporal_surface_width() - icon_surface.get_width()) // 2
+            y = (self._get_temporal_surface_height() - icon_surface.get_height()) // 2
             self._blit(icon_surface, (x, y))
             return True
         else:
@@ -189,7 +201,7 @@ class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
         # set temporal font size at max Beat width/height for creating temporal surface with required size
         super().set_size(self.__max_size)
         icon_surface = super().render(self._icon, self._color)
-        self._tmp_surface = pygame.Surface((icon_surface.get_width(), icon_surface.get_height()))
+        super()._create_temporal_surface(icon_surface.get_size())
         # restore original size
         super().set_size(self.__original_size)
 
@@ -213,8 +225,8 @@ class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
                 else:
                     self.__increase_size = True
             super().set_size(self.__current_size)
-            x = (self._tmp_surface.get_width() - icon_surface.get_width()) // 2
-            y = (self._tmp_surface.get_height() - icon_surface.get_height()) // 2
+            x = (self._get_temporal_surface_width() - icon_surface.get_width()) // 2
+            y = (self._get_temporal_surface_height() - icon_surface.get_height()) // 2
             self._blit(icon_surface, (x, y))
             return True
         else:
@@ -226,7 +238,7 @@ class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
         self._animation_type = FontAwesomeAnimationType.BOUNCE
         self.__icon_surface = super().render(self._icon, self._color)
         total_height = self.__icon_surface.get_height() + (self.__icon_surface.get_height() // 2)
-        self._tmp_surface = pygame.Surface((self.__icon_surface.get_width(), total_height))
+        super()._create_temporal_surface((self.__icon_surface.get_width(), total_height))
         self.__x = 0
         self.__y = 0
         self.__min_y = 0
@@ -263,10 +275,7 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
         self.__alpha = 0
         self.__fade_in = True
         self.__icon_surface = super().render(self._icon, self._color)
-        if self._transparent:
-            self._tmp_surface = pygame.Surface(self.__icon_surface.get_size(), pygame.SRCALPHA)
-        else:
-            self._tmp_surface = pygame.Surface(self.__icon_surface.get_size())
+        super()._create_temporal_surface(self.__icon_surface.get_size())
 
     def _animate(self) -> bool:
         if self._animation_frame_change_required():
@@ -300,7 +309,7 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
         self.__radius = 0
         self.__icon_surface = super().render(self._icon, self._color)
         square_size = max(self.__icon_surface.get_size())
-        self._create_temporal_surface((square_size, square_size))
+        super()._create_temporal_surface((square_size, square_size))
         self.__icon_surface_center_cache = (self.__icon_surface.get_width() // 2, self.__icon_surface.get_height() // 2)
         self.__refresh_required = True
 
@@ -339,10 +348,7 @@ class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
         self.__current_width = self.__width
         self.__height = self.__icon_surface.get_height()
         self.__current_height = self.__height
-        if self._transparent:
-            self._tmp_surface = pygame.Surface((self.__width, self.__height), pygame.SRCALPHA)
-        else:
-            self._tmp_surface = pygame.Surface((self.__width, self.__height))
+        super()._create_temporal_surface((self.__width, self.__height))
 
     def _animate(self) -> bool:
         if self._animation_frame_change_required():
