@@ -9,7 +9,6 @@ from typing import Any
 from src.utils.logger import Logger
 
 from src.modules.rss.rss_feed import RSSFeed
-from src.modules.weather.open_meteo import OpenMeteo,WeatherDataType
 
 from src.display.widgets.simple_label_widget import SimpleLabelWidget
 from src.display.widgets.date_widget import DateWidget
@@ -22,7 +21,13 @@ from src.display.widgets.widget_font import WidgetFont
 from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect, FontAwesomeIconSpinEffect, FontAwesomeIconFlipEffect, FontAwesomeAnimationFlipAxis, FontAwesomeIconFadeEffect, FontAwesomeIconBeatAndFadeEffect
 from src.display.font_awesome_unicode_icons import FontAwesomeUnicodeIcons
 
+from src.display.fps import FPS
+
+logger = Logger("py-shdb")
+logger.configure_global(logger.DEBUG)
+
 def parse_args() -> argparse.Namespace:
+    logger.debug(f"Commandline args: {sys.argv}")
     parser = argparse.ArgumentParser(description="Parse skin/config custom file.")
     parser.add_argument('-skin', type=str, help='Path to skin/config custom file.', required=False)
     return parser.parse_args()
@@ -57,8 +62,6 @@ if config is None:
     print("Error: skin/config file is empty or invalid.")
     sys.exit(1)
 
-print("skin/config loaded successfully.")
-
 last_modified_time = os.path.getmtime(configuration_file_path)
 
 app_name = config.get('general', {}).get('app_name', "Python Smart Home Dashboard")
@@ -69,13 +72,11 @@ cache_path = config.get('app', {}).get('cache_path', None)
 background_color = config.get('app', {}).get('background_color', [0, 0, 0, 0])
 
 locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
-# Inicializar Pygame
+
 pygame.init()
 
-logger = Logger("py-shdb")
-logger.configure_global(logger.DEBUG)
+FPS.set_default_fps(max_fps)
 
-# Obtener la resolución actual de la pantalla
 screen_info = pygame.display.Info()
 
 logger.debug(f"Current screen resolution: {screen_info.current_w}x{screen_info.current_h}")
@@ -262,7 +263,6 @@ load_widgets()
 
 fps_font = pygame.font.SysFont("monospace", 12)
 
-clock = pygame.time.Clock()
 
 running = True
 
@@ -337,7 +337,7 @@ while running:
     click_event = None
 
     if show_fps:
-        current_fps = int(clock.get_fps())
+        current_fps = FPS.get_current_fps()
         if current_fps != previous_fps:
             previous_fps_surface = fps_font.render(f"FPS: {previous_fps:03d}", True, background_color)
             previous_fps_rect = previous_fps_surface.get_rect()
@@ -357,8 +357,8 @@ while running:
 
     pygame.display.flip()
 
-    # limit FPS
-    clock.tick(max_fps)
+    # limit fps
+    FPS.tick()
 
 pygame.quit()
 
