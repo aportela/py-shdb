@@ -322,7 +322,7 @@ while running:
 
     if widgets_changed:
         for i in range(len(icons)):
-            icons[i].animate()
+            icons[i].animate(current_fps)
         screen.blit(framebuffer_global, (0, 0))
         widgets_changed = False
 
