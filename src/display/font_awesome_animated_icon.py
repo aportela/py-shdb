@@ -272,24 +272,27 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
     def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
         super().__init__(surface = surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.FADE
-        self.__alpha = 0
+        self.__current_alpha = 0
+        self.__min_alpha = self.__current_alpha
+        self.__max_alpha = 255
+        self._set_animation_total_frames(self.__max_alpha - self.__min_alpha)
         self.__fade_in = True
         self.__icon_surface = super().render(self._icon, self._color)
         super()._create_temporal_surface(self.__icon_surface.get_size())
 
     def _animate(self) -> bool:
-        if self._animation_frame_change_required():
-            self.__icon_surface.set_alpha(self.__alpha)
+        if True or self._animation_frame_change_required():
+            self.__icon_surface.set_alpha(self.__current_alpha)
             self._blit(self.__icon_surface, (0, 0))
             animation_unit = 10
             if self.__fade_in:
-                if self.__alpha < 255:
-                    self.__alpha += animation_unit
+                if self.__current_alpha < self.__max_alpha:
+                    self.__current_alpha += animation_unit
                 else:
                     self.__fade_in = False
             else:
-                if self.__alpha > 0:
-                    self.__alpha -= animation_unit
+                if self.__current_alpha > self.__min_alpha:
+                    self.__current_alpha -= animation_unit
                 else:
                     self.__fade_in = True
             return True
