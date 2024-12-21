@@ -116,11 +116,11 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
         self.__max_size = max_size
         self.__current_size = size
         self.__increase_size = True
-        # set surface size at max Beat width/height
+        # set temporal font size at max Beat width/height for creating temporal surface with required size
         super().set_size(self.__max_size)
         icon_surface = super().render(self._icon, self._color)
         self._tmp_surface = pygame.Surface((icon_surface.get_width(), icon_surface.get_height()))
-        # restore original (start) size
+        # restore original size
         super().set_size(self.__original_size)
 
     def _animate(self) -> bool:
@@ -135,6 +135,51 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
             else:
                 if self.__current_size > self.__original_size:
                     self.__current_size -= animation_unit
+                else:
+                    self.__increase_size = True
+            super().set_size(self.__current_size)
+            x = (self._tmp_surface.get_width() - icon_surface.get_width()) // 2
+            y = (self._tmp_surface.get_height() - icon_surface.get_height()) // 2
+            self._blit(icon_surface, (x, y))
+            return True
+        else:
+            return False
+
+class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
+    def __init__(self, surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, max_size: int = 0) -> None:
+        super().__init__(surface = surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+        self._animation_type = FontAwesomeAnimationType.BEAT_AND_FADE
+        self.__original_size = size
+        if (max_size <= size):
+            raise ValueError(f"Invalid max_size value: {max_size}.")
+        self.__max_size = max_size
+        self.__current_size = size
+        self.__increase_size = True
+        self.__alpha = 72
+        # set temporal font size at max Beat width/height for creating temporal surface with required size
+        super().set_size(self.__max_size)
+        icon_surface = super().render(self._icon, self._color)
+        self._tmp_surface = pygame.Surface((icon_surface.get_width(), icon_surface.get_height()))
+        # restore original size
+        super().set_size(self.__original_size)
+
+    def _animate(self) -> bool:
+        if self._animation_frame_change_required():
+            animation_unit = 1
+            icon_surface = super().render(self._icon, self._color)
+            icon_surface.set_alpha(self.__alpha)
+            if self.__increase_size:
+                if self.__current_size < self.__max_size:
+                    self.__current_size += animation_unit
+                    if self.__alpha < 255:
+                        self.__alpha += animation_unit * 16
+                else:
+                    self.__increase_size = False
+            else:
+                if self.__current_size > self.__original_size:
+                    self.__current_size -= animation_unit
+                    if self.__alpha > 72:
+                        self.__alpha -= animation_unit * 16
                 else:
                     self.__increase_size = True
             super().set_size(self.__current_size)
@@ -168,6 +213,7 @@ class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
                     else:
                         self.__falling = False
                         self.__min_y += animation_unit
+                        animation_unit += 1
                 else:
                     if self.__y > self.__min_y:
                         self.__y -= animation_unit
