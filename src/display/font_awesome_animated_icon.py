@@ -344,44 +344,47 @@ class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
         self.__flip = False
         self.__icon_surface = super().render(self._icon, self._color)
         self.__icon_surface_flipped = pygame.transform.flip(self.__icon_surface, self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP, self._animation_type == FontAwesomeAnimationType.VERTICAL_FLIP)
-        self.__width = self.__icon_surface.get_width()
-        self.__current_width = self.__width
-        self.__height = self.__icon_surface.get_height()
-        self.__current_height = self.__height
-        super()._create_temporal_surface((self.__width, self.__height))
+        self.__width_cache = self.__icon_surface.get_width()
+        self.__current_width = self.__width_cache
+        self.__height_cache = self.__icon_surface.get_height()
+        self.__current_height = self.__height_cache
+        if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
+            self._set_animation_total_frames(self.__width_cache * 4)
+        else:
+            self._set_animation_total_frames(self.__height_cache * 4)
+        super()._create_temporal_surface((self.__width_cache, self.__height_cache))
 
     def _animate(self) -> bool:
-        if self._animation_frame_change_required():
+        if True or self._animation_frame_change_required():
             streched_icon = pygame.transform.scale(self.__icon_surface if self.__flip else self.__icon_surface_flipped, (self.__current_width, self.__current_height))
             if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
-                dest = ((self.__width - self.__current_width) // 2, 0)
+                dest = ((self.__width_cache - self.__current_width) // 2, 0)
             else:
-                dest = (0, (self.__height - self.__current_height) // 2)
+                dest = (0, (self.__height_cache - self.__current_height) // 2)
             self._blit(streched_icon, dest)
-            animation_unit = self._speed.value / 2
             if self.__shrinking:
                 if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
-                    self.__current_width -= animation_unit
+                    self.__current_width -= self._frame_skip
                     if self.__current_width < 1:
                         self.__current_width = 1
                         self.__shrinking = False
                         self.__flip = not self.__flip
                 else:
-                    self.__current_height -= animation_unit
+                    self.__current_height -= self._frame_skip
                     if self.__current_height < 1:
                         self.__current_height = 1
                         self.__shrinking = False
                         self.__flip = not self.__flip
             else:
                 if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
-                    self.__current_width += animation_unit
-                    if self.__current_width >= self.__width:
-                        self.__current_width = self.__width
+                    self.__current_width += self._frame_skip
+                    if self.__current_width >= self.__width_cache:
+                        self.__current_width = self.__width_cache
                         self.__shrinking = True
                 else:
-                    self.__current_height += animation_unit
-                    if self.__current_height >= self.__height:
-                        self.__current_height = self.__height
+                    self.__current_height += self._frame_skip
+                    if self.__current_height >= self.__height_cache:
+                        self.__current_height = self.__height_cache
                         self.__shrinking = True
             return True
         else:
