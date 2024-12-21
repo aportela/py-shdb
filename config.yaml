@@ -10,6 +10,7 @@ app:
   locale: "es_ES.UTF-8"
   background_color: [20, 20, 50] # azul oscuro fondo global
   cache_path: "tmp/cache"
+  skin: "skins/default/1920x1080.ini"
 
 widgets:
   label1:
