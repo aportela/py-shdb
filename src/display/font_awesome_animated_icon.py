@@ -157,32 +157,37 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
             raise ValueError(f"Invalid max_size value: {max_size}.")
         self.__max_size = max_size
         self.__current_size = size
+        self.__last_size = 0
         self.__increase_size = True
         # set temporal font size at max Beat width/height for creating temporal surface with required size
         super().set_size(self.__max_size)
         icon_surface = super().render(self._icon, self._color)
-        super()._create_temporal_surface(icon_surface.get_size())
+        big_size_cached = icon_surface.get_size()
+        super()._create_temporal_surface(big_size_cached)
         # restore original size
         super().set_size(self.__original_size)
+        icon_surface = super().render(self._icon, self._color)
+        small_size_cached = icon_surface.get_size()
+        self._set_animation_total_frames((max(big_size_cached) - max(small_size_cached)) * 4)
 
     def _animate(self) -> bool:
-        if self._animation_frame_change_required():
-            animation_unit = 1
-            icon_surface = super().render(self._icon, self._color)
-            if self.__increase_size:
-                if self.__current_size < self.__max_size:
-                    self.__current_size += animation_unit
-                else:
-                    self.__increase_size = False
+        if self.__increase_size:
+            if self.__current_size < self.__max_size:
+                self.__current_size += self._frame_skip
             else:
-                if self.__current_size > self.__original_size:
-                    self.__current_size -= animation_unit
-                else:
-                    self.__increase_size = True
-            super().set_size(self.__current_size)
+                self.__increase_size = False
+        else:
+            if self.__current_size > self.__original_size:
+                self.__current_size -= self._frame_skip
+            else:
+                self.__increase_size = True
+        super().set_size(int(self.__current_size))
+        if self.__last_size != self.__current_size:
+            icon_surface = super().render(self._icon, self._color)
             x = (self._get_temporal_surface_width() - icon_surface.get_width()) // 2
             y = (self._get_temporal_surface_height() - icon_surface.get_height()) // 2
             self._blit(icon_surface, (x, y))
+            self.__last_size = self.__current_size
             return True
         else:
             return False
@@ -244,21 +249,21 @@ class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
         self.__min_y = 0
         self.__max_y = total_height - self.__icon_surface.get_height()
         self.__falling = True
+        self.__animation_unit = 2
 
     def _animate(self) -> bool:
         if self._animation_frame_change_required():
-            animation_unit = 2
             if self.__min_y < self.__max_y:
                 if self.__falling:
                     if self.__y < self.__max_y:
-                        self.__y += animation_unit
+                        self.__y += self.__animation_unit
                     else:
                         self.__falling = False
-                        self.__min_y += animation_unit
-                        animation_unit += 1
+                        self.__min_y += self.__animation_unit
+                        #self.__animation_unit += 1
                 else:
                     if self.__y > self.__min_y:
-                        self.__y -= animation_unit
+                        self.__y -= self.__animation_unit
                     else:
                         self.__falling = True
                 self._blit(self.__icon_surface, (self.__x, self.__y))
