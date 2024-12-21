@@ -216,15 +216,13 @@ def load_widgets():
                         background_color = widget_config.get('background_color', (0, 0, 0, 0)),
                         border = debug_widgets,
                         font = WidgetFont(
-                            #family = widget_config.get('font_family', None),
-                            file = "resources/fonts/fa-solid-900.ttf",
-                            size = widget_config.get('font_size', 30),
+                            family = widget_config.get('font_family', None),
+                            size = widget_config.get('font_size', 32),
                             color = widget_config.get('font_color', [255, 255, 255]),
                             style_bold = widget_config.get('font_style_bold', False),
                             style_italic = widget_config.get('font_style_italic', False)
                         ),
-                        #text = widget_config.get( 'text', "\uf6c4") # cloud
-                        text = widget_config.get( 'text', "\uf013") # fan (wind)
+                        text = widget_config.get('header_text', 'Weather forecast') # cloud
                     )
                 )
     logger.debug(f"Total widgets: {len(widgets)}")
