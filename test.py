@@ -1,8 +1,10 @@
 import sys
 import os
+import argparse
 import yaml
 import pygame
 import locale
+from typing import Any
 
 from src.utils.logger import Logger
 
@@ -20,15 +22,44 @@ from src.display.widgets.widget_font import WidgetFont
 from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect, FontAwesomeIconSpinEffect, FontAwesomeIconFlipEffect, FontAwesomeAnimationFlipAxis, FontAwesomeIconFadeEffect, FontAwesomeIconBeatAndFadeEffect
 from src.display.font_awesome_unicode_icons import FontAwesomeUnicodeIcons
 
-configuration_file_path = "config.yaml"
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Parse skin/config custom file.")
+    parser.add_argument('-skin', type=str, help='Path to skin/config custom file.', required=False)
+    return parser.parse_args()
 
-def load_config():
-    with open(configuration_file_path, 'r') as file:
-        return yaml.safe_load(file)
+def load_config(file_path: str) -> Any:
+    try:
+        with open(file_path, 'r') as file:
+            return yaml.safe_load(file)
+    except FileNotFoundError:
+        print(f"Error: skin/config file not found at '{file_path}'.")
+        sys.exit(1)
+    except yaml.YAMLError as e:
+        print(f"Error: Invalid YAML format in '{file_path}': {e}")
+        sys.exit(1)
+
+args = parse_args()
+
+if args.skin:
+    if not os.path.exists(args.skin):
+        print(f"Error: Custom skin/config file '{args.skin}' not found.")
+        sys.exit(1)
+    configuration_file_path = args.skin
+else:
+    configuration_file_path = "config.yaml"
+    if not os.path.exists(configuration_file_path):
+        print(f"Error: Default skin/config file '{configuration_file_path}' not found on current path.")
+        sys.exit(1)
+
+config = load_config(configuration_file_path)
+
+if config is None:
+    print("Error: skin/config file is empty or invalid.")
+    sys.exit(1)
+
+print("skin/config loaded successfully.")
 
 last_modified_time = os.path.getmtime(configuration_file_path)
-
-config = load_config()
 
 app_name = config.get('general', {}).get('app_name', "Python Smart Home Dashboard")
 debug_widgets = config.get('app', {}).get('debug_widgets', False)
