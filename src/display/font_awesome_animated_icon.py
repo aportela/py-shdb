@@ -181,13 +181,13 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
                 self.__current_size -= self._frame_skip
             else:
                 self.__increase_size = True
-        super().set_size(int(self.__current_size))
-        if self.__last_size != self.__current_size:
+        if self.__last_size != int(self.__current_size):
+            super().set_size(int(self.__current_size))
             icon_surface = super().render(self._icon, self._color)
             x = (self._get_temporal_surface_width() - icon_surface.get_width()) // 2
             y = (self._get_temporal_surface_height() - icon_surface.get_height()) // 2
             self._blit(icon_surface, (x, y))
-            self.__last_size = self.__current_size
+            self.__last_size = int(self.__current_size)
             return True
         else:
             return False
@@ -211,6 +211,7 @@ class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
         super().set_size(self.__original_size)
 
     def _animate(self) -> bool:
+        # TODO
         if self._animation_frame_change_required():
             animation_unit = 1
             icon_surface = super().render(self._icon, self._color)
@@ -249,6 +250,7 @@ class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
         self.__min_y = 0
         self.__max_y = total_height - self.__icon_surface.get_height()
         self.__falling = True
+        # TODO
         self.__animation_unit = 2
 
     def _animate(self) -> bool:
@@ -278,28 +280,30 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
         super().__init__(surface = surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.FADE
         self.__current_alpha = 0
+        self.__last_alpha = 0
         self.__min_alpha = self.__current_alpha
         self.__max_alpha = 255
-        self._set_animation_total_frames(self.__max_alpha - self.__min_alpha)
+        self._set_animation_total_frames((self.__max_alpha - self.__min_alpha) * 4)
         self.__fade_in = True
         self.__icon_surface = super().render(self._icon, self._color)
         super()._create_temporal_surface(self.__icon_surface.get_size())
 
     def _animate(self) -> bool:
-        if True or self._animation_frame_change_required():
-            self.__icon_surface.set_alpha(self.__current_alpha)
-            self._blit(self.__icon_surface, (0, 0))
-            animation_unit = 10
-            if self.__fade_in:
-                if self.__current_alpha < self.__max_alpha:
-                    self.__current_alpha += animation_unit
-                else:
-                    self.__fade_in = False
+        if self.__fade_in:
+            if self.__current_alpha < self.__max_alpha:
+                self.__current_alpha += self._frame_skip
             else:
-                if self.__current_alpha > self.__min_alpha:
-                    self.__current_alpha -= animation_unit
-                else:
-                    self.__fade_in = True
+                self.__fade_in = False
+        else:
+            if self.__current_alpha > self.__min_alpha:
+                self.__current_alpha -= self._frame_skip
+            else:
+                self.__fade_in = True
+
+        if (self.__last_alpha != int(self.__current_alpha)):
+            self.__icon_surface.set_alpha(int(self.__current_alpha))
+            self._blit(self.__icon_surface, (0, 0))
+            self.__last_alpha = int(self.__current_alpha)
             return True
         else:
             return False
