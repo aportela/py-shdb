@@ -74,6 +74,7 @@ if skin is None:
     sys.exit(1)
 
 skin_config = load_config(skin)
+
 logger.debug(f"Using skin: {skin}")
 
 last_modified_time = os.path.getmtime(configuration_file_path)
@@ -89,6 +90,12 @@ FPS.set_default_fps(max_fps)
 screen_info = pygame.display.Info()
 
 logger.debug(f"Current screen resolution: {screen_info.current_w}x{screen_info.current_h}")
+
+skin_width = skin_config.get('skin', {}).get('width', None)
+skin_height = skin_config.get('skin', {}).get('height', None)
+if ((skin_width, skin_height) != (screen_info.current_w, screen_info.current_h)):
+    print(f"Error: skin size (width: {skin_width}px, height: {skin_height}px) do not match with current screen resolution (width: {screen_info.current_w}px, height: {screen_info.current_h}px).")
+    sys.exit(1)
 
 RESOLUTION = (screen_info.current_w, screen_info.current_h)
 
