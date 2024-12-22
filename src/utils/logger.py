@@ -30,7 +30,9 @@ class Logger:
                     if class_instance:
                         name = class_instance.__class__.__name__
                     else:
-                        name = "Unknown"
+                        module_name = caller_frame.f_globals.get('__name__', 'Unknown')
+                        function_name = caller_frame.f_code.co_name
+                        name = f"{module_name}.{function_name}"
                 else:
                     name = "Unknown"
             except Exception as e:
