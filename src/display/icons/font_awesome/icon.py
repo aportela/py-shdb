@@ -1,10 +1,10 @@
 import os
 import pygame
-from .icons.font_awesome.icon_list import IconList as FontAwesomeIcons
+from .icon_list import IconList as FontAwesomeIcons
 
-from ..utils.logger import Logger
+from ....utils.logger import Logger
 
-class FontAwesomeIcon():
+class Icon():
 
     __default_font_file_path = None
 
@@ -13,8 +13,8 @@ class FontAwesomeIcon():
             if not os.path.exists(font_file_path):
                 raise ValueError(f"Font awesome external file path {font_file_path} not found.")
             else:
-                FontAwesomeIcon.__default_font_file_path = font_file_path
-        elif FontAwesomeIcon.__default_font_file_path is None:
+                Icon.__default_font_file_path = font_file_path
+        elif Icon.__default_font_file_path is None:
             raise ValueError(f"Font awesome external file path not set.")
         self.__font_file_path = font_file_path
         self.__size = size
@@ -24,7 +24,7 @@ class FontAwesomeIcon():
     @staticmethod
     def set_default_font_filepath(font_file_path) -> None:
         if os.path.exists(font_file_path):
-            FontAwesomeIcon.__default_font_file_path = font_file_path
+            Icon.__default_font_file_path = font_file_path
             Logger().debug(f"Setting default FontAwesome path: {font_file_path}")
 
         else:

@@ -4,10 +4,10 @@ import math
 import datetime
 import pygame
 
-from .icons.font_awesome.icon_list import IconList as FontAwesomeIcons
-from .font_awesome_icon import FontAwesomeIcon
-from ..utils.logger import Logger
-from .fps import FPS
+from .icon_list import IconList as FontAwesomeIcons
+from .icon import Icon as FontAwesomeIcon
+from ....utils.logger import Logger
+from ...fps import FPS
 
 # SIMULATE animations of https://docs.fontawesome.com/web/style/animate#_top
 class FontAwesomeAnimationType(Enum):

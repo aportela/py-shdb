@@ -19,9 +19,9 @@ from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
-from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect, FontAwesomeIconSpinEffect, FontAwesomeIconFlipEffect, FontAwesomeAnimationFlipAxis, FontAwesomeIconFadeEffect, FontAwesomeIconBeatAndFadeEffect
+from src.display.icons.font_awesome.animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect, FontAwesomeIconSpinEffect, FontAwesomeIconFlipEffect, FontAwesomeAnimationFlipAxis, FontAwesomeIconFadeEffect, FontAwesomeIconBeatAndFadeEffect
 from src.display.icons.font_awesome.icon_list import IconList as FontAwesomeIcons
-from src.display.font_awesome_icon import FontAwesomeIcon
+from src.display.icons.font_awesome.icon import Icon as FontAwesomeIcon
 
 from src.display.fps import FPS
 
