@@ -344,27 +344,27 @@ for j in range(len(icon_names)):
     for i in range(len(speeds)):
         if j == 0:
             icons.append(
-                FontAwesomeIconBounceEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False)
+                FontAwesomeIconBounceEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i])
             )
         elif j == 1:
             icons.append(
-                FontAwesomeIconBeatEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, max_size = 36)
+                FontAwesomeIconBeatEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], max_size = 36)
             )
         elif j == 2:
             icons.append(
-                FontAwesomeIconSpinEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
+                FontAwesomeIconSpinEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
             )
         elif j == 3:
             icons.append(
-                FontAwesomeIconFlipEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, axis = FontAwesomeAnimationFlipAxis.HORIZONTAL)
+                FontAwesomeIconFlipEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], axis = FontAwesomeAnimationFlipAxis.HORIZONTAL)
             )
         elif j == 4:
                 icons.append(
-                FontAwesomeIconFadeEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False)
+                FontAwesomeIconFadeEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i])
             )
         elif j == 5:
                 icons.append(
-                FontAwesomeIconBeatAndFadeEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, max_size = 36)
+                FontAwesomeIconBeatAndFadeEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], max_size = 36)
             )
         x += 50
     y += 80

@@ -26,7 +26,6 @@ class WeatherForecastWidget(Widget):
                                                color = (255,255,255),
                                                background_color = background_color,
                                                speed = FontAwesomeAnimationSpeed.MEDIUM,
-                                               use_sprite_cache = False,
                                                max_size = 60
         )
 
