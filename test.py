@@ -354,6 +354,8 @@ for j in range(len(icon_names)):
     x = 50
 
 
+#pygame.mouse.set_visible(False)
+
 while running:
 
     # check for exit
@@ -394,6 +396,8 @@ while running:
 
     # limit fps
     FPS.tick()
+
+#pygame.mouse.set_visible(True)
 
 pygame.quit()
 
