@@ -1,0 +1,17 @@
+general:
+  app_name: "Python Smart Home Dashboard"
+  version: 0.1
+
+app:
+  logger_level: DEBUG
+  debug_widgets: true
+  max_fps: 60
+  show_fps: true
+  locale: "es_ES.UTF-8"
+  cache_path: "tmp/cache"
+  skin: "skins/default/1920x1080.yaml"
+  hide_mouse_cursor: True
+  show_mouse_cursor_on_mouse_motion_events: True
+  auto_hide_mouse_cursor_timeout: 3
+  # TODO
+  # night_skin: "skins/default/1920x1080-night.yaml"

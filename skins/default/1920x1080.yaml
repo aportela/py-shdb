@@ -1,128 +1,123 @@
-general:
-  app_name: "Python Smart Home Dashboard"
+skin:
+  name: "default"
+  author: "aportela"
   version: 0.1
+  last_update: "2024-12-22"
+  # skin area (matched to screen size)
   width: 1920
   height: 1080
+  background_image: "resources/images/wallhaven-nzojvj.jpg"
+  #background_color: [20, 20, 50]
+  widgets:
+    label1:
+      visible: true
+      type: "simple_label"
+      x: 8
+      y: 8
+      width: 276
+      height: 25
+      padding: 2
+      #background_color: [20, 20, 50]
+      font_family: "monospace"
+      font_size: 16
+      font_color: [255, 255, 255]
+      font_style_bold: True
+      font_style_italic: False
+      text: "Python Smart Home Dashboard"
 
-app:
-  logger_level: DEBUG
-  debug_widgets: true
-  max_fps: 60
-  show_fps: true
-  locale: "es_ES.UTF-8"
-  background_color: [20, 20, 50]
-  cache_path: "tmp/cache"
-  skin: "skins/default/1920x1080.ini"
+    label2:
+      visible: true
+      type: "date"
+      x: 8
+      y: 38
+      width: 750
+      height: 34
+      padding: 2
+      #background_color: [20, 20, 50]
+      font_family: "monospace"
+      font_size: 24
+      font_color: [255, 255, 255]
+      font_style_bold: True
+      font_style_italic: False
+      format_mask: "%A, %d de %B"
 
-widgets:
-  label1:
-    visible: true
-    type: "simple_label"
-    x: 8
-    y: 8
-    width: 276
-    height: 25
-    padding: 2
-    background_color: [20, 20, 50]
-    font_family: "monospace"
-    font_size: 16
-    font_color: [255, 255, 255]
-    font_style_bold: True
-    font_style_italic: False
-    text: "Python Smart Home Dashboard"
+    label3:
+      visible: true
+      type: "time"
+      x: 8
+      y: 76
+      width: 750
+      height: 170
+      padding: 2
+      #background_color: [20, 20, 50]
+      font_family: "monospace"
+      font_size: 150
+      font_color: [255, 255, 255]
+      font_style_bold: True
+      font_style_italic: False
+      format_mask: "%I:%M %p"
 
-  label2:
-    visible: true
-    type: "date"
-    x: 8
-    y: 38
-    width: 750
-    height: 34
-    padding: 2
-    background_color: [20, 20, 50]
-    font_family: "monospace"
-    font_size: 24
-    font_color: [255, 255, 255]
-    font_style_bold: True
-    font_style_italic: False
-    format_mask: "%A, %d de %B"
+    hticker1:
+      visible: true
+      type: "horizontal_ticker"
+      full_width: False
+      x: 460
+      y: 900
+      width: 1000
+      height: 28
+      padding: 2
+      #background_color: [20, 20, 50]
+      font_family: "monospace"
+      font_size: 22
+      font_color: [224, 224, 224]
+      font_style_bold: True
+      font_style_italic: False
+      text: ""
+      rss_url: "https://www.meneame.net/rss2.php"
+      speed: 1
 
-  label3:
-    visible: true
-    type: "time"
-    x: 8
-    y: 76
-    width: 750
-    height: 170
-    padding: 2
-    background_color: [20, 20, 50]
-    font_family: "monospace"
-    font_size: 150
-    font_color: [255, 255, 255]
-    font_style_bold: True
-    font_style_italic: False
-    format_mask: "%I:%M %p"
+    calendar1:
+      visible: true
+      type: "month_calendar"
+      x: 8
+      y: 500
+      width: 360
+      height: 210
+      padding: 2
+      #background_color: [20, 20, 50]
+      font_family: "monospace"
+      font_size: 16
+      font_color: [255, 255, 255]
+      font_style_bold: True
+      font_style_italic: False
 
-  hticker1:
-    visible: true
-    type: "horizontal_ticker"
-    x: 8
-    y: 900
-    width: 1920
-    height: 28
-    padding: 2
-    background_color: [20, 20, 50]
-    font_family: "monospace"
-    font_size: 22
-    font_color: [224, 224, 224]
-    font_style_bold: True
-    font_style_italic: False
-    text: ""
-    rss_url: "https://www.meneame.net/rss2.php"
-    speed: 1
+    image1:
+      visible: true
+      type: "image"
+      x: 800
+      y: 500
+      width: 300
+      height: 300
+      padding: 2
+      #background_color: [20, 20, 50]
+      #path: "resources/images/business-cat.jpg"
+      url: "https://i.kym-cdn.com/photos/images/newsfeed/000/176/107/business-cat.jpg"
 
-  calendar1:
-    visible: true
-    type: "month_calendar"
-    x: 8
-    y: 500
-    width: 360
-    height: 210
-    padding: 2
-    background_color: [20, 20, 50]
-    font_family: "monospace"
-    font_size: 16
-    font_color: [255, 255, 255]
-    font_style_bold: True
-    font_style_italic: False
-
-  image1:
-    visible: true
-    type: "image"
-    x: 800
-    y: 500
-    width: 300
-    height: 300
-    padding: 2
-    background_color: [20, 20, 50]
-    #path: "resources/images/business-cat.jpg"
-    url: "https://i.kym-cdn.com/photos/images/newsfeed/000/176/107/business-cat.jpg"
-
-  weather1:
-    visible: true
-    type: "weather_forecast"
-    provider: "open_meteo"
-    x: 1200
-    y: 32
-    width: 400
-    height: 500
-    padding: 2
-    background_color: [20, 20, 50]
-    font_family: "monospace"
-    font_size: 32
-    font_color: [255, 255, 255]
-    font_style_bold: True
-    font_style_italic: False
-    latitude: 40.4168
-    longitude: -3.7038
-    header_text: "My Weather forecast"
+    weather1:
+      visible: false
+      type: "weather_forecast"
+      provider: "open_meteo"
+      x: 1200
+      y: 32
+      width: 400
+      height: 500
+      padding: 2
+      background_color: [20, 20, 50]
+      font_family: "monospace"
+      font_size: 32
+      font_color: [255, 255, 255]
+      font_style_bold: True
+      font_style_italic: False
+      latitude: 40.4168
+      longitude: -3.7038
+      header_text: "My Weather forecast"

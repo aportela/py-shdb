@@ -47,38 +47,41 @@ def load_config(file_path: str) -> Any:
 COLOR_WHITE=(255, 255, 255)
 COLOR_BLACK=(0, 0, 0)
 
+configuration_file_path = "config.yaml"
+config = load_config(configuration_file_path)
+
+app_name = config.get('general', {}).get('app_name', "Python Smart Home Dashboard")
+debug_widgets = config.get('app', {}).get('debug_widgets', False)
+max_fps = config.get('app', {}).get('max_fps', 30)
+show_fps = config.get('app', {}).get('show_fps', False)
+locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
+cache_path = config.get('app', {}).get('cache_path', None)
+skin = config.get('app', {}).get('skin', None)
+hide_mouse_cursor = config.get('app', {}).get('hide_mouse_cursor', True)
+show_mouse_cursor_on_mouse_motion_events = config.get('app', {}).get('show_mouse_cursor_on_mouse_motion_events', True)
+auto_hide_mouse_cursor_timeout = config.get('app', {}).get('auto_hide_mouse_cursor_timeout', 3)
+
 args = parse_args()
 
 if args.skin:
     if not os.path.exists(args.skin):
         print(f"Error: Custom skin/config file '{args.skin}' not found.")
         sys.exit(1)
-    configuration_file_path = args.skin
-else:
-    configuration_file_path = "config.yaml"
-    if not os.path.exists(configuration_file_path):
-        print(f"Error: Default skin/config file '{configuration_file_path}' not found on current path.")
-        sys.exit(1)
+    skin = args.skin
 
-config = load_config(configuration_file_path)
-
-if config is None:
+if skin is None:
     print("Error: skin/config file is empty or invalid.")
     sys.exit(1)
 
+skin_config = load_config(skin)
+logger.debug(f"Using skin: {skin}")
+
 last_modified_time = os.path.getmtime(configuration_file_path)
 
-app_name = config.get('general', {}).get('app_name', "Python Smart Home Dashboard")
-debug_widgets = config.get('app', {}).get('debug_widgets', False)
-max_fps = config.get('app', {}).get('max_fps', 30)
-show_fps = config.get('app', {}).get('show_fps', False)
-cache_path = config.get('app', {}).get('cache_path', None)
-background_color = config.get('app', {}).get('background_color', COLOR_BLACK)
-
-locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
+background_image = skin_config.get('skin', {}).get('background_image', None)
+background_color = skin_config.get('skin', {}).get('background_color', COLOR_BLACK)
 
 pygame.init()
-
 
 
 FPS.set_default_fps(max_fps)
@@ -89,6 +92,8 @@ logger.debug(f"Current screen resolution: {screen_info.current_w}x{screen_info.c
 
 RESOLUTION = (screen_info.current_w, screen_info.current_h)
 
+# TODO: check skin resolution match
+
 # Configurar pantalla completa
 screen = pygame.display.set_mode(RESOLUTION, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME)
 pygame.display.set_caption(app_name)
@@ -98,10 +103,22 @@ if len(background_color) == 4:
 else:
     framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
 """
+
 framebuffer_global = screen
 
-framebuffer_global.fill(background_color)
+if background_image is not None:
+    if os.path.exists(background_image):
+        wallpaper_image = pygame.image.load(background_image)
+        wallpaper_scaled = pygame.transform.scale(wallpaper_image, (screen_info.current_w, screen_info.current_h))
+        framebuffer_global.blit(wallpaper_scaled, (0, 0))
+    else:
+        print(f"Error: skin background image '{background_image}' not found.")
+        sys.exit(1)
+else:
+    framebuffer_global.fill(background_color)
+
 pygame.display.flip() # update screen with background color, required becase widgets only update owned area
+
 
 widgets = []
 
@@ -129,7 +146,7 @@ def load_widgets():
                 )
             )
         )
-    for widget_name, widget_config in config.get("widgets", {}).items():
+    for widget_name, widget_config in skin_config.get("skin", {}).get("widgets", {}).items():
         if (widget_config.get("visible", False)):
             if (widget_config.get("type", "") == "simple_label"):
                 logger.debug(f"Adding widget: {widget_name} (SimpleLabelWidget)")
@@ -205,13 +222,18 @@ def load_widgets():
                     if (rss_url != None and rss_url != ""):
                         feed = RSSFeed(url = rss_url, max_items=16, default_seconds_refresh_time= 600, cache_path = cache_path)
                         text = " # ".join(f"[{item['published']}] - {item['title']}" for item in feed.get()['items'])
+                full_width = widget_config.get('full_width', False)
+                if full_width:
+                    widget_width = screen_info.current_w - 4
+                else:
+                    widget_width = widget_config.get('width', 0) - 20
                 widgets.append(
                     HorizontalTickerWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
-                        x = widget_config.get('x', 0),
+                        x = 0 if full_width else widget_config.get('x', 0),
                         y = widget_config.get('y', 0),
-                        width = widget_config.get('width', 0),
+                        width = widget_width,
                         height = widget_config.get('height', 0),
                         padding = widget_config.get('padding', 0),
                         background_color = widget_config.get('background_color', None),
@@ -334,6 +356,11 @@ for j in range(len(icon_names)):
     y += 80
     x = 50
 
+if hide_mouse_cursor:
+    pygame.mouse.set_visible(False)
+
+last_mouse_motion_event = pygame.time.get_ticks()
+inactive_time = auto_hide_mouse_cursor_timeout * 1000
 
 while running:
 
@@ -342,6 +369,10 @@ while running:
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             logger.info("See you next time!")
             running = False
+        elif event.type == pygame.MOUSEMOTION and show_mouse_cursor_on_mouse_motion_events:
+            if not pygame.mouse.get_visible():
+                pygame.mouse.set_visible(True)
+            last_mouse_motion_event = pygame.time.get_ticks()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             click_event = event
 
@@ -375,6 +406,16 @@ while running:
 
     # limit fps
     FPS.tick()
+
+    if hide_mouse_cursor and show_mouse_cursor_on_mouse_motion_events:
+        current_time = pygame.time.get_ticks()
+        if current_time - last_mouse_motion_event > inactive_time:
+            if pygame.mouse.get_visible():
+                pygame.mouse.set_visible(False)
+
+
+if hide_mouse_cursor:
+    pygame.mouse.set_visible(True)
 
 pygame.quit()
 

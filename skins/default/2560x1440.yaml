@@ -1,8 +1,8 @@
 general:
   app_name: "Python Smart Home Dashboard"
   version: 0.1
-  width: 1920
-  height: 1080
+  width: 2560
+  height: 1440
 
 app:
   logger_level: DEBUG
