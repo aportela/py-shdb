@@ -44,7 +44,7 @@ class Logger:
         self._logger = logging.getLogger(name)
 
     @staticmethod
-    def parse_level(level: str = None):
+    def parse_level(level: Optional[str] = None):
         """
         Parses the provided log level string and returns the corresponding logging level constant.
 

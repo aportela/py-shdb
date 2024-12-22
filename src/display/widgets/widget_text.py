@@ -1,8 +1,9 @@
+from typing import Optional
 import pygame
 from .widget_font import WidgetFont
 
 class WidgetText:
-    def __init__(self, font: WidgetFont = None, text: str = None) -> None:
+    def __init__(self, font: WidgetFont = None, text: Optional[str] = None) -> None:
         # Ensure that the font is provided, otherwise raise an error
         if font is None:
             raise RuntimeError("Font not set")  # Font must be provided
@@ -14,7 +15,7 @@ class WidgetText:
     def text(self) -> str:
         return self.__str
 
-    def set_text(self, text: str = None) -> None:
+    def set_text(self, text: Optional[str] = None) -> None:
         self.__text = text
 
     def render(self) -> pygame.Surface:

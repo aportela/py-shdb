@@ -1,11 +1,11 @@
-from typing import Any
+from typing import Any, Optional
 import os
 import pickle
 import time
 from ..utils.logger import Logger
 
 class ModuleCache:
-    def __init__(self, cache_path: str = None, expire_seconds: int = 3600, purge_expired: bool = True):
+    def __init__(self, cache_path: Optional[str] = None, expire_seconds: int = 3600, purge_expired: bool = True):
         self.__log = Logger()
         if cache_path:
             self.__cache_path = cache_path

@@ -1,3 +1,4 @@
+from typing import Optional
 import pygame
 import os
 import hashlib
@@ -8,7 +9,7 @@ from ...modules.module_cache import ModuleCache
 
 class ImageWidget(Widget):
 
-    def __init__(self, parent_surface: pygame.Surface, name: str, x: int , y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, path: str = None, url: str = None, cache_path: str = None) -> None:
+    def __init__(self, parent_surface: pygame.Surface, name: str, x: int , y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, path: Optional[str] = None, url: Optional[str] = None, cache_path: Optional[str] = None) -> None:
         super().__init__(parent_surface = parent_surface, name = name, x = x, y = y, width = width, height = height, padding = padding, background_color = background_color, border = border, border_color = border_color)
         self.__image = None
         if path is not None:

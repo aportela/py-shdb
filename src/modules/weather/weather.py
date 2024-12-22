@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 import hashlib
 import time
 from enum import Enum
@@ -20,7 +20,7 @@ class Weather(ABC):
 
     def __init__(self, latitude: float , longitude: float,
                  data_interval: WeatherDataType,
-                 default_seconds_refresh_time: int = 600, cache_path: str = None):
+                 default_seconds_refresh_time: int = 600, cache_path: Optional[str] = None):
         """
         Initializes the Weather object with location and refresh settings.
 

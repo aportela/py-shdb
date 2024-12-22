@@ -1,3 +1,4 @@
+from typing import Optional
 import os
 import pygame
 from .icon_list import IconList as FontAwesomeIcons
@@ -8,7 +9,7 @@ class Icon():
 
     __default_font_file_path = None
 
-    def __init__(self, font_file_path: str = None, size: int = 16, color: tuple = (255, 255, 255)) -> None:
+    def __init__(self, font_file_path: Optional[str] = None, size: int = 16, color: tuple = (255, 255, 255)) -> None:
         if font_file_path is not None:
             if not os.path.exists(font_file_path):
                 raise ValueError(f"Font awesome external file path {font_file_path} not found.")
