@@ -1,6 +1,7 @@
 import pygame
 import random
 
+from ..fps import FPS
 from .widget import Widget, DEFAULT_WIDGET_BORDER_COLOR
 from .widget_font import WidgetFont
 from ..font_awesome_unicode_icons import FontAwesomeUnicodeIcons
@@ -17,8 +18,20 @@ class WeatherForecastWidget(Widget):
         if not text:
             raise RuntimeError("Text not set")
         self.__text = text
+        self._icon = FontAwesomeIconBeatEffect(parent_surface = self.parent_surface,
+                                               x = 10, y = 40,
+                                               icon = FontAwesomeUnicodeIcons.ICON_CLOUD_BOLT,
+                                               font_file_path= "resources/fonts/fa-solid-900.ttf",
+                                               size = 50,
+                                               color = (255,255,255),
+                                               background_color = background_color,
+                                               speed = FontAwesomeAnimationSpeed.MEDIUM,
+                                               use_sprite_cache = False,
+                                               max_size = 60
+        )
+
+    def __blit_defaults(self):
         super()._blit(self.__font.render(self.__text))
-        self._icon = FontAwesomeIconBeatEffect(parent_surface = self.parent_surface, x = 10, y = 40, icon = FontAwesomeUnicodeIcons.ICON_CLOUD_BOLT, file= "resources/fonts/fa-solid-900.ttf", size = 50, color = (255,255,255), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache = False, max_size = 60)
         self._render_required = True
 
         self.__font.update_font(size = 32)
@@ -35,19 +48,22 @@ class WeatherForecastWidget(Widget):
         icons1 = [ FontAwesomeUnicodeIcons.ICON_SUN, FontAwesomeUnicodeIcons.ICON_CLOUD, FontAwesomeUnicodeIcons.ICON_CLOUD_RAIN, FontAwesomeUnicodeIcons.ICON_CLOUD_BOLT ]
         icons2 = [ FontAwesomeUnicodeIcons.ICON_WIND, FontAwesomeUnicodeIcons.ICON_WIND, FontAwesomeUnicodeIcons.ICON_WIND, FontAwesomeUnicodeIcons.ICON_WIND ]
         icons3 = [ FontAwesomeUnicodeIcons.ICON_TEMPERATURE_0, FontAwesomeUnicodeIcons.ICON_TEMPERATURE_1, FontAwesomeUnicodeIcons.ICON_TEMPERATURE_2, FontAwesomeUnicodeIcons.ICON_TEMPERATURE_3, FontAwesomeUnicodeIcons.ICON_TEMPERATURE_4 ]
-        ic = FontAwesomeIcon(file = "resources/fonts/fa-solid-900.ttf", size = 32, color = (255, 255, 255))
+        ic = FontAwesomeIcon(font_file_path = "resources/fonts/fa-solid-900.ttf", size = 32, color = (255, 255, 255))
         for i in range(len(hours)):
             super()._blit(self.__font.render(hours[i]), (x, y))
             super()._blit(ic.render(random.choice(icons1), (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))), (x+170, y+8))
             super()._blit(ic.render(random.choice(icons2), (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))), (x+220, y+8))
             super()._blit(ic.render(random.choice(icons3), (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))), (x+270, y+8))
             y+= 60
+
     def refresh(self, force: bool = False) -> bool:
-        icon_refreshed = self._icon.animate(60)
-        if not self._render_required:
-            self._render_required = icon_refreshed
+        icon_surface = self._icon.render(FPS.get_current_fps())
+        self._render_required = icon_surface is not None
         if force or self._render_required:
-            #super()._clear()
+            print("render refresh")
+            super()._clear()
+            #self.__blit_defaults()
+            super()._blit(icon_surface)
             super()._render()
             self._render_required = False
             return True  # Indicate that the widget was rendered successfully
