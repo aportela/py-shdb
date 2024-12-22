@@ -21,6 +21,7 @@ from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
 from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect, FontAwesomeIconSpinEffect, FontAwesomeIconFlipEffect, FontAwesomeAnimationFlipAxis, FontAwesomeIconFadeEffect, FontAwesomeIconBeatAndFadeEffect
 from src.display.font_awesome_unicode_icons import FontAwesomeUnicodeIcons
+from src.display.font_awesome_icon import FontAwesomeIcon
 
 from src.display.fps import FPS
 
@@ -60,6 +61,11 @@ skin = config.get('app', {}).get('skin', None)
 hide_mouse_cursor = config.get('app', {}).get('hide_mouse_cursor', True)
 show_mouse_cursor_on_mouse_motion_events = config.get('app', {}).get('show_mouse_cursor_on_mouse_motion_events', True)
 auto_hide_mouse_cursor_timeout = config.get('app', {}).get('auto_hide_mouse_cursor_timeout', 3)
+
+font_awesome_path = config.get('resources', {}).get('font_awesome_path', None)
+
+if font_awesome_path is not None:
+    FontAwesomeIcon.set_default_font_filepath(font_awesome_path)
 
 args = parse_args()
 
@@ -331,33 +337,34 @@ speeds = [ FontAwesomeAnimationSpeed.FAST, FontAwesomeAnimationSpeed.MEDIUM, Fon
 icon_names = [ FontAwesomeUnicodeIcons.ICON_BASKETBALL, FontAwesomeUnicodeIcons.ICON_SUN, FontAwesomeUnicodeIcons.ICON_COG, FontAwesomeUnicodeIcons.ICON_COMPACT_DISC, FontAwesomeUnicodeIcons.ICON_COMPUTER, FontAwesomeUnicodeIcons.ICON_FROG ]
 colors = [ (255, 234, 0), (155, 234, 0), (55, 34, 200) ]
 icons = []
+icons_size = 30
 x = 50
 y = 30
 for j in range(len(icon_names)):
     for i in range(len(speeds)):
         if j == 0:
             icons.append(
-                FontAwesomeIconBounceEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False)
+                FontAwesomeIconBounceEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False)
             )
         elif j == 1:
             icons.append(
-                FontAwesomeIconBeatEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, max_size = 36)
+                FontAwesomeIconBeatEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, max_size = 36)
             )
         elif j == 2:
             icons.append(
-                FontAwesomeIconSpinEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
+                FontAwesomeIconSpinEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
             )
         elif j == 3:
             icons.append(
-                FontAwesomeIconFlipEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, axis = FontAwesomeAnimationFlipAxis.HORIZONTAL)
+                FontAwesomeIconFlipEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, axis = FontAwesomeAnimationFlipAxis.HORIZONTAL)
             )
         elif j == 4:
                 icons.append(
-                FontAwesomeIconFadeEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False)
+                FontAwesomeIconFadeEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False)
             )
         elif j == 5:
                 icons.append(
-                FontAwesomeIconBeatAndFadeEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], file= "resources/fonts/fa-solid-900.ttf", size = 30, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, max_size = 36)
+                FontAwesomeIconBeatAndFadeEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], use_sprite_cache = False, max_size = 36)
             )
         x += 50
     y += 80
