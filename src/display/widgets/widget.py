@@ -5,7 +5,7 @@ from ...utils.logger import Logger
 DEFAULT_WIDGET_BORDER_COLOR=(255, 105, 180) # PINK
 
 class Widget(ABC):
-    def __init__(self, surface: pygame.Surface, name: str, x: int, y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int, int] = (0, 0, 0, 0), border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:
+    def __init__(self, surface: pygame.Surface, name: str, x: int, y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:
         self._log = Logger()
         self.__surface = surface
         if not name:
@@ -17,15 +17,17 @@ class Widget(ABC):
             raise ValueError("Invalid width/height/padding.")
         self.__width = width
         self.__height = height
+        self.__widget_area = pygame.Rect(self.__x, self.__y, self.__width, self.__height)
+        self.__sub_surface = self.__surface.subsurface(self.__widget_area)
         self.__padding = padding
         self.__background_color = background_color
         self.__border = border
         self.__border_color = border_color
         self.__rect = pygame.Rect(x, y, width, height)
-        if len(background_color) == 4:
-            self._tmp_surface = pygame.Surface((self.__width, self.__height), pygame.SRCALPHA)
-        else:
-            self._tmp_surface = pygame.Surface((self.__width, self.__height))
+
+        self._tmp_surface = pygame.Surface((self.__width, self.__height), pygame.SRCALPHA if background_color is None else 0)
+        print(f"Dimensiones de sub-superficie: {self.__sub_surface.get_rect()}")
+        print(f"Tamaño de _tmp_surface: {self._tmp_surface.get_size()}")
 
     @property
     def name(self) -> str:
@@ -44,7 +46,10 @@ class Widget(ABC):
         return self.__padding
 
     def _clear(self):
-        self._tmp_surface.fill(self.__background_color)
+        if self.__background_color is None:
+            self._tmp_surface.fill((0, 0, 0, 0))
+        else:
+            self._tmp_surface.fill(self.__background_color)
 
     def _blit(self, surface: pygame.Surface, dest: tuple[int, int] = None):
         if dest is None:
