@@ -57,6 +57,9 @@ show_fps = config.get('app', {}).get('show_fps', False)
 locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
 cache_path = config.get('app', {}).get('cache_path', None)
 skin = config.get('app', {}).get('skin', None)
+hide_mouse_cursor = config.get('app', {}).get('hide_mouse_cursor', True)
+show_mouse_cursor_on_mouse_motion_events = config.get('app', {}).get('show_mouse_cursor_on_mouse_motion_events', True)
+auto_hide_mouse_cursor_timeout = config.get('app', {}).get('auto_hide_mouse_cursor_timeout', 3)
 
 args = parse_args()
 
@@ -353,8 +356,11 @@ for j in range(len(icon_names)):
     y += 80
     x = 50
 
+if hide_mouse_cursor:
+    pygame.mouse.set_visible(False)
 
-#pygame.mouse.set_visible(False)
+last_mouse_motion_event = pygame.time.get_ticks()
+inactive_time = auto_hide_mouse_cursor_timeout * 1000
 
 while running:
 
@@ -363,6 +369,10 @@ while running:
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             logger.info("See you next time!")
             running = False
+        elif event.type == pygame.MOUSEMOTION and show_mouse_cursor_on_mouse_motion_events:
+            # TODO: flickering after first auto hide
+            pygame.mouse.set_visible(True)
+            last_mouse_move_time = pygame.time.get_ticks()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             click_event = event
 
@@ -397,7 +407,13 @@ while running:
     # limit fps
     FPS.tick()
 
-#pygame.mouse.set_visible(True)
+    if hide_mouse_cursor and show_mouse_cursor_on_mouse_motion_events:
+        current_time = pygame.time.get_ticks()
+        if current_time - last_mouse_motion_event > inactive_time:
+            pygame.mouse.set_visible(False)
+
+if hide_mouse_cursor:
+    pygame.mouse.set_visible(True)
 
 pygame.quit()
 

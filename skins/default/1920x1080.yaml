@@ -60,10 +60,10 @@ skin:
     hticker1:
       visible: true
       type: "horizontal_ticker"
-      x: 0
+      full_width: False
+      x: 460
       y: 900
-      full_width: True
-      #width: 1920
+      width: 1000
       height: 28
       padding: 2
       #background_color: [20, 20, 50]
