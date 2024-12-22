@@ -7,6 +7,7 @@ import pygame
 from .font_awesome_unicode_icons import FontAwesomeUnicodeIcons
 from .font_awesome_icon import FontAwesomeIcon
 from ..utils.logger import Logger
+from .fps import FPS
 
 # SIMULATE animations of https://docs.fontawesome.com/web/style/animate#_top
 class FontAwesomeAnimationType(Enum):
@@ -35,8 +36,8 @@ class FontAwesomeAnimationSpinDirection(Enum):
     COUNTERCLOCKWISE = 2
 
 class FontAwesomeIconBaseEffect(FontAwesomeIcon):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), animation_total_frames: int = 0, use_sprite_cache: bool = False) -> None:
-        super().__init__(file = file, size = size, color = color)
+    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, font_file_path: str = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), animation_total_frames: int = 0, use_sprite_cache: bool = False) -> None:
+        super().__init__(font_file_path = font_file_path, size = size, color = color)
         self._log = Logger()
         self._parent_surface = parent_surface
         self.__tmp_surface = None
@@ -45,7 +46,7 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         self._icon = icon
         self._color = color
         self.__background_color = background_color
-        self.__transparent = len(background_color) == 4
+        self.__transparent = background_color == None
         self._speed = speed
         self._set_animation_duration_coefficients(animation_duration_coefficients)
         if use_sprite_cache:
@@ -127,15 +128,18 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         return render_required
 
     def _clear(self) -> None:
-        self.__tmp_surface.fill(self.__background_color)
+        if self.__background_color is None:
+            self.__tmp_surface.fill((0, 0, 0, 0))
+        else:
+            self.__tmp_surface.fill(self.__background_color)
 
     def _blit(self, surface: pygame.Surface, dest: tuple[int, int]) -> None:
-        self.__tmp_surface.fill(self.__background_color)
+        #self.__tmp_surface.fill(self.__background_color)
         self.__tmp_surface.blit(surface, dest)
 
-    def animate(self, current_fps: int) -> bool:
+    def animate(self) -> bool:
         if self._parent_surface is not None:
-            self.__animation_duration = self.__set_animation_duration(current_fps, self._speed)
+            self.__animation_duration = self.__set_animation_duration(FPS.get_current_fps(), self._speed)
             if self._animate():
                 self._parent_surface.blit(self.__tmp_surface, (self.__x, self.__y))
                 return True
@@ -148,9 +152,12 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
     def _animate(self) -> bool:
         raise ValueError("Missing _animate method.")
 
+    def _set_animation_duration(self):
+        self.__animation_duration = self.__set_animation_duration(FPS.get_current_fps(), self._speed)
+
 class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, max_size: int = 0) -> None:
-        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, font_file_path: str = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, max_size: int = 0) -> None:
+        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_file_path = font_file_path, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.BEAT
         self.__original_size = size
         if (max_size <= size):
@@ -164,6 +171,7 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
         icon_surface = super().render(self._icon, self._color)
         big_size_cached = icon_surface.get_size()
         super()._create_temporal_surface(big_size_cached)
+        self.__size = big_size_cached
         # restore original size
         super().set_size(self.__original_size)
         icon_surface = super().render(self._icon, self._color)
@@ -192,9 +200,40 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
         else:
             return False
 
+    def render(self, current_fps: int) -> pygame.Surface:
+        self._set_animation_duration()
+        print(f"current {self.__current_size} / max: {self.__max_size} - frameskip: {self._frame_skip}")
+        if self.__increase_size:
+            print("increase")
+            if self.__current_size < self.__max_size:
+                self.__current_size += self._frame_skip
+            else:
+                self.__increase_size = False
+        else:
+            print("decrease")
+            if self.__current_size > self.__original_size:
+                self.__current_size -= self._frame_skip
+            else:
+                self.__increase_size = True
+        if self.__last_size != int(self.__current_size):
+            print("cambio size")
+            tmp_surface = pygame.Surface(self.__size, pygame.SRCALPHA)
+            super().set_size(int(self.__current_size))
+            icon_surface = super().render(self._icon, self._color)
+            x = (self._get_temporal_surface_width() - icon_surface.get_width()) // 2
+            y = (self._get_temporal_surface_height() - icon_surface.get_height()) // 2
+            tmp_surface.blit(icon_surface, (x, y))
+            self.__last_size = int(self.__current_size)
+            return tmp_surface
+        else:
+            return None
+
+    #def reset_animation(self):
+        # TODO
+
 class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, max_size: int = 0) -> None:
-        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, font_file_path: str = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, max_size: int = 0) -> None:
+        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_file_path = font_file_path, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.BEAT_AND_FADE
         self.__original_size = size
         if (max_size <= size):
@@ -239,8 +278,8 @@ class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
             return False
 
 class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False) -> None:
-        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, font_file_path: str = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False) -> None:
+        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_file_path = font_file_path, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.BOUNCE
         self.__icon_surface = super().render(self._icon, self._color)
         total_height = self.__icon_surface.get_height() + (self.__icon_surface.get_height() // 2)
@@ -299,8 +338,8 @@ class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
             return False
 
 class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
-        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, font_file_path: str = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
+        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_file_path = font_file_path, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.FADE
         self.__current_alpha = 0
         self.__last_alpha = 0
@@ -332,8 +371,8 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
             return False
 
 class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), use_sprite_cache: bool = False, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
-        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed, animation_duration_coefficients = animation_duration_coefficients, animation_total_frames = 359)
+    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, font_file_path: str = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), use_sprite_cache: bool = False, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
+        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_file_path = font_file_path, size = size, color = color, background_color = background_color, speed = speed, animation_duration_coefficients = animation_duration_coefficients, animation_total_frames = 359)
         if direction == FontAwesomeAnimationSpinDirection.CLOCKWISE:
             self._animation_type = FontAwesomeAnimationType.SPIN_CLOCKWISE
             self.__angle = 0
@@ -369,8 +408,8 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
             return False
 
 class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, file: str, size: int, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int, int] = (0, 0, 0, 0), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, axis: FontAwesomeAnimationFlipAxis = FontAwesomeAnimationFlipAxis.HORIZONTAL) -> None:
-        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, file = file, size = size, color = color, background_color = background_color, speed = speed)
+    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeUnicodeIcons, font_file_path: str = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache: bool = False, axis: FontAwesomeAnimationFlipAxis = FontAwesomeAnimationFlipAxis.HORIZONTAL) -> None:
+        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_file_path = font_file_path, size = size, color = color, background_color = background_color, speed = speed)
         if axis == FontAwesomeAnimationFlipAxis.HORIZONTAL:
             self._animation_type = FontAwesomeAnimationType.HORIZONTAL_FLIP
         else:
