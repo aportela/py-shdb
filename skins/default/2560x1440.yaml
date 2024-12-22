@@ -112,7 +112,7 @@ skin:
       width: 400
       height: 500
       padding: 2
-      background_color: [20, 20, 50]
+      #background_color: [20, 20, 50]
       font_family: "monospace"
       font_size: 32
       font_color: [255, 255, 255]
