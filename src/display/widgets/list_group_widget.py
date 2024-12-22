@@ -7,7 +7,7 @@ from .widget_font import WidgetFont
 class ListGroupWidget(Widget):
 
     def __init__(self, name: str, x: int, y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int] = None, border: bool = False, surface: pygame.Surface = None, title_font: WidgetFont = None, title_text: str = None, items_font: WidgetFont = None, items_text: Optional[List[str]] = None) -> None:
-        super().__init__(surface = surface, name = name, x = x, y = y, width = width, height = height, padding = padding, background_color = background_color, border = border, border_color = border_color)
+        super().__init__(parent_surface = parent_surface, name = name, x = x, y = y, width = width, height = height, padding = padding, background_color = background_color, border = border, border_color = border_color)
         if not font:
             raise RuntimeError("Font not set")
         self.__font = font
