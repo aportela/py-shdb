@@ -10,7 +10,7 @@ app:
   max_fps: 60
   show_fps: true
   locale: "es_ES.UTF-8"
-  background_color: [20, 20, 50]
+  background_color: [20, 20, 50] # DO NOT USE TRANSPARENCY (ALPHA VALUE) HERE!, ONLY R,G,B
   cache_path: "tmp/cache"
   skin: "skins/default/1920x1080.ini"
 
@@ -23,7 +23,7 @@ widgets:
     width: 276
     height: 25
     padding: 2
-    background_color: [20, 20, 50]
+    background_color: [20, 20, 150]
     font_family: "monospace"
     font_size: 16
     font_color: [255, 255, 255]
@@ -39,7 +39,6 @@ widgets:
     width: 750
     height: 34
     padding: 2
-    background_color: [20, 20, 50]
     font_family: "monospace"
     font_size: 24
     font_color: [255, 255, 255]
@@ -55,7 +54,6 @@ widgets:
     width: 750
     height: 170
     padding: 2
-    background_color: [20, 20, 50]
     font_family: "monospace"
     font_size: 150
     font_color: [255, 255, 255]
@@ -71,7 +69,8 @@ widgets:
     width: 1920
     height: 28
     padding: 2
-    background_color: [20, 20, 50]
+    #background_color: [20, 20, 50]
+    background_color: [10, 10, 30]
     font_family: "monospace"
     font_size: 22
     font_color: [224, 224, 224]
@@ -89,7 +88,6 @@ widgets:
     width: 360
     height: 210
     padding: 2
-    background_color: [20, 20, 50]
     font_family: "monospace"
     font_size: 16
     font_color: [255, 255, 255]
@@ -117,7 +115,6 @@ widgets:
     width: 400
     height: 500
     padding: 2
-    background_color: [20, 20, 50]
     font_family: "monospace"
     font_size: 32
     font_color: [255, 255, 255]
