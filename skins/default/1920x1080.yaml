@@ -58,14 +58,15 @@ skin:
       format_mask: "%I:%M %p"
 
     hticker1:
-      visible: false
+      visible: true
       type: "horizontal_ticker"
-      x: 8
+      x: 0
       y: 900
-      width: 1920
+      full_width: True
+      #width: 1920
       height: 28
       padding: 2
-      background_color: [20, 20, 50]
+      #background_color: [20, 20, 50]
       font_family: "monospace"
       font_size: 22
       font_color: [224, 224, 224]
@@ -76,14 +77,14 @@ skin:
       speed: 1
 
     calendar1:
-      visible: false
+      visible: true
       type: "month_calendar"
       x: 8
       y: 500
       width: 360
       height: 210
       padding: 2
-      background_color: [20, 20, 50]
+      #background_color: [20, 20, 50]
       font_family: "monospace"
       font_size: 16
       font_color: [255, 255, 255]
@@ -91,14 +92,14 @@ skin:
       font_style_italic: False
 
     image1:
-      visible: false
+      visible: true
       type: "image"
       x: 800
       y: 500
       width: 300
       height: 300
       padding: 2
-      background_color: [20, 20, 50]
+      #background_color: [20, 20, 50]
       #path: "resources/images/business-cat.jpg"
       url: "https://i.kym-cdn.com/photos/images/newsfeed/000/176/107/business-cat.jpg"
 

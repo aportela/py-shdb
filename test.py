@@ -219,13 +219,18 @@ def load_widgets():
                     if (rss_url != None and rss_url != ""):
                         feed = RSSFeed(url = rss_url, max_items=16, default_seconds_refresh_time= 600, cache_path = cache_path)
                         text = " # ".join(f"[{item['published']}] - {item['title']}" for item in feed.get()['items'])
+                full_width = widget_config.get('full_width', False)
+                if full_width:
+                    widget_width = screen_info.current_w - 4
+                else:
+                    widget_width = widget_config.get('width', 0) - 20
                 widgets.append(
                     HorizontalTickerWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
-                        x = widget_config.get('x', 0),
+                        x = 0 if full_width else widget_config.get('x', 0),
                         y = widget_config.get('y', 0),
-                        width = widget_config.get('width', 0),
+                        width = widget_width,
                         height = widget_config.get('height', 0),
                         padding = widget_config.get('padding', 0),
                         background_color = widget_config.get('background_color', None),
