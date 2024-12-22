@@ -370,9 +370,9 @@ while running:
             logger.info("See you next time!")
             running = False
         elif event.type == pygame.MOUSEMOTION and show_mouse_cursor_on_mouse_motion_events:
-            # TODO: flickering after first auto hide
-            pygame.mouse.set_visible(True)
-            last_mouse_move_time = pygame.time.get_ticks()
+            if not pygame.mouse.get_visible():
+                pygame.mouse.set_visible(True)
+            last_mouse_motion_event = pygame.time.get_ticks()
         elif event.type == pygame.MOUSEBUTTONDOWN:
             click_event = event
 
@@ -410,7 +410,9 @@ while running:
     if hide_mouse_cursor and show_mouse_cursor_on_mouse_motion_events:
         current_time = pygame.time.get_ticks()
         if current_time - last_mouse_motion_event > inactive_time:
-            pygame.mouse.set_visible(False)
+            if pygame.mouse.get_visible():
+                pygame.mouse.set_visible(False)
+
 
 if hide_mouse_cursor:
     pygame.mouse.set_visible(True)
