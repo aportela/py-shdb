@@ -10,3 +10,5 @@ app:
   locale: "es_ES.UTF-8"
   cache_path: "tmp/cache"
   skin: "skins/default/1920x1080.yaml"
+  # TODO
+  # night_skin: "skins/default/1920x1080-night.yaml"
