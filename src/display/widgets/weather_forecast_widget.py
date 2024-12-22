@@ -9,8 +9,8 @@ from ..font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeA
 
 class WeatherForecastWidget(Widget):
 
-    def __init__(self, surface: pygame.Surface, name: str, x: int , y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, font: WidgetFont = None, text: str = None) -> None:
-        super().__init__(surface = surface, name = name, x = x, y = y, width = width, height = height, padding = padding, background_color = background_color, border = border, border_color = border_color)
+    def __init__(self, parent_surface: pygame.Surface, name: str, x: int , y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, font: WidgetFont = None, text: str = None) -> None:
+        super().__init__(parent_surface = parent_surface, name = name, x = x, y = y, width = width, height = height, padding = padding, background_color = background_color, border = border, border_color = border_color)
         if not font:
             raise RuntimeError("Font not set")
         self.__font = font
@@ -18,8 +18,8 @@ class WeatherForecastWidget(Widget):
             raise RuntimeError("Text not set")
         self.__text = text
         super()._blit(self.__font.render(self.__text))
+        self._icon = FontAwesomeIconBeatEffect(parent_surface = self.parent_surface, x = 10, y = 40, icon = FontAwesomeUnicodeIcons.ICON_CLOUD_BOLT, file= "resources/fonts/fa-solid-900.ttf", size = 50, color = (255,255,255), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache = False, max_size = 60)
         self._render_required = True
-        self._icon = FontAwesomeIconBeatEffect(surface = self._tmp_surface, x = 10, y = 40, icon = FontAwesomeUnicodeIcons.ICON_CLOUD_BOLT, file= "resources/fonts/fa-solid-900.ttf", size = 50, color = (255,255,255), background_color = background_color, speed = FontAwesomeAnimationSpeed.MEDIUM, use_sprite_cache = False, max_size = 60)
 
         self.__font.update_font(size = 32)
         super()._blit(self.__font.render("NOW"), (80, 52))
