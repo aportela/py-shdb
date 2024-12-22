@@ -71,9 +71,11 @@ if skin is None:
     sys.exit(1)
 
 skin_config = load_config(skin)
+logger.debug(f"Using skin: {skin}")
 
 last_modified_time = os.path.getmtime(configuration_file_path)
 
+background_image = skin_config.get('skin', {}).get('background_image', None)
 background_color = skin_config.get('skin', {}).get('background_color', COLOR_BLACK)
 
 pygame.init()
@@ -99,12 +101,19 @@ else:
     framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
 """
 
-#wallpaper_image = pygame.image.load("resources/images/wallhaven-nzojvj.jpg")
-#wallpaper_scaled = pygame.transform.scale(wallpaper_image, (screen_info.current_w, screen_info.current_h))
-
 framebuffer_global = screen
 
-framebuffer_global.fill(background_color)
+if background_image is not None:
+    if os.path.exists(background_image):
+        wallpaper_image = pygame.image.load(background_image)
+        wallpaper_scaled = pygame.transform.scale(wallpaper_image, (screen_info.current_w, screen_info.current_h))
+        framebuffer_global.blit(wallpaper_scaled, (0, 0))
+    else:
+        print(f"Error: skin background image '{background_image}' not found.")
+        sys.exit(1)
+else:
+    framebuffer_global.fill(background_color)
+
 pygame.display.flip() # update screen with background color, required becase widgets only update owned area
 
 
