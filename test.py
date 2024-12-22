@@ -139,23 +139,24 @@ def load_widgets():
     logger.info("Loading widgets")
     widgets.clear()
     if show_fps:
+        fps_widget_width = config.get('widget_defaults', {}).get('fps', {}).get("width", 88)
         widgets.append(
             FPSWidget(
                 parent_surface = framebuffer_global,
-                name = "fps",
-                x = screen_info.current_w - 90,
-                y = 8,
-                width = 90,
-                height = 22,
-                padding = 1,
+                name = config.get('widget_defaults', {}).get('fps', {}).get("name", "fps"),
+                x = screen_info.current_w - fps_widget_width,
+                y = 0,
+                width = fps_widget_width,
+                height = config.get('widget_defaults', {}).get('fps', {}).get("height", 21),
+                padding = config.get('widget_defaults', {}).get('fps', {}).get("padding", 1),
                 background_color = None,
                 border = debug_widgets,
                 font = WidgetFont(
-                    family = "monospace",
-                    size = 18,
-                    color = COLOR_WHITE,
-                    style_bold = True,
-                    style_italic = False
+                    family = config.get('widget_defaults', {}).get('fps', {}).get("font_family", "monospace"),
+                    size = config.get('widget_defaults', {}).get('fps', {}).get("font_size", 18),
+                    color = config.get('widget_defaults', {}).get('fps', {}).get("font_color", COLOR_WHITE),
+                    style_bold = config.get('widget_defaults', {}).get('fps', {}).get("font_style_bold", False),
+                    style_italic = config.get('widget_defaults', {}).get('fps', {}).get("font_style_italic", False),
                 )
             )
         )

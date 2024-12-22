@@ -16,5 +16,16 @@ app:
   show_mouse_cursor_on_mouse_motion_events: True
   auto_hide_mouse_cursor_timeout: 3
 
+widget_defaults:
+  fps:
+    name: "fps"
+    width: 88
+    height: 21
+    padding: 1
+    font_family: "monospace"
+    font_size: 18
+    font_color: [255, 255, 0]
+    font_style_bold: True
+
 resources:
   font_awesome_path: "resources/fonts/fa-solid-900.ttf"
