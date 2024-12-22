@@ -66,6 +66,9 @@ class FontAwesomeIconBaseEffect(FontAwesomeIcon):
         else:
             self.__tmp_surface = pygame.Surface(size)
 
+        print (tuple[0])
+        #self.__widget_area = pygame.Rect(self.__x, self.__y, tuple[0], tuple[1])
+
     def _get_temporal_surface_width(self) -> int:
         if self.__tmp_surface is not None:
             return self.__tmp_surface.get_width()
@@ -202,21 +205,17 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
 
     def render(self, current_fps: int) -> pygame.Surface:
         self._set_animation_duration()
-        print(f"current {self.__current_size} / max: {self.__max_size} - frameskip: {self._frame_skip}")
         if self.__increase_size:
-            print("increase")
             if self.__current_size < self.__max_size:
                 self.__current_size += self._frame_skip
             else:
                 self.__increase_size = False
         else:
-            print("decrease")
             if self.__current_size > self.__original_size:
                 self.__current_size -= self._frame_skip
             else:
                 self.__increase_size = True
         if self.__last_size != int(self.__current_size):
-            print("cambio size")
             tmp_surface = pygame.Surface(self.__size, pygame.SRCALPHA)
             super().set_size(int(self.__current_size))
             icon_surface = super().render(self._icon, self._color)
