@@ -20,7 +20,7 @@ from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
 from src.display.font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect, FontAwesomeIconSpinEffect, FontAwesomeIconFlipEffect, FontAwesomeAnimationFlipAxis, FontAwesomeIconFadeEffect, FontAwesomeIconBeatAndFadeEffect
-from src.display.font_awesome_unicode_icons import FontAwesomeUnicodeIcons
+from src.display.icons.font_awesome.icon_list import IconList as FontAwesomeIcons
 from src.display.font_awesome_icon import FontAwesomeIcon
 
 from src.display.fps import FPS
@@ -335,7 +335,7 @@ running = True
 click_event = None
 
 speeds = [ FontAwesomeAnimationSpeed.FAST, FontAwesomeAnimationSpeed.MEDIUM, FontAwesomeAnimationSpeed.SLOW ]
-icon_names = [ FontAwesomeUnicodeIcons.ICON_BASKETBALL, FontAwesomeUnicodeIcons.ICON_SUN, FontAwesomeUnicodeIcons.ICON_COG, FontAwesomeUnicodeIcons.ICON_COMPACT_DISC, FontAwesomeUnicodeIcons.ICON_COMPUTER, FontAwesomeUnicodeIcons.ICON_FROG ]
+icon_names = [ FontAwesomeIcons.ICON_BASKETBALL, FontAwesomeIcons.ICON_SUN, FontAwesomeIcons.ICON_COG, FontAwesomeIcons.ICON_COMPACT_DISC, FontAwesomeIcons.ICON_COMPUTER, FontAwesomeIcons.ICON_FROG ]
 colors = [ (255, 234, 0), (155, 234, 0), (55, 34, 200) ]
 icons = []
 icons_size = 30

@@ -1,10 +1,9 @@
 import pygame
 import random
 
-from ..fps import FPS
 from .widget import Widget, DEFAULT_WIDGET_BORDER_COLOR
 from .widget_font import WidgetFont
-from ..font_awesome_unicode_icons import FontAwesomeUnicodeIcons
+from ..icons.font_awesome.icon_list import IconList as FontAwesomeIcons
 from ..font_awesome_icon import FontAwesomeIcon
 from ..font_awesome_animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect, FontAwesomeIconSpinEffect, FontAwesomeIconFlipEffect, FontAwesomeAnimationFlipAxis, FontAwesomeIconFadeEffect, FontAwesomeIconBeatAndFadeEffect
 
@@ -20,7 +19,7 @@ class WeatherForecastWidget(Widget):
         self.__text = text
         self._icon = FontAwesomeIconBeatEffect(parent_surface = self.parent_surface,
                                                x = 10, y = 40,
-                                               icon = FontAwesomeUnicodeIcons.ICON_CLOUD_BOLT,
+                                               icon = FontAwesomeIcons.ICON_CLOUD_BOLT,
                                                font_file_path= "resources/fonts/fa-solid-900.ttf",
                                                size = 50,
                                                color = (255,255,255),
@@ -44,9 +43,9 @@ class WeatherForecastWidget(Widget):
         hours = ["16:00", "17:00", "18:00", "19:00", "20:00", "21:00" ]
         x = 4
         y = 110
-        icons1 = [ FontAwesomeUnicodeIcons.ICON_SUN, FontAwesomeUnicodeIcons.ICON_CLOUD, FontAwesomeUnicodeIcons.ICON_CLOUD_RAIN, FontAwesomeUnicodeIcons.ICON_CLOUD_BOLT ]
-        icons2 = [ FontAwesomeUnicodeIcons.ICON_WIND, FontAwesomeUnicodeIcons.ICON_WIND, FontAwesomeUnicodeIcons.ICON_WIND, FontAwesomeUnicodeIcons.ICON_WIND ]
-        icons3 = [ FontAwesomeUnicodeIcons.ICON_TEMPERATURE_0, FontAwesomeUnicodeIcons.ICON_TEMPERATURE_1, FontAwesomeUnicodeIcons.ICON_TEMPERATURE_2, FontAwesomeUnicodeIcons.ICON_TEMPERATURE_3, FontAwesomeUnicodeIcons.ICON_TEMPERATURE_4 ]
+        icons1 = [ FontAwesomeIcons.ICON_SUN, FontAwesomeIcons.ICON_CLOUD, FontAwesomeIcons.ICON_CLOUD_RAIN, FontAwesomeIcons.ICON_CLOUD_BOLT ]
+        icons2 = [ FontAwesomeIcons.ICON_WIND, FontAwesomeIcons.ICON_WIND, FontAwesomeIcons.ICON_WIND, FontAwesomeIcons.ICON_WIND ]
+        icons3 = [ FontAwesomeIcons.ICON_TEMPERATURE_0, FontAwesomeIcons.ICON_TEMPERATURE_1, FontAwesomeIcons.ICON_TEMPERATURE_2, FontAwesomeIcons.ICON_TEMPERATURE_3, FontAwesomeIcons.ICON_TEMPERATURE_4 ]
         ic = FontAwesomeIcon(font_file_path = "resources/fonts/fa-solid-900.ttf", size = 32, color = (255, 255, 255))
         for i in range(len(hours)):
             super()._blit(self.__font.render(hours[i]), (x, y))
@@ -56,13 +55,14 @@ class WeatherForecastWidget(Widget):
             y+= 60
 
     def refresh(self, force: bool = False) -> bool:
-        icon_surface = self._icon.render(FPS.get_current_fps())
+        icon_surface = self._icon.render()
         self._render_required = icon_surface is not None
         if force or self._render_required:
-            print("render refresh")
             super()._clear()
             #self.__blit_defaults()
+            #self._icon.clear_prev()
             super()._blit(icon_surface)
+            #self._icon.update_1()
             super()._render()
             self._render_required = False
             return True  # Indicate that the widget was rendered successfully

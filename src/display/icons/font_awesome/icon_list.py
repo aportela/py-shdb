@@ -1,6 +1,6 @@
 from enum import Enum
 
-class FontAwesomeUnicodeIcons(str, Enum):
+class IconList(str, Enum):
     ICON_0 = "\u0030"
     ICON_1 = "\u0031"
     ICON_2 = "\u0032"
