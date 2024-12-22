@@ -5,9 +5,9 @@ from ...utils.logger import Logger
 DEFAULT_WIDGET_BORDER_COLOR=(255, 105, 180) # PINK
 
 class Widget(ABC):
-    def __init__(self, surface: pygame.Surface, name: str, x: int, y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:
+    def __init__(self, parent_surface: pygame.Surface, name: str, x: int, y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:
         self._log = Logger()
-        self.__surface = surface
+        self.__parent_surface = parent_surface
         if not name:
             raise ValueError("Name cannot be None or empty.")
         self.__name = name
@@ -18,16 +18,20 @@ class Widget(ABC):
         self.__width = width
         self.__height = height
         self.__widget_area = pygame.Rect(self.__x, self.__y, self.__width, self.__height)
-        self.__sub_surface = self.__surface.subsurface(self.__widget_area)
+        self.refresh_sub_surface_from_parent_surface()
         self.__padding = padding
         self.__background_color = background_color
         self.__border = border
         self.__border_color = border_color
         self.__rect = pygame.Rect(x, y, width, height)
-
         self._tmp_surface = pygame.Surface((self.__width, self.__height), pygame.SRCALPHA if background_color is None else 0)
-        print(f"Dimensiones de sub-superficie: {self.__sub_surface.get_rect()}")
-        print(f"Tamaño de _tmp_surface: {self._tmp_surface.get_size()}")
+
+    def refresh_sub_surface_from_parent_surface(self) -> None:
+        self.__sub_surface = self.__parent_surface.subsurface(self.__widget_area).copy()
+
+    @property
+    def parent_surface(self) -> pygame.Surface:
+        return self.__parent_surface
 
     @property
     def name(self) -> str:
@@ -57,9 +61,11 @@ class Widget(ABC):
         self._tmp_surface.blit(surface, dest)
 
     def _render(self):
+        self.__parent_surface.blit(self.__sub_surface, self.__widget_area) # clear previous widget area (restoring with original area)
         if self.__border:
             pygame.draw.rect(self._tmp_surface, self.__border_color, (0, 0, self.__width , self.__height), 1)
-        self.__surface.blit(self._tmp_surface, (self.__x, self.__y))
+        self.__parent_surface.blit(self._tmp_surface, self.__widget_area)
+        pygame.display.update(self.__widget_area) # update only the widget area
 
     @abstractmethod
     def refresh(self, force: bool = False) -> bool:
