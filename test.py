@@ -47,38 +47,36 @@ def load_config(file_path: str) -> Any:
 COLOR_WHITE=(255, 255, 255)
 COLOR_BLACK=(0, 0, 0)
 
+configuration_file_path = "config.yaml"
+config = load_config(configuration_file_path)
+
+app_name = config.get('general', {}).get('app_name', "Python Smart Home Dashboard")
+debug_widgets = config.get('app', {}).get('debug_widgets', False)
+max_fps = config.get('app', {}).get('max_fps', 30)
+show_fps = config.get('app', {}).get('show_fps', False)
+locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
+cache_path = config.get('app', {}).get('cache_path', None)
+skin = config.get('app', {}).get('skin', None)
+
 args = parse_args()
 
 if args.skin:
     if not os.path.exists(args.skin):
         print(f"Error: Custom skin/config file '{args.skin}' not found.")
         sys.exit(1)
-    configuration_file_path = args.skin
-else:
-    configuration_file_path = "config.yaml"
-    if not os.path.exists(configuration_file_path):
-        print(f"Error: Default skin/config file '{configuration_file_path}' not found on current path.")
-        sys.exit(1)
+    skin = args.skin
 
-config = load_config(configuration_file_path)
-
-if config is None:
+if skin is None:
     print("Error: skin/config file is empty or invalid.")
     sys.exit(1)
 
+skin_config = load_config(skin)
+
 last_modified_time = os.path.getmtime(configuration_file_path)
 
-app_name = config.get('general', {}).get('app_name', "Python Smart Home Dashboard")
-debug_widgets = config.get('app', {}).get('debug_widgets', False)
-max_fps = config.get('app', {}).get('max_fps', 30)
-show_fps = config.get('app', {}).get('show_fps', False)
-cache_path = config.get('app', {}).get('cache_path', None)
-background_color = config.get('app', {}).get('background_color', COLOR_BLACK)
-
-locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
+background_color = skin_config.get('skin', {}).get('background_color', COLOR_BLACK)
 
 pygame.init()
-
 
 
 FPS.set_default_fps(max_fps)
@@ -89,6 +87,8 @@ logger.debug(f"Current screen resolution: {screen_info.current_w}x{screen_info.c
 
 RESOLUTION = (screen_info.current_w, screen_info.current_h)
 
+# TODO: check skin resolution match
+
 # Configurar pantalla completa
 screen = pygame.display.set_mode(RESOLUTION, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME)
 pygame.display.set_caption(app_name)
@@ -98,10 +98,15 @@ if len(background_color) == 4:
 else:
     framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
 """
+
+#wallpaper_image = pygame.image.load("resources/images/wallhaven-nzojvj.jpg")
+#wallpaper_scaled = pygame.transform.scale(wallpaper_image, (screen_info.current_w, screen_info.current_h))
+
 framebuffer_global = screen
 
 framebuffer_global.fill(background_color)
 pygame.display.flip() # update screen with background color, required becase widgets only update owned area
+
 
 widgets = []
 
@@ -129,7 +134,7 @@ def load_widgets():
                 )
             )
         )
-    for widget_name, widget_config in config.get("widgets", {}).items():
+    for widget_name, widget_config in skin_config.get("skin", {}).get("widgets", {}).items():
         if (widget_config.get("visible", False)):
             if (widget_config.get("type", "") == "simple_label"):
                 logger.debug(f"Adding widget: {widget_name} (SimpleLabelWidget)")

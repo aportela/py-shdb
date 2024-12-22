@@ -1,0 +1,12 @@
+general:
+  app_name: "Python Smart Home Dashboard"
+  version: 0.1
+
+app:
+  logger_level: DEBUG
+  debug_widgets: true
+  max_fps: 60
+  show_fps: true
+  locale: "es_ES.UTF-8"
+  cache_path: "tmp/cache"
+  skin: "skins/default/1920x1080.yaml"
