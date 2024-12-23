@@ -1,5 +1,4 @@
 import yaml
-from typing import Any
 import locale
 import os
 from .logger import Logger
@@ -10,7 +9,6 @@ class Configuration:
 
     def __init__(self, logger: Logger, path: str):
         self._logger = logger
-        self._logger.debug(f"Using configuration file: {path}")
         self.__path = path
         self._loaded_configuration = None
         self.__last_modified_time = None
@@ -36,6 +34,7 @@ class AppSettings (Configuration):
 
     def __init__(self, logger: Logger, path: str):
         super().__init__(logger = logger, path = path)
+        self._logger.debug(f"Configuration file: {path}")
         super()._load(path)
         self.__apply()
 
@@ -87,3 +86,34 @@ class AppSettings (Configuration):
     @property
     def skin(self) -> str:
         return self._loaded_configuration.get('app', {}).get('skin', None)
+
+
+class SkinSettings (Configuration):
+
+    def __init__(self, logger: Logger, path: str):
+        super().__init__(logger = logger, path = path)
+        self._logger.debug(f"Skin file: {path}")
+        super()._load(path)
+        self.__apply()
+
+    def __apply(self) -> bool:
+        if self._loaded_configuration is not None:
+            return True
+        else:
+            return False
+
+    def reload(self) -> bool:
+        super()._load()
+        return self.__apply()
+
+    @property
+    def background_image_url(self) -> str:
+        return self._loaded_configuration.get('skin', {}).get('background_image_url', None)
+
+    @property
+    def background_image(self) -> str:
+        return self._loaded_configuration.get('skin', {}).get('background_image', None)
+
+    @property
+    def background_color(self) -> str:
+        return self._loaded_configuration.get('skin', {}).get('background_color', None)

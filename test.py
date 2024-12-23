@@ -12,7 +12,7 @@ from src.utils.logger import Logger
 from src.modules.module_cache import ModuleCache
 from src.modules.rss.rss_feed import RSSFeed
 
-from src.utils.configuration import AppSettings
+from src.utils.configuration import AppSettings, SkinSettings
 from src.utils.commandline import Commandline
 
 from src.display.widgets.fps_widget import FPSWidget
@@ -67,14 +67,12 @@ if skin is None:
 
 skin_config = load_config(skin)
 
-logger.debug(f"Using skin: {skin}")
+skin_settings = SkinSettings(logger, skin)
 
-background_image_url = skin_config.get('skin', {}).get('background_image_url', None)
-background_image = skin_config.get('skin', {}).get('background_image', None)
-background_color = skin_config.get('skin', {}).get('background_color', COLOR_BLACK)
+# TODO: remove
+background_color = skin_settings.background_color or COLOR_BLACK
 
 pygame.init()
-
 
 screen_info = pygame.display.Info()
 
@@ -100,19 +98,19 @@ def set_background_image(path: str):
         wallpaper_scaled = pygame.transform.scale(wallpaper_image, (screen_info.current_w, screen_info.current_h))
         current_screen_surface.blit(wallpaper_scaled, (0, 0))
     else:
-        print(f"Error: skin background image '{background_image}' not found.")
+        print(f"Error: skin background image '{path}' not found.")
         sys.exit(1)
 
 def dump_background():
 
-    if background_image_url is not None:
-        cache_file_path = f"{app_settings.cache_path}/images/{hashlib.sha256(background_image_url.encode('utf-8')).hexdigest()[:64]}.image"
+    if skin_settings.background_image_url is not None:
+        cache_file_path = f"{app_settings.cache_path}/images/{hashlib.sha256(skin_settings.background_image_url.encode('utf-8')).hexdigest()[:64]}.image"
         if os.path.exists(cache_file_path):
             logger.debug(f"Remote background url image cache found on {cache_file_path}")
             set_background_image(cache_file_path)
         else:
             try:
-                response = requests.get(background_image_url, timeout=10)
+                response = requests.get(skin_settings.background_image_url, timeout=10)
                 response.raise_for_status()
                 if 'image' not in response.headers['Content-Type']:
                     raise ValueError("The URL does not point to a valid image.")
@@ -123,10 +121,10 @@ def dump_background():
                     set_background_image(cache_file_path)
             except requests.exceptions.RequestException as e:
                 raise ValueError(f"Error fetching image from URL: {e}")
-    elif background_image is not None:
-        set_background_image(background_image)
+    elif skin_settings.background_image is not None:
+        set_background_image(skin_settings.background_image)
     else:
-        current_screen_surface.fill(background_color)
+        current_screen_surface.fill(skin_settings.background_color or COLOR_BLACK)
 
 dump_background()
 pygame.display.flip() # update screen with background color, required becase widgets only update owned area
