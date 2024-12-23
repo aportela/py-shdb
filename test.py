@@ -5,9 +5,11 @@ import yaml
 import pygame
 import locale
 from typing import Any
+import hashlib
+import requests
 
 from src.utils.logger import Logger
-
+from src.modules.module_cache import ModuleCache
 from src.modules.rss.rss_feed import RSSFeed
 
 from src.display.widgets.fps_widget import FPSWidget
@@ -85,6 +87,7 @@ logger.debug(f"Using skin: {skin}")
 
 last_modified_time = os.path.getmtime(configuration_file_path)
 
+background_image_url = skin_config.get('skin', {}).get('background_image_url', None)
 background_image = skin_config.get('skin', {}).get('background_image', None)
 background_color = skin_config.get('skin', {}).get('background_color', COLOR_BLACK)
 
@@ -119,14 +122,36 @@ else:
 
 framebuffer_global = screen
 
-if background_image is not None:
-    if os.path.exists(background_image):
-        wallpaper_image = pygame.image.load(background_image)
+def set_background_image(path: str):
+    if os.path.exists(path):
+        wallpaper_image = pygame.image.load(path)
         wallpaper_scaled = pygame.transform.scale(wallpaper_image, (screen_info.current_w, screen_info.current_h))
         framebuffer_global.blit(wallpaper_scaled, (0, 0))
     else:
         print(f"Error: skin background image '{background_image}' not found.")
         sys.exit(1)
+
+
+if background_image_url is not None:
+    cache_file_path = f"{cache_path}/images/{hashlib.sha256(background_image_url.encode('utf-8')).hexdigest()[:64]}.image"
+    if os.path.exists(cache_file_path):
+        logger.debug(f"Remote background url image cache found on {cache_file_path}")
+        set_background_image(cache_file_path)
+    else:
+        try:
+            response = requests.get(background_image_url, timeout=10)
+            response.raise_for_status()
+            if 'image' not in response.headers['Content-Type']:
+                raise ValueError("The URL does not point to a valid image.")
+            cache = ModuleCache(cache_file_path)
+            if cache.save_bytes(response.content) is False:
+                raise ValueError("Error saving cache of remote url background image.")
+            else:
+                set_background_image(cache_file_path)
+        except requests.exceptions.RequestException as e:
+            raise ValueError(f"Error fetching image from URL: {e}")
+elif background_image is not None:
+    set_background_image(background_image)
 else:
     framebuffer_global.fill(background_color)
 

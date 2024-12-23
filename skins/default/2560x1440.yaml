@@ -6,7 +6,8 @@ skin:
   # skin area (matched to screen size)
   width: 2560
   height: 1440
-  background_image: "resources/images/wallhaven-nzojvj.jpg"
+  background_image_url: "https://w.wallhaven.cc/full/dg/wallhaven-dgzj9o.jpg"
+  #background_image: "resources/images/wallhaven-dgzj9o.jpg"
   #background_color: [20, 20, 50]
   widgets:
     label1:
