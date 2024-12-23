@@ -32,8 +32,9 @@ logger.configure_global(logger.DEBUG)
 
 def parse_args() -> argparse.Namespace:
     logger.debug(f"Commandline args: {sys.argv}")
-    parser = argparse.ArgumentParser(description="Parse skin/config custom file.")
-    parser.add_argument('-skin', type=str, help='Path to skin/config custom file.', required=False)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-config', type=str, help='Path to configuration file.', required=False)
+    parser.add_argument('-skin', type=str, help='Path to skin configuration file.', required=False)
     return parser.parse_args()
 
 def load_config(file_path: str) -> Dict[str, Any]:
@@ -51,7 +52,13 @@ def load_config(file_path: str) -> Dict[str, Any]:
 COLOR_WHITE = pygame.Color("white")
 COLOR_BLACK = pygame.Color("black")
 
-configuration_file_path = "config.yaml"
+args = parse_args()
+
+if args.config is None:
+    configuration_file_path = "config.yaml"
+else:
+    configuration_file_path = args.config
+
 config = load_config(configuration_file_path)
 
 app_name = config.get('general', {}).get('app_name', "Python Smart Home Dashboard")
@@ -69,8 +76,6 @@ font_awesome_path = config.get('resources', {}).get('font_awesome_path', None)
 
 if font_awesome_path is not None:
     FontAwesomeIcon.set_default_font_filepath(font_awesome_path)
-
-args = parse_args()
 
 if args.skin:
     if not os.path.exists(args.skin):
