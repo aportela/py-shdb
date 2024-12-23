@@ -1,6 +1,6 @@
 from typing import Dict, Any, List
 import pygame
-from ..utils.config import Configuration
+from ..utils.configuration import Configuration
 from ..utils.logger import Logger
 
 from widgets.fps_widget import FPSWidget

@@ -12,7 +12,7 @@ from src.utils.logger import Logger
 from src.modules.module_cache import ModuleCache
 from src.modules.rss.rss_feed import RSSFeed
 
-from src.utils.config import Configuration
+from src.utils.configuration import Configuration
 from src.utils.commandline import Commandline
 
 from src.display.widgets.fps_widget import FPSWidget
