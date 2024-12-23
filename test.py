@@ -78,10 +78,8 @@ screen_info = pygame.display.Info()
 
 logger.debug(f"Current screen resolution: {screen_info.current_w}x{screen_info.current_h}")
 
-skin_width = skin_config.get('skin', {}).get('width', None)
-skin_height = skin_config.get('skin', {}).get('height', None)
-if ((skin_width, skin_height) != (screen_info.current_w, screen_info.current_h)):
-    print(f"Error: skin size (width: {skin_width}px, height: {skin_height}px) do not match with current screen resolution (width: {screen_info.current_w}px, height: {screen_info.current_h}px).")
+if ((skin_settings.width, skin_settings.height) != (screen_info.current_w, screen_info.current_h)):
+    print(f"Error: skin size (width: {skin_settings.width}px, height: {skin_settings.height}px) do not match with current screen resolution (width: {screen_info.current_w}px, height: {screen_info.current_h}px).")
     sys.exit(1)
 
 RESOLUTION = (screen_info.current_w, screen_info.current_h)

@@ -117,3 +117,11 @@ class SkinSettings (Configuration):
     @property
     def background_color(self) -> str:
         return self._loaded_configuration.get('skin', {}).get('background_color', None)
+
+    @property
+    def width(self) -> int:
+        return self._loaded_configuration.get('skin', {}).get('width', False)
+
+    @property
+    def height(self) -> int:
+        return self._loaded_configuration.get('skin', {}).get('height', False)
