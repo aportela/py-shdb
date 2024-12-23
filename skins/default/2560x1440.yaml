@@ -17,7 +17,6 @@ skin:
       y: 8
       width: 276
       height: 25
-      padding: 2
       #background_color: [20, 20, 50]
       font_family: "monospace"
       font_size: 16
@@ -33,7 +32,6 @@ skin:
       y: 38
       width: 750
       height: 34
-      padding: 2
       #background_color: [20, 20, 50]
       font_family: "monospace"
       font_size: 24
@@ -49,7 +47,6 @@ skin:
       y: 76
       width: 750
       height: 170
-      padding: 2
       #background_color: [20, 20, 50]
       font_family: "monospace"
       font_size: 150
@@ -66,7 +63,6 @@ skin:
       y: 900
       width: 1000
       height: 28
-      padding: 2
       #background_color: [20, 20, 50]
       font_family: "monospace"
       font_size: 22
@@ -84,7 +80,6 @@ skin:
       y: 500
       width: 360
       height: 210
-      padding: 2
       #background_color: [20, 20, 50]
       font_family: "monospace"
       font_size: 16
@@ -99,7 +94,6 @@ skin:
       y: 500
       width: 300
       height: 300
-      padding: 2
       #background_color: [20, 20, 50]
       #path: "resources/images/business-cat.jpg"
       url: "https://i.kym-cdn.com/photos/images/newsfeed/000/176/107/business-cat.jpg"
@@ -112,7 +106,6 @@ skin:
       y: 32
       width: 400
       height: 500
-      padding: 2
       #background_color: [20, 20, 50]
       font_family: "monospace"
       font_size: 32
