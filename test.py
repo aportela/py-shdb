@@ -4,7 +4,7 @@ import argparse
 import yaml
 import pygame
 import locale
-from typing import Any
+from typing import Dict, Any
 import hashlib
 import requests
 
@@ -36,7 +36,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument('-skin', type=str, help='Path to skin/config custom file.', required=False)
     return parser.parse_args()
 
-def load_config(file_path: str) -> Any:
+def load_config(file_path: str) -> Dict[str, Any]:
     try:
         with open(file_path, 'r') as file:
             return yaml.safe_load(file)
@@ -160,6 +160,36 @@ pygame.display.flip() # update screen with background color, required becase wid
 
 widgets = []
 
+def get_widget_rect_from_config(widget_config: Dict[str, Any]) -> pygame.Rect:
+    print(widget_config)
+    position = widget_config.get('position', None)
+    print (position)
+    x = widget_config.get('x', 0)
+    y = widget_config.get('y', 0)
+    width = widget_config.get('width', 0)
+    height = widget_config.get('height', 0)
+    if position == "top_left":
+        print("TOPLEFT")
+        x = 0
+        y = 0
+    elif position == "top_right":
+        print("TOPRIGHT")
+        x = screen_info.current_w - width
+        y = 0
+    elif position == "bottom_left":
+        print("BOTTOMLEFT")
+        x = 0
+        y = screen_info.current_w - height
+    elif position == "bottom_right":
+        print("BOTTOMRIGHT")
+        x = screen_info.current_w - width
+        y = screen_info.current_h - height
+    else:
+        print("NO")
+    print (f"x: {x} y: {y} width: {width} height: {height}")
+    #exit(1)
+    return pygame.Rect(x, y, width, height)
+
 def load_widgets():
     logger.info("Loading widgets")
     widgets.clear()
@@ -169,11 +199,7 @@ def load_widgets():
             FPSWidget(
                 parent_surface = framebuffer_global,
                 name = config.get('widget_defaults', {}).get('fps', {}).get("name", "fps"),
-                rect = pygame.Rect(screen_info.current_w - fps_widget_width, 0, fps_widget_width, config.get('widget_defaults', {}).get('fps', {}).get("height", 21)),
-                x = screen_info.current_w - fps_widget_width,
-                y = 0,
-                width = fps_widget_width,
-                height = config.get('widget_defaults', {}).get('fps', {}).get("height", 21),
+                rect = get_widget_rect_from_config(config.get('widget_defaults', {}).get('fps', {})),
                 background_color = None,
                 border = debug_widgets,
                 font = WidgetFont(
@@ -185,6 +211,7 @@ def load_widgets():
                 )
             )
         )
+    #exit(1)
     for widget_name, widget_config in skin_config.get("skin", {}).get("widgets", {}).items():
         if (widget_config.get("visible", False)):
             if (widget_config.get("type", "") == "simple_label"):
@@ -193,11 +220,7 @@ def load_widgets():
                     SimpleLabelWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
-                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
-                        x = widget_config.get('x', 0),
-                        y = widget_config.get('y', 0),
-                        width = widget_config.get('width', 0),
-                        height = widget_config.get('height', 0),
+                        rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
@@ -215,11 +238,7 @@ def load_widgets():
                     DateWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
-                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
-                        x = widget_config.get('x', 0),
-                        y = widget_config.get('y', 0),
-                        width = widget_config.get('width', 0),
-                        height = widget_config.get('height', 0),
+                        rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
@@ -237,11 +256,7 @@ def load_widgets():
                     TimeWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
-                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
-                        x = widget_config.get('x', 0),
-                        y = widget_config.get('y', 0),
-                        width = widget_config.get('width', 0),
-                        height = widget_config.get('height', 0),
+                        rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
@@ -271,10 +286,6 @@ def load_widgets():
                         parent_surface = framebuffer_global,
                         name = widget_name,
                         rect = pygame.Rect(0 if full_width else widget_config.get('x', 0), widget_config.get('y', 0), widget_width,  widget_config.get('height', 0)),
-                        x = 0 if full_width else widget_config.get('x', 0),
-                        y = widget_config.get('y', 0),
-                        width = widget_width,
-                        height = widget_config.get('height', 0),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
@@ -293,11 +304,7 @@ def load_widgets():
                     MonthCalendarWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
-                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
-                        x = widget_config.get('x', 0),
-                        y = widget_config.get('y', 0),
-                        width = widget_config.get('width', 0),
-                        height = widget_config.get('height', 0),
+                        rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
@@ -314,11 +321,7 @@ def load_widgets():
                     ImageWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
-                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
-                        x = widget_config.get('x', 0),
-                        y = widget_config.get('y', 0),
-                        width = widget_config.get('width', 0),
-                        height = widget_config.get('height', 0),
+                        rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         path = widget_config.get('path', None),
@@ -331,11 +334,7 @@ def load_widgets():
                     WeatherForecastWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
-                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
-                        x = widget_config.get('x', 0),
-                        y = widget_config.get('y', 0),
-                        width = widget_config.get('width', 0),
-                        height = widget_config.get('height', 0),
+                        rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(

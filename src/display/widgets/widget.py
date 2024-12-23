@@ -5,22 +5,17 @@ from ...utils.logger import Logger
 DEFAULT_WIDGET_BORDER_COLOR=(255, 105, 180) # PINK
 
 class Widget(ABC):
-    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, x: int, y: int, width: int, height: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:
+    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:
         self._log = Logger()
         self.__parent_surface = parent_surface
         if not name:
             raise ValueError("Name cannot be None or empty.")
         self.__name = name
-        self.__x = x
-        self.__y = y
-        if width < 1 or height < 1 :
-            raise ValueError("Invalid width/height.")
         self.__rect = rect
         self.refresh_sub_surface_from_parent_surface()
         self.__background_color = background_color
         self.__border = border
         self.__border_color = border_color
-        self.__rect = pygame.Rect(x, y, width, height)
         self._tmp_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA if background_color is None else 0)
 
     def refresh_sub_surface_from_parent_surface(self) -> None:
@@ -33,6 +28,14 @@ class Widget(ABC):
     @property
     def name(self) -> str:
         return self.__name
+
+    @property
+    def x(self) -> str:
+        return self.__rect.x
+
+    @property
+    def y(self) -> str:
+        return self.__rect.y
 
     @property
     def width(self) -> str:

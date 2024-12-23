@@ -6,8 +6,8 @@ from .widget_font import WidgetFont
 
 class TimeWidget(Widget):
 
-    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, x: int , y: int, width: int, height: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, font: WidgetFont = None, format_mask: str = "%I:%M %p") -> None:
-        super().__init__(parent_surface = parent_surface, name = name, rect = rect, x = x, y = y, width = width, height = height, background_color = background_color, border = border, border_color = border_color)
+    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, font: WidgetFont = None, format_mask: str = "%I:%M %p") -> None:
+        super().__init__(parent_surface = parent_surface, name = name, rect = rect, background_color = background_color, border = border, border_color = border_color)
         if not font:
             raise RuntimeError("Font not set")
         self.__font = font

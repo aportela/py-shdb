@@ -21,7 +21,7 @@ widget_defaults:
     name: "fps"
     width: 88
     height: 21
-    padding: 1
+    position: "top_right"
     font_family: "monospace"
     font_size: 18
     font_color: [255, 255, 0]
