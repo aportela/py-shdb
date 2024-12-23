@@ -38,11 +38,11 @@ class Widget(ABC):
         return self.__rect.y
 
     @property
-    def width(self) -> str:
+    def width(self) -> int:
         return self.__rect.width
 
     @property
-    def height(self) -> str:
+    def height(self) -> int:
         return self.__rect.height
 
     def _clear(self):
