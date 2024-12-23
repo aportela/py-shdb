@@ -161,16 +161,15 @@ pygame.display.flip() # update screen with background color, required becase wid
 widgets = []
 
 def get_widget_rect_from_config(widget_config: Dict[str, Any]) -> pygame.Rect:
-    print(widget_config)
     position = widget_config.get('position', None)
-    print (position)
     x = widget_config.get('x', 0)
     y = widget_config.get('y', 0)
     width = widget_config.get('width', 0)
     if widget_config.get('full_width', False):
         width = screen_info.current_w
-
     height = widget_config.get('height', 0)
+    if widget_config.get('full_height', False):
+        height = screen_info.current_h
     if position == "top_left":
         x = 0
         y = 0
@@ -189,7 +188,6 @@ def load_widgets():
     logger.info("Loading widgets")
     widgets.clear()
     if show_fps:
-        fps_widget_width = config.get('widget_defaults', {}).get('fps', {}).get("width", 88)
         widgets.append(
             FPSWidget(
                 parent_surface = framebuffer_global,
