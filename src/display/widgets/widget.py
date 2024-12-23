@@ -15,19 +15,16 @@ class Widget(ABC):
         self.__y = y
         if width < 1 or height < 1 :
             raise ValueError("Invalid width/height.")
-        self.__width = width
-        self.__height = height
         self.__rect = rect
-        self.__widget_area = pygame.Rect(self.__x, self.__y, self.__width, self.__height)
         self.refresh_sub_surface_from_parent_surface()
         self.__background_color = background_color
         self.__border = border
         self.__border_color = border_color
         self.__rect = pygame.Rect(x, y, width, height)
-        self._tmp_surface = pygame.Surface((self.__width, self.__height), pygame.SRCALPHA if background_color is None else 0)
+        self._tmp_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA if background_color is None else 0)
 
     def refresh_sub_surface_from_parent_surface(self) -> None:
-        self.__sub_surface = self.__parent_surface.subsurface(self.__widget_area).copy()
+        self.__sub_surface = self.__parent_surface.subsurface(self.__rect).copy()
 
     @property
     def parent_surface(self) -> pygame.Surface:
@@ -39,11 +36,11 @@ class Widget(ABC):
 
     @property
     def width(self) -> str:
-        return self.__width
+        return self.__rect.width
 
     @property
     def height(self) -> str:
-        return self.__height
+        return self.__rect.height
 
     def _clear(self):
         if self.__background_color is None:
@@ -57,11 +54,11 @@ class Widget(ABC):
         self._tmp_surface.blit(surface, dest)
 
     def _render(self):
-        self.__parent_surface.blit(self.__sub_surface, self.__widget_area) # clear previous widget area (restoring with original area)
+        self.__parent_surface.blit(self.__sub_surface, self.__rect) # clear previous widget area (restoring with original area)
         if self.__border:
-            pygame.draw.rect(self._tmp_surface, self.__border_color, (0, 0, self.__width , self.__height), 1)
-        self.__parent_surface.blit(self._tmp_surface, self.__widget_area)
-        pygame.display.update(self.__widget_area) # update only the widget area
+            pygame.draw.rect(self._tmp_surface, self.__border_color, (0, 0, self.width , self.height), 1)
+        self.__parent_surface.blit(self._tmp_surface, self.__rect)
+        pygame.display.update(self.__rect) # update only the widget area
 
     @abstractmethod
     def refresh(self, force: bool = False) -> bool:
