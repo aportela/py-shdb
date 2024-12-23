@@ -8,7 +8,6 @@ from ..display.fps import FPS
 
 class Configuration:
 
-
     def __init__(self, path: str):
         self._log = Logger()
         self._log.debug(f"Using configuration file: {path}")
@@ -26,7 +25,7 @@ class Configuration:
                 self.__last_modified_time = os.path.getmtime(configuration_path)
                 self.__path = configuration_path
         except FileNotFoundError:
-            raise RuntimeError(f"Error: skin/config file not found at '{configuration_path}'.")
+            raise RuntimeError(f"Error: file not found at '{configuration_path}'.")
         except yaml.YAMLError as e:
             raise RuntimeError("Error: Invalid YAML format in '{configuration_path}': {e}")
 
@@ -74,3 +73,7 @@ class Configuration:
     @property
     def file_changed(self) -> bool:
         return os.path.getmtime(self.__path) != self.__last_modified_time
+
+    @property
+    def skin(self) -> str:
+        return self.__loaded_configuration.get('app', {}).get('skin', None)
