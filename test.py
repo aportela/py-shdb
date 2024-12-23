@@ -169,6 +169,7 @@ def load_widgets():
             FPSWidget(
                 parent_surface = framebuffer_global,
                 name = config.get('widget_defaults', {}).get('fps', {}).get("name", "fps"),
+                rect = pygame.Rect(screen_info.current_w - fps_widget_width, 0, fps_widget_width, config.get('widget_defaults', {}).get('fps', {}).get("height", 21)),
                 x = screen_info.current_w - fps_widget_width,
                 y = 0,
                 width = fps_widget_width,
@@ -192,6 +193,7 @@ def load_widgets():
                     SimpleLabelWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
+                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
                         x = widget_config.get('x', 0),
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),
@@ -213,6 +215,7 @@ def load_widgets():
                     DateWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
+                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
                         x = widget_config.get('x', 0),
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),
@@ -234,6 +237,7 @@ def load_widgets():
                     TimeWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
+                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
                         x = widget_config.get('x', 0),
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),
@@ -266,6 +270,7 @@ def load_widgets():
                     HorizontalTickerWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
+                        rect = pygame.Rect(0 if full_width else widget_config.get('x', 0), widget_config.get('y', 0), widget_width,  widget_config.get('height', 0)),
                         x = 0 if full_width else widget_config.get('x', 0),
                         y = widget_config.get('y', 0),
                         width = widget_width,
@@ -288,6 +293,7 @@ def load_widgets():
                     MonthCalendarWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
+                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
                         x = widget_config.get('x', 0),
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),
@@ -308,6 +314,7 @@ def load_widgets():
                     ImageWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
+                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
                         x = widget_config.get('x', 0),
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),
@@ -324,6 +331,7 @@ def load_widgets():
                     WeatherForecastWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
+                        rect = pygame.Rect(widget_config.get('x', 0), widget_config.get('y', 0), widget_config.get('width', 0), widget_config.get('height', 0)),
                         x = widget_config.get('x', 0),
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),

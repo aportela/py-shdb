@@ -5,7 +5,7 @@ from ...utils.logger import Logger
 DEFAULT_WIDGET_BORDER_COLOR=(255, 105, 180) # PINK
 
 class Widget(ABC):
-    def __init__(self, parent_surface: pygame.Surface, name: str, x: int, y: int, width: int, height: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:
+    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, x: int, y: int, width: int, height: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:
         self._log = Logger()
         self.__parent_surface = parent_surface
         if not name:
@@ -17,6 +17,7 @@ class Widget(ABC):
             raise ValueError("Invalid width/height.")
         self.__width = width
         self.__height = height
+        self.__rect = rect
         self.__widget_area = pygame.Rect(self.__x, self.__y, self.__width, self.__height)
         self.refresh_sub_surface_from_parent_surface()
         self.__background_color = background_color
