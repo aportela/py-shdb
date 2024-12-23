@@ -32,7 +32,7 @@ class Configuration:
             raise RuntimeError("Error: Invalid YAML format in '{configuration_path}': {e}")
 
 
-class MainConfiguration (Configuration):
+class AppSettings (Configuration):
 
     def __init__(self, logger: Logger, path: str):
         super().__init__(logger = logger, path = path)
