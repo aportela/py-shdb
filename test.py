@@ -50,13 +50,8 @@ def load_config(file_path: str) -> Dict[str, Any]:
 COLOR_WHITE = pygame.Color("white")
 COLOR_BLACK = pygame.Color("black")
 
-if command_line.configuration is None:
-    configuration_file_path = "config.yaml"
-else:
-    configuration_file_path = command_line.configuration
-
-config2 = Configuration(logger, configuration_file_path)
-config = load_config(configuration_file_path)
+config2 = Configuration(logger, command_line.configuration if command_line.configuration is not None else "config.yaml")
+config = load_config(command_line.configuration if command_line.configuration is not None else "config.yaml")
 
 skin = config2.skin
 
