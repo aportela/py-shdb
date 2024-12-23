@@ -99,10 +99,10 @@ skin:
       visible: true
       type: "weather_forecast"
       provider: "open_meteo"
-      x: 1200
-      y: 32
-      width: 400
-      height: 500
+      x: 2000
+      y: 64
+      width: 560
+      height: 600
       #background_color: [20, 20, 50]
       font_family: "monospace"
       font_size: 32
