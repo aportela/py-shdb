@@ -47,8 +47,9 @@ def load_config(file_path: str) -> Dict[str, Any]:
         print(f"Error: Invalid YAML format in '{file_path}': {e}")
         sys.exit(1)
 
-COLOR_WHITE=(255, 255, 255)
-COLOR_BLACK=(0, 0, 0)
+# https://www.pygame.org/docs/ref/color_list.html
+COLOR_WHITE = pygame.Color("white")
+COLOR_BLACK = pygame.Color("black")
 
 configuration_file_path = "config.yaml"
 config = load_config(configuration_file_path)
@@ -63,7 +64,7 @@ skin = config.get('app', {}).get('skin', None)
 hide_mouse_cursor = config.get('app', {}).get('hide_mouse_cursor', True)
 show_mouse_cursor_on_mouse_motion_events = config.get('app', {}).get('show_mouse_cursor_on_mouse_motion_events', True)
 auto_hide_mouse_cursor_timeout = config.get('app', {}).get('auto_hide_mouse_cursor_timeout', 3)
-
+monitor_index = config.get('app', {}).get('monitor_index', 0)
 font_awesome_path = config.get('resources', {}).get('font_awesome_path', None)
 
 if font_awesome_path is not None:
@@ -111,7 +112,7 @@ RESOLUTION = (screen_info.current_w, screen_info.current_h)
 # TODO: check skin resolution match
 
 # Configurar pantalla completa
-screen = pygame.display.set_mode(RESOLUTION, pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME)
+screen = pygame.display.set_mode(size = RESOLUTION, flags = pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME, display = monitor_index)
 pygame.display.set_caption(app_name)
 """
 if len(background_color) == 4:
