@@ -182,6 +182,9 @@ def get_widget_rect_from_config(widget_config: Dict[str, Any]) -> pygame.Rect:
     elif position == "bottom_right":
         x = screen_info.current_w - width
         y = screen_info.current_h - height
+    elif position == "center":
+        x = ((screen_info.current_w // 2) - (width // 2))
+        y = ((screen_info.current_h // 2) - (height // 2))
     return pygame.Rect(x, y, width, height)
 
 def load_widgets():

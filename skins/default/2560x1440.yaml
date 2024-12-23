@@ -88,8 +88,7 @@ skin:
     image1:
       visible: true
       type: "image"
-      x: 800
-      y: 500
+      position: "center"
       width: 300
       height: 300
       #background_color: [20, 20, 50]
