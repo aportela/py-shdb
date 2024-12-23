@@ -58,8 +58,7 @@ else:
 config2 = Configuration(configuration_file_path)
 config = load_config(configuration_file_path)
 
-cache_path = config.get('app', {}).get('cache_path', None)
-skin = config.get('app', {}).get('skin', None)
+skin = config2.skin
 
 if command_line.skin is not None:
     if not os.path.exists(command_line.skin):
@@ -112,7 +111,7 @@ def set_background_image(path: str):
 def dump_background():
 
     if background_image_url is not None:
-        cache_file_path = f"{cache_path}/images/{hashlib.sha256(background_image_url.encode('utf-8')).hexdigest()[:64]}.image"
+        cache_file_path = f"{config2.cache_path}/images/{hashlib.sha256(background_image_url.encode('utf-8')).hexdigest()[:64]}.image"
         if os.path.exists(cache_file_path):
             logger.debug(f"Remote background url image cache found on {cache_file_path}")
             set_background_image(cache_file_path)
@@ -255,7 +254,7 @@ def load_widgets():
                 if text == None or text == "":
                     rss_url = widget_config.get('rss_url', "")
                     if (rss_url != None and rss_url != ""):
-                        feed = RSSFeed(url = rss_url, max_items=16, default_seconds_refresh_time= 600, cache_path = cache_path)
+                        feed = RSSFeed(url = rss_url, max_items=16, default_seconds_refresh_time= 600, cache_path = config2.cache_path)
                         text = " # ".join(f"[{item['published']}] - {item['title']}" for item in feed.get()['items'])
                 widgets.append(
                     HorizontalTickerWidget(
@@ -302,7 +301,7 @@ def load_widgets():
                         border = config2.debug_widgets,
                         path = widget_config.get('path', None),
                         url = widget_config.get('url', None),
-                        cache_path = cache_path
+                        cache_path = config2.cache_path
                     )
                 )
             elif (widget_config.get("type", "") == "weather_forecast"):
@@ -396,7 +395,6 @@ while running:
         # TODO: create method for avoid duplicate code
         logger.info("Configuration file changes detected, reloading widgets")
         config = load_config(configuration_file_path)
-        cache_path = config.get('app', {}).get('cache_path', None)
         background_color = config.get('app', {}).get('background_color', COLOR_BLACK)
         config2.load()
         config2.apply()
