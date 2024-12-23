@@ -1,6 +1,5 @@
 import sys
 import os
-import argparse
 import yaml
 import pygame
 
@@ -9,10 +8,12 @@ import hashlib
 import requests
 
 from src.utils.logger import Logger
+
 from src.modules.module_cache import ModuleCache
 from src.modules.rss.rss_feed import RSSFeed
 
 from src.utils.config import Configuration
+from src.utils.commandline import Commandline
 
 from src.display.widgets.fps_widget import FPSWidget
 from src.display.widgets.simple_label_widget import SimpleLabelWidget
@@ -32,13 +33,7 @@ from src.display.fps import FPS
 logger = Logger("py-shdb")
 logger.configure_global(logger.DEBUG)
 
-
-def parse_args() -> argparse.Namespace:
-    logger.debug(f"Commandline args: {sys.argv}")
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-config', type=str, help='Path to configuration file.', required=False)
-    parser.add_argument('-skin', type=str, help='Path to skin configuration file.', required=False)
-    return parser.parse_args()
+command_line = Commandline()
 
 def load_config(file_path: str) -> Dict[str, Any]:
     try:
@@ -55,12 +50,10 @@ def load_config(file_path: str) -> Dict[str, Any]:
 COLOR_WHITE = pygame.Color("white")
 COLOR_BLACK = pygame.Color("black")
 
-args = parse_args()
-
-if args.config is None:
+if command_line.configuration is None:
     configuration_file_path = "config.yaml"
 else:
-    configuration_file_path = args.config
+    configuration_file_path = command_line.configuration
 
 config2 = Configuration(configuration_file_path)
 config = load_config(configuration_file_path)
@@ -68,11 +61,11 @@ config = load_config(configuration_file_path)
 cache_path = config.get('app', {}).get('cache_path', None)
 skin = config.get('app', {}).get('skin', None)
 
-if args.skin:
-    if not os.path.exists(args.skin):
-        print(f"Error: Custom skin/config file '{args.skin}' not found.")
+if command_line.skin is not None:
+    if not os.path.exists(command_line.skin):
+        print(f"Error: Custom skin/config file '{command_line.skin}' not found.")
         sys.exit(1)
-    skin = args.skin
+    skin = command_line.skin
 
 if skin is None:
     print("Error: skin/config file is empty or invalid.")
