@@ -82,8 +82,6 @@ skin_config = load_config(skin)
 
 logger.debug(f"Using skin: {skin}")
 
-last_modified_time = os.path.getmtime(configuration_file_path)
-
 background_image_url = skin_config.get('skin', {}).get('background_image_url', None)
 background_image = skin_config.get('skin', {}).get('background_image', None)
 background_color = skin_config.get('skin', {}).get('background_color', COLOR_BLACK)
@@ -106,50 +104,44 @@ RESOLUTION = (screen_info.current_w, screen_info.current_h)
 # TODO: check skin resolution match
 
 # Configurar pantalla completa
-screen = pygame.display.set_mode(size = RESOLUTION, flags = pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME, display = config2.monitor_index)
+current_screen_surface = pygame.display.set_mode(size = RESOLUTION, flags = pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME, display = config2.monitor_index)
 pygame.display.set_caption(config2.app_name)
-"""
-if len(background_color) == 4:
-    framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h), pygame.SRCALPHA)
-else:
-    framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h))
-"""
-
-framebuffer_global = screen
 
 def set_background_image(path: str):
     if os.path.exists(path):
         wallpaper_image = pygame.image.load(path)
         wallpaper_scaled = pygame.transform.scale(wallpaper_image, (screen_info.current_w, screen_info.current_h))
-        framebuffer_global.blit(wallpaper_scaled, (0, 0))
+        current_screen_surface.blit(wallpaper_scaled, (0, 0))
     else:
         print(f"Error: skin background image '{background_image}' not found.")
         sys.exit(1)
 
+def dump_background():
 
-if background_image_url is not None:
-    cache_file_path = f"{cache_path}/images/{hashlib.sha256(background_image_url.encode('utf-8')).hexdigest()[:64]}.image"
-    if os.path.exists(cache_file_path):
-        logger.debug(f"Remote background url image cache found on {cache_file_path}")
-        set_background_image(cache_file_path)
+    if background_image_url is not None:
+        cache_file_path = f"{cache_path}/images/{hashlib.sha256(background_image_url.encode('utf-8')).hexdigest()[:64]}.image"
+        if os.path.exists(cache_file_path):
+            logger.debug(f"Remote background url image cache found on {cache_file_path}")
+            set_background_image(cache_file_path)
+        else:
+            try:
+                response = requests.get(background_image_url, timeout=10)
+                response.raise_for_status()
+                if 'image' not in response.headers['Content-Type']:
+                    raise ValueError("The URL does not point to a valid image.")
+                cache = ModuleCache(cache_file_path)
+                if cache.save_bytes(response.content) is False:
+                    raise ValueError("Error saving cache of remote url background image.")
+                else:
+                    set_background_image(cache_file_path)
+            except requests.exceptions.RequestException as e:
+                raise ValueError(f"Error fetching image from URL: {e}")
+    elif background_image is not None:
+        set_background_image(background_image)
     else:
-        try:
-            response = requests.get(background_image_url, timeout=10)
-            response.raise_for_status()
-            if 'image' not in response.headers['Content-Type']:
-                raise ValueError("The URL does not point to a valid image.")
-            cache = ModuleCache(cache_file_path)
-            if cache.save_bytes(response.content) is False:
-                raise ValueError("Error saving cache of remote url background image.")
-            else:
-                set_background_image(cache_file_path)
-        except requests.exceptions.RequestException as e:
-            raise ValueError(f"Error fetching image from URL: {e}")
-elif background_image is not None:
-    set_background_image(background_image)
-else:
-    framebuffer_global.fill(background_color)
+        current_screen_surface.fill(background_color)
 
+dump_background()
 pygame.display.flip() # update screen with background color, required becase widgets only update owned area
 
 
@@ -194,7 +186,7 @@ def load_widgets():
     if config2.show_fps:
         widgets.append(
             FPSWidget(
-                parent_surface = framebuffer_global,
+                parent_surface = current_screen_surface,
                 name = config.get('widget_defaults', {}).get('fps', {}).get("name", "fps"),
                 rect = get_widget_rect_from_config(config.get('widget_defaults', {}).get('fps', {})),
                 background_color = None,
@@ -214,7 +206,7 @@ def load_widgets():
                 logger.debug(f"Adding widget: {widget_name} (SimpleLabelWidget)")
                 widgets.append(
                     SimpleLabelWidget(
-                        parent_surface = framebuffer_global,
+                        parent_surface = current_screen_surface,
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
@@ -232,7 +224,7 @@ def load_widgets():
             elif (widget_config.get("type", "") == "date"):
                 widgets.append(
                     DateWidget(
-                        parent_surface = framebuffer_global,
+                        parent_surface = current_screen_surface,
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
@@ -250,7 +242,7 @@ def load_widgets():
             elif (widget_config.get("type", "") == "time"):
                 widgets.append(
                     TimeWidget(
-                        parent_surface = framebuffer_global,
+                        parent_surface = current_screen_surface,
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
@@ -274,7 +266,7 @@ def load_widgets():
                         text = " # ".join(f"[{item['published']}] - {item['title']}" for item in feed.get()['items'])
                 widgets.append(
                     HorizontalTickerWidget(
-                        parent_surface = framebuffer_global,
+                        parent_surface = current_screen_surface,
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
@@ -293,7 +285,7 @@ def load_widgets():
             elif (widget_config.get("type", "") == "month_calendar"):
                 widgets.append(
                     MonthCalendarWidget(
-                        parent_surface = framebuffer_global,
+                        parent_surface = current_screen_surface,
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
@@ -310,7 +302,7 @@ def load_widgets():
             elif (widget_config.get("type", "") == "image"):
                 widgets.append(
                     ImageWidget(
-                        parent_surface = framebuffer_global,
+                        parent_surface = current_screen_surface,
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
@@ -323,7 +315,7 @@ def load_widgets():
             elif (widget_config.get("type", "") == "weather_forecast"):
                 widgets.append(
                     WeatherForecastWidget(
-                        parent_surface = framebuffer_global,
+                        parent_surface = current_screen_surface,
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
@@ -360,27 +352,27 @@ for j in range(len(icon_names)):
     for i in range(len(speeds)):
         if j == 0:
             icons.append(
-                FontAwesomeIconBounceEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i])
+                FontAwesomeIconBounceEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i])
             )
         elif j == 1:
             icons.append(
-                FontAwesomeIconBeatEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], max_size = 36)
+                FontAwesomeIconBeatEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], max_size = 36)
             )
         elif j == 2:
             icons.append(
-                FontAwesomeIconSpinEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
+                FontAwesomeIconSpinEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
             )
         elif j == 3:
             icons.append(
-                FontAwesomeIconFlipEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], axis = FontAwesomeAnimationFlipAxis.HORIZONTAL)
+                FontAwesomeIconFlipEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], axis = FontAwesomeAnimationFlipAxis.HORIZONTAL)
             )
         elif j == 4:
                 icons.append(
-                FontAwesomeIconFadeEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i])
+                FontAwesomeIconFadeEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i])
             )
         elif j == 5:
                 icons.append(
-                FontAwesomeIconBeatAndFadeEffect(parent_surface = framebuffer_global, x = screen.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], max_size = 36)
+                FontAwesomeIconBeatAndFadeEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], max_size = 36)
             )
         x += 50
     y += 80
@@ -407,22 +399,17 @@ while running:
             click_event = event
 
     # DEBUG: check for configuration changes
-    if config2.debug_widgets:
-        current_modified_time = os.path.getmtime(configuration_file_path)
-        if current_modified_time != last_modified_time:
-            # TODO: create method for avoid duplicate code
-            logger.info("Configuration file changes detected, reloading widgets")
-            config = load_config(configuration_file_path)
-            cache_path = config.get('app', {}).get('cache_path', None)
-            background_color = config.get('app', {}).get('background_color', COLOR_BLACK)
-            config2.load()
-            config2.apply()
-            last_modified_time = current_modified_time
-            load_widgets()
-            framebuffer_global.fill(background_color)
-            pygame.display.flip() # update screen with background color, required becase widgets only update owned area
-            for widget in widgets:
-                widget.refresh_sub_surface_from_parent_surface()
+    if config2.debug_widgets and config2.file_changed:
+        # TODO: create method for avoid duplicate code
+        logger.info("Configuration file changes detected, reloading widgets")
+        config = load_config(configuration_file_path)
+        cache_path = config.get('app', {}).get('cache_path', None)
+        background_color = config.get('app', {}).get('background_color', COLOR_BLACK)
+        config2.load()
+        config2.apply()
+        dump_background()
+        load_widgets()
+        pygame.display.flip() # update screen with background color, required becase widgets only update owned area
 
     for widget in widgets:
         if click_event is not None:
