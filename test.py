@@ -12,7 +12,7 @@ from src.utils.logger import Logger
 from src.modules.module_cache import ModuleCache
 from src.modules.rss.rss_feed import RSSFeed
 
-from src.utils.configuration import Configuration
+from src.utils.configuration import MainConfiguration
 from src.utils.commandline import Commandline
 
 from src.display.widgets.fps_widget import FPSWidget
@@ -50,7 +50,7 @@ def load_config(file_path: str) -> Dict[str, Any]:
 COLOR_WHITE = pygame.Color("white")
 COLOR_BLACK = pygame.Color("black")
 
-config2 = Configuration(logger, command_line.configuration if command_line.configuration is not None else "config.yaml")
+config2 = MainConfiguration(logger, command_line.configuration if command_line.configuration is not None else "config.yaml")
 config = load_config(command_line.configuration if command_line.configuration is not None else "config.yaml")
 
 skin = config2.skin
@@ -389,10 +389,9 @@ while running:
     if config2.debug_widgets and config2.file_changed:
         # TODO: create method for avoid duplicate code
         logger.info("Configuration file changes detected, reloading widgets")
-        config = load_config(configuration_file_path)
+        config = load_config(command_line.configuration if command_line.configuration is not None else "config.yaml")
         background_color = config.get('app', {}).get('background_color', COLOR_BLACK)
-        config2.load()
-        config2.apply()
+        config2.reload()
         dump_background()
         load_widgets()
         pygame.display.flip() # update screen with background color, required becase widgets only update owned area
