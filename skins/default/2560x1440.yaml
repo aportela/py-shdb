@@ -58,10 +58,8 @@ skin:
     hticker1:
       visible: true
       type: "horizontal_ticker"
-      full_width: False
-      x: 460
-      y: 900
-      width: 1000
+      position: "bottom_left"
+      full_width: True
       height: 28
       #background_color: [20, 20, 50]
       font_family: "monospace"

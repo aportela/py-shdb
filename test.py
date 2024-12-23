@@ -167,27 +167,22 @@ def get_widget_rect_from_config(widget_config: Dict[str, Any]) -> pygame.Rect:
     x = widget_config.get('x', 0)
     y = widget_config.get('y', 0)
     width = widget_config.get('width', 0)
+    if widget_config.get('full_width', False):
+        width = screen_info.current_w
+
     height = widget_config.get('height', 0)
     if position == "top_left":
-        print("TOPLEFT")
         x = 0
         y = 0
     elif position == "top_right":
-        print("TOPRIGHT")
         x = screen_info.current_w - width
         y = 0
     elif position == "bottom_left":
-        print("BOTTOMLEFT")
         x = 0
-        y = screen_info.current_w - height
+        y = screen_info.current_h - height
     elif position == "bottom_right":
-        print("BOTTOMRIGHT")
         x = screen_info.current_w - width
         y = screen_info.current_h - height
-    else:
-        print("NO")
-    print (f"x: {x} y: {y} width: {width} height: {height}")
-    #exit(1)
     return pygame.Rect(x, y, width, height)
 
 def load_widgets():
@@ -211,7 +206,6 @@ def load_widgets():
                 )
             )
         )
-    #exit(1)
     for widget_name, widget_config in skin_config.get("skin", {}).get("widgets", {}).items():
         if (widget_config.get("visible", False)):
             if (widget_config.get("type", "") == "simple_label"):
@@ -276,16 +270,11 @@ def load_widgets():
                     if (rss_url != None and rss_url != ""):
                         feed = RSSFeed(url = rss_url, max_items=16, default_seconds_refresh_time= 600, cache_path = cache_path)
                         text = " # ".join(f"[{item['published']}] - {item['title']}" for item in feed.get()['items'])
-                full_width = widget_config.get('full_width', False)
-                if full_width:
-                    widget_width = screen_info.current_w - 4
-                else:
-                    widget_width = widget_config.get('width', 0) - 20
                 widgets.append(
                     HorizontalTickerWidget(
                         parent_surface = framebuffer_global,
                         name = widget_name,
-                        rect = pygame.Rect(0 if full_width else widget_config.get('x', 0), widget_config.get('y', 0), widget_width,  widget_config.get('height', 0)),
+                        rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
