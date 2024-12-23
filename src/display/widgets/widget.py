@@ -5,7 +5,7 @@ from ...utils.logger import Logger
 DEFAULT_WIDGET_BORDER_COLOR=(255, 105, 180) # PINK
 
 class Widget(ABC):
-    def __init__(self, parent_surface: pygame.Surface, name: str, x: int, y: int, width: int, height: int, padding: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:
+    def __init__(self, parent_surface: pygame.Surface, name: str, x: int, y: int, width: int, height: int, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:
         self._log = Logger()
         self.__parent_surface = parent_surface
         if not name:
@@ -13,13 +13,12 @@ class Widget(ABC):
         self.__name = name
         self.__x = x
         self.__y = y
-        if width < 1 or height < 1 or padding < 0:
-            raise ValueError("Invalid width/height/padding.")
+        if width < 1 or height < 1 :
+            raise ValueError("Invalid width/height.")
         self.__width = width
         self.__height = height
         self.__widget_area = pygame.Rect(self.__x, self.__y, self.__width, self.__height)
         self.refresh_sub_surface_from_parent_surface()
-        self.__padding = padding
         self.__background_color = background_color
         self.__border = border
         self.__border_color = border_color
@@ -45,10 +44,6 @@ class Widget(ABC):
     def height(self) -> str:
         return self.__height
 
-    @property
-    def padding(self) -> str:
-        return self.__padding
-
     def _clear(self):
         if self.__background_color is None:
             self._tmp_surface.fill((0, 0, 0, 0))
@@ -57,7 +52,7 @@ class Widget(ABC):
 
     def _blit(self, surface: pygame.Surface, dest: tuple[int, int] = None):
         if dest is None:
-            dest = (self.__padding, self.__padding)
+            dest = (0, 0)
         self._tmp_surface.blit(surface, dest)
 
     def _render(self):

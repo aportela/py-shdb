@@ -173,7 +173,6 @@ def load_widgets():
                 y = 0,
                 width = fps_widget_width,
                 height = config.get('widget_defaults', {}).get('fps', {}).get("height", 21),
-                padding = config.get('widget_defaults', {}).get('fps', {}).get("padding", 1),
                 background_color = None,
                 border = debug_widgets,
                 font = WidgetFont(
@@ -197,7 +196,6 @@ def load_widgets():
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),
                         height = widget_config.get('height', 0),
-                        padding = widget_config.get('padding', 0),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
@@ -219,7 +217,6 @@ def load_widgets():
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),
                         height = widget_config.get('height', 0),
-                        padding = widget_config.get('padding', 0),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
@@ -241,7 +238,6 @@ def load_widgets():
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),
                         height = widget_config.get('height', 0),
-                        padding = widget_config.get('padding', 0),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
@@ -274,7 +270,6 @@ def load_widgets():
                         y = widget_config.get('y', 0),
                         width = widget_width,
                         height = widget_config.get('height', 0),
-                        padding = widget_config.get('padding', 0),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
@@ -297,7 +292,6 @@ def load_widgets():
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),
                         height = widget_config.get('height', 0),
-                        padding = widget_config.get('padding', 0),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
@@ -318,7 +312,6 @@ def load_widgets():
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),
                         height = widget_config.get('height', 0),
-                        padding = widget_config.get('padding', 0),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         path = widget_config.get('path', None),
@@ -335,7 +328,6 @@ def load_widgets():
                         y = widget_config.get('y', 0),
                         width = widget_config.get('width', 0),
                         height = widget_config.get('height', 0),
-                        padding = widget_config.get('padding', 0),
                         background_color = widget_config.get('background_color', None),
                         border = debug_widgets,
                         font = WidgetFont(
