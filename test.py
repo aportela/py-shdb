@@ -33,7 +33,7 @@ from src.display.fps import FPS
 logger = Logger("py-shdb")
 logger.configure_global(logger.DEBUG)
 
-command_line = Commandline()
+command_line = Commandline(logger)
 
 def load_config(file_path: str) -> Dict[str, Any]:
     try:
@@ -55,7 +55,7 @@ if command_line.configuration is None:
 else:
     configuration_file_path = command_line.configuration
 
-config2 = Configuration(configuration_file_path)
+config2 = Configuration(logger, configuration_file_path)
 config = load_config(configuration_file_path)
 
 skin = config2.skin

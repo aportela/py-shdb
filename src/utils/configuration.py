@@ -8,9 +8,9 @@ from ..display.fps import FPS
 
 class Configuration:
 
-    def __init__(self, path: str):
-        self.__log = Logger()
-        self.__log.debug(f"Using configuration file: {path}")
+    def __init__(self, logger: Logger, path: str):
+        self.__logger = logger
+        self.__logger.debug(f"Using configuration file: {path}")
         self.__path = path
         self.__loaded_configuration = None
         self.__last_modified_time = None

@@ -5,8 +5,8 @@ from .logger import Logger
 
 class Commandline:
 
-    def __init__(self):
-        self.__logger = Logger()
+    def __init__(self, logger: Logger):
+        self.__logger = logger
         self.__logger.debug(f"Commandline args: {sys.argv}")
         parser = argparse.ArgumentParser()
         parser.add_argument('-config', type=str, help='Path to configuration file.', required=False)
