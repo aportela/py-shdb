@@ -8,19 +8,23 @@ from ..display.fps import FPS
 
 class Configuration:
 
+
     def __init__(self, path: str):
         self._log = Logger()
         self._log.debug(f"Using configuration file: {path}")
         self.__path = path
         self.__loaded_configuration = None
+        self.__last_modified_time = None
         self.load(path)
         self.apply()
 
-    def load(self, path: str) -> None:
-        configuration_path = path if path is None else self.__path
+    def load(self, path: str = None) -> None:
+        configuration_path = path if path is not None else self.__path
         try:
             with open(configuration_path, 'r') as file:
                 self.__loaded_configuration = yaml.safe_load(file)
+                self.__last_modified_time = os.path.getmtime(configuration_path)
+                self.__path = configuration_path
         except FileNotFoundError:
             raise RuntimeError(f"Error: skin/config file not found at '{configuration_path}'.")
         except yaml.YAMLError as e:
@@ -66,3 +70,7 @@ class Configuration:
     @property
     def monitor_index(self) -> int:
         return self.__loaded_configuration.get('app', {}).get('monitor_index', 0)
+
+    @property
+    def file_changed(self) -> bool:
+        return os.path.getmtime(self.__path) != self.__last_modified_time
