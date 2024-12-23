@@ -3,7 +3,7 @@ import os
 import argparse
 import yaml
 import pygame
-import locale
+
 from typing import Dict, Any
 import hashlib
 import requests
@@ -11,6 +11,8 @@ import requests
 from src.utils.logger import Logger
 from src.modules.module_cache import ModuleCache
 from src.modules.rss.rss_feed import RSSFeed
+
+from src.utils.config import Configuration
 
 from src.display.widgets.fps_widget import FPSWidget
 from src.display.widgets.simple_label_widget import SimpleLabelWidget
@@ -29,6 +31,7 @@ from src.display.fps import FPS
 
 logger = Logger("py-shdb")
 logger.configure_global(logger.DEBUG)
+
 
 def parse_args() -> argparse.Namespace:
     logger.debug(f"Commandline args: {sys.argv}")
@@ -59,23 +62,11 @@ if args.config is None:
 else:
     configuration_file_path = args.config
 
+config2 = Configuration(configuration_file_path)
 config = load_config(configuration_file_path)
 
-app_name = config.get('general', {}).get('app_name', "Python Smart Home Dashboard")
-debug_widgets = config.get('app', {}).get('debug_widgets', False)
-max_fps = config.get('app', {}).get('max_fps', 30)
-show_fps = config.get('app', {}).get('show_fps', False)
-locale.setlocale(locale.LC_TIME, config.get('app', {}).get("locale", "en_EN.UTF-8"))
 cache_path = config.get('app', {}).get('cache_path', None)
 skin = config.get('app', {}).get('skin', None)
-hide_mouse_cursor = config.get('app', {}).get('hide_mouse_cursor', True)
-show_mouse_cursor_on_mouse_motion_events = config.get('app', {}).get('show_mouse_cursor_on_mouse_motion_events', True)
-auto_hide_mouse_cursor_timeout = config.get('app', {}).get('auto_hide_mouse_cursor_timeout', 3)
-monitor_index = config.get('app', {}).get('monitor_index', 0)
-font_awesome_path = config.get('resources', {}).get('font_awesome_path', None)
-
-if font_awesome_path is not None:
-    FontAwesomeIcon.set_default_font_filepath(font_awesome_path)
 
 if args.skin:
     if not os.path.exists(args.skin):
@@ -100,8 +91,6 @@ background_color = skin_config.get('skin', {}).get('background_color', COLOR_BLA
 pygame.init()
 
 
-FPS.set_default_fps(max_fps)
-
 screen_info = pygame.display.Info()
 
 logger.debug(f"Current screen resolution: {screen_info.current_w}x{screen_info.current_h}")
@@ -117,8 +106,8 @@ RESOLUTION = (screen_info.current_w, screen_info.current_h)
 # TODO: check skin resolution match
 
 # Configurar pantalla completa
-screen = pygame.display.set_mode(size = RESOLUTION, flags = pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME, display = monitor_index)
-pygame.display.set_caption(app_name)
+screen = pygame.display.set_mode(size = RESOLUTION, flags = pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME, display = config2.monitor_index)
+pygame.display.set_caption(config2.app_name)
 """
 if len(background_color) == 4:
     framebuffer_global = pygame.Surface((screen_info.current_w, screen_info.current_h), pygame.SRCALPHA)
@@ -202,14 +191,14 @@ def get_widget_rect_from_config(widget_config: Dict[str, Any]) -> pygame.Rect:
 def load_widgets():
     logger.info("Loading widgets")
     widgets.clear()
-    if show_fps:
+    if config2.show_fps:
         widgets.append(
             FPSWidget(
                 parent_surface = framebuffer_global,
                 name = config.get('widget_defaults', {}).get('fps', {}).get("name", "fps"),
                 rect = get_widget_rect_from_config(config.get('widget_defaults', {}).get('fps', {})),
                 background_color = None,
-                border = debug_widgets,
+                border = config2.debug_widgets,
                 font = WidgetFont(
                     family = config.get('widget_defaults', {}).get('fps', {}).get("font_family", "monospace"),
                     size = config.get('widget_defaults', {}).get('fps', {}).get("font_size", 18),
@@ -229,7 +218,7 @@ def load_widgets():
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
-                        border = debug_widgets,
+                        border = config2.debug_widgets,
                         font = WidgetFont(
                             family = widget_config.get('font_family', None),
                             size = widget_config.get('font_size', 30),
@@ -247,7 +236,7 @@ def load_widgets():
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
-                        border = debug_widgets,
+                        border = config2.debug_widgets,
                         font = WidgetFont(
                             family = widget_config.get('font_family', None),
                             size = widget_config.get('font_size', 30),
@@ -265,7 +254,7 @@ def load_widgets():
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
-                        border = debug_widgets,
+                        border = config2.debug_widgets,
                         font = WidgetFont(
                             family = widget_config.get('font_family', None),
                             size = widget_config.get('font_size', 30),
@@ -289,7 +278,7 @@ def load_widgets():
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
-                        border = debug_widgets,
+                        border = config2.debug_widgets,
                         font = WidgetFont(
                             family = widget_config.get('font_family', None),
                             size = widget_config.get('font_size', 30),
@@ -308,7 +297,7 @@ def load_widgets():
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
-                        border = debug_widgets,
+                        border = config2.debug_widgets,
                         font = WidgetFont(
                             family = widget_config.get('font_family', None),
                             size = widget_config.get('font_size', 30),
@@ -325,7 +314,7 @@ def load_widgets():
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
-                        border = debug_widgets,
+                        border = config2.debug_widgets,
                         path = widget_config.get('path', None),
                         url = widget_config.get('url', None),
                         cache_path = cache_path
@@ -338,7 +327,7 @@ def load_widgets():
                         name = widget_name,
                         rect = get_widget_rect_from_config(widget_config),
                         background_color = widget_config.get('background_color', None),
-                        border = debug_widgets,
+                        border = config2.debug_widgets,
                         font = WidgetFont(
                             family = widget_config.get('font_family', None),
                             size = widget_config.get('font_size', 32),
@@ -397,11 +386,11 @@ for j in range(len(icon_names)):
     y += 80
     x = 50
 
-if hide_mouse_cursor:
+if config2.hide_mouse_cursor:
     pygame.mouse.set_visible(False)
 
 last_mouse_motion_event = pygame.time.get_ticks()
-inactive_time = auto_hide_mouse_cursor_timeout * 1000
+inactive_time = config2.auto_hide_mouse_cursor_timeout * 1000
 
 while running:
 
@@ -410,7 +399,7 @@ while running:
         if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
             logger.info("See you next time!")
             running = False
-        elif event.type == pygame.MOUSEMOTION and show_mouse_cursor_on_mouse_motion_events:
+        elif event.type == pygame.MOUSEMOTION and config2.show_mouse_cursor_on_mouse_motion_events:
             if not pygame.mouse.get_visible():
                 pygame.mouse.set_visible(True)
             last_mouse_motion_event = pygame.time.get_ticks()
@@ -418,19 +407,16 @@ while running:
             click_event = event
 
     # DEBUG: check for configuration changes
-    if debug_widgets:
+    if config2.debug_widgets:
         current_modified_time = os.path.getmtime(configuration_file_path)
         if current_modified_time != last_modified_time:
             # TODO: create method for avoid duplicate code
             logger.info("Configuration file changes detected, reloading widgets")
             config = load_config(configuration_file_path)
-            app_name = config.get('general', {}).get('app_name', "Python Smart Home Dashboard")
-            debug_widgets = config.get('app', {}).get('debug_widgets', False)
-            max_fps = config.get('app', {}).get('max_fps', 30)
-            show_fps = config.get('app', {}).get('show_fps', False)
             cache_path = config.get('app', {}).get('cache_path', None)
             background_color = config.get('app', {}).get('background_color', COLOR_BLACK)
-
+            config2.load()
+            config2.apply()
             last_modified_time = current_modified_time
             load_widgets()
             framebuffer_global.fill(background_color)
@@ -448,14 +434,14 @@ while running:
     # limit fps
     FPS.tick()
 
-    if hide_mouse_cursor and show_mouse_cursor_on_mouse_motion_events:
+    if config2.hide_mouse_cursor and config2.show_mouse_cursor_on_mouse_motion_events:
         current_time = pygame.time.get_ticks()
         if current_time - last_mouse_motion_event > inactive_time:
             if pygame.mouse.get_visible():
                 pygame.mouse.set_visible(False)
 
 
-if hide_mouse_cursor:
+if config2.hide_mouse_cursor:
     pygame.mouse.set_visible(True)
 
 pygame.quit()
