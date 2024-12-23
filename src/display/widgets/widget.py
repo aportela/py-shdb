@@ -12,14 +12,11 @@ class Widget(ABC):
             raise ValueError("Name cannot be None or empty.")
         self.__name = name
         self.__rect = rect
-        self.refresh_sub_surface_from_parent_surface()
+        self.__sub_surface = self.__parent_surface.subsurface(self.__rect).copy()
         self.__background_color = background_color
         self.__border = border
         self.__border_color = border_color
         self._tmp_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA if background_color is None else 0)
-
-    def refresh_sub_surface_from_parent_surface(self) -> None:
-        self.__sub_surface = self.__parent_surface.subsurface(self.__rect).copy()
 
     @property
     def parent_surface(self) -> pygame.Surface:
