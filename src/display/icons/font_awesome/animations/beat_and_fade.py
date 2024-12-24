@@ -5,47 +5,56 @@ from ..icon_list import IconList as FontAwesomeIcons
 from ..enums import AnimationType as FontAwesomeAnimationType, AnimationSpeed as FontAwesomeAnimationSpeed
 
 class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcons, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, max_size: int = 0) -> None:
-        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_path = font_path, size = size, color = color, speed = speed)
+    def __init__(self, parent_surface: pygame.Surface, icon: FontAwesomeIcons, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, max_size: int = 0) -> None:
+        super().__init__(parent_surface = parent_surface, icon = icon, font_path = font_path, size = size, color = color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.BEAT_AND_FADE
         self.__original_size = size
         if (max_size <= size):
             raise ValueError(f"Invalid max_size value: {max_size}.")
         self.__max_size = max_size
         self.__current_size = size
+        self.__last_size = 0
+        self.__alpha = 32
         self.__increase_size = True
-        self.__alpha = 72
         # set temporal font size at max Beat width/height for creating temporal surface with required size
         super().set_size(self.__max_size)
         icon_surface = super().render(self._icon, self._color)
-        super()._create_temporal_surface(icon_surface.get_size())
+        big_size_cached = icon_surface.get_size()
+        #super()._create_temporal_surface(big_size_cached)
+        self.__real_surface_size = big_size_cached
         # restore original size
         super().set_size(self.__original_size)
+        icon_surface = super().render(self._icon, self._color)
+        small_size_cached = icon_surface.get_size()
+        self._set_animation_total_frames((max(big_size_cached) - max(small_size_cached)) * 4)
 
-    def _animate(self) -> bool:
-        # TODO
-        if self._animation_frame_change_required():
-            animation_unit = 1
+    def render(self) -> pygame.Surface:
+        self._set_animation_duration()
+        if self.__increase_size:
+            if self.__current_size < self.__max_size:
+                self.__current_size += self._frame_skip
+                if self.__alpha < 255:
+                    self.__alpha += 4
+
+            else:
+                self.__increase_size = False
+        else:
+            if self.__current_size > self.__original_size:
+                self.__current_size -= self._frame_skip
+                if self.__alpha > 72:
+                    self.__alpha -= 4
+
+            else:
+                self.__increase_size = True
+        if self.__last_size != int(self.__current_size):
+            tmp_surface = pygame.Surface(self.__real_surface_size, pygame.SRCALPHA)
+            super().set_size(int(self.__current_size))
             icon_surface = super().render(self._icon, self._color)
             icon_surface.set_alpha(self.__alpha)
-            if self.__increase_size:
-                if self.__current_size < self.__max_size:
-                    self.__current_size += animation_unit
-                    if self.__alpha < 255:
-                        self.__alpha += animation_unit * 16
-                else:
-                    self.__increase_size = False
-            else:
-                if self.__current_size > self.__original_size:
-                    self.__current_size -= animation_unit
-                    if self.__alpha > 72:
-                        self.__alpha -= animation_unit * 16
-                else:
-                    self.__increase_size = True
-            super().set_size(self.__current_size)
-            x = (self._get_temporal_surface_width() - icon_surface.get_width()) // 2
-            y = (self._get_temporal_surface_height() - icon_surface.get_height()) // 2
-            self._blit(icon_surface, (x, y))
-            return True
+            x = (self.__real_surface_size[0] - icon_surface.get_width()) // 2
+            y = (self.__real_surface_size[1] - icon_surface.get_height()) // 2
+            tmp_surface.blit(icon_surface, (x, y))
+            self.__last_size = int(self.__current_size)
+            return tmp_surface
         else:
-            return False
+            return None
