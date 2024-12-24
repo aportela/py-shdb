@@ -37,7 +37,6 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
         self.__last_alpha = int(self.__current_alpha)
 
     def render(self) -> pygame.Surface:
-        self._set_animation_duration()
         self.__animate()
         if self.__changed:
             self.__icon_surface.set_alpha(int(self.__current_alpha))
