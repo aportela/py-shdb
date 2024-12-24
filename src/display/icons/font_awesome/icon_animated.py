@@ -10,13 +10,13 @@ from ...fps import FPS
 from .enums import AnimationType as FontAwesomeAnimationType, AnimationSpeed as FontAwesomeAnimationSpeed
 
 class IconAnimated(Icon):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcon, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), animation_total_frames: int = 0) -> None:
+    def __init__(self, parent_surface: pygame.Surface, icon: FontAwesomeIcon, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), animation_total_frames: int = 0) -> None:
         super().__init__(font_path = font_path, size = size, color = color)
         self._log = Logger()
         self._parent_surface = parent_surface
         self.__tmp_surface = None
-        self.__x = x
-        self.__y = y
+        #self.__x = 200
+        #self.__y = 200
         self._icon = icon
         self._color = color
         self._speed = speed
@@ -42,10 +42,12 @@ class IconAnimated(Icon):
             self.__tmp_surface = pygame.Surface(size, pygame.SRCALPHA)
         else:
             self.__tmp_surface = pygame.Surface(size)
+        """
         if self.__widget_area is None:
             self.__widget_area = pygame.Rect(self.__x, self.__y, size[0], size[1])
         if self.__sub_surface is None:
             self.__sub_surface = self._parent_surface.subsurface(self.__widget_area).copy()
+        """
 
     def _get_temporal_surface_width(self) -> int:
         if self.__tmp_surface is not None:

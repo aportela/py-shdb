@@ -5,8 +5,8 @@ from ..icon_list import IconList as FontAwesomeIcons
 from ..enums import AnimationType as FontAwesomeAnimationType, AnimationSpeed as FontAwesomeAnimationSpeed
 
 class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcons, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
-        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_path = font_path, size = size, color = color, background_color = background_color, speed = speed)
+    def __init__(self, parent_surface: pygame.Surface, icon: FontAwesomeIcons, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
+        super().__init__(parent_surface = parent_surface, icon = icon, font_path = font_path, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.FADE
         self.__current_alpha = 0
         self.__last_alpha = 0
