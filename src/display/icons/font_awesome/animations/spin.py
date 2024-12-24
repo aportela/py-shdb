@@ -14,13 +14,9 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
             self._animation_type = FontAwesomeAnimationType.SPIN_COUNTERCLOCKWISE
             self.__angle = 360
         self.__last_angle = self.__angle
-        self.__radius = 0
         self.__icon_surface = super().render(self._icon, self._color)
         self.__real_surface_size = self.__icon_surface.get_size()
-        #square_size = max(self.__icon_surface.get_size())
-        #super()._create_temporal_surface((square_size, square_size))
         self.__icon_surface_center = (self.__icon_surface.get_width() // 2, self.__icon_surface.get_height() // 2)
-
 
     def __animate(self) -> None:
         self._set_animation_duration()
@@ -33,8 +29,12 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
             if self.__angle > 360:
                 self.__angle = 0
 
+    @property
     def __changed(self) -> bool:
         return self.__last_angle != int(self.__angle)
+
+    def __update_changed_values(self) -> None:
+        self.__last_angle = int(self.__angle)
 
     def render(self) -> bool:
         self.__animate()
@@ -43,7 +43,7 @@ class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
             rotated_icon = pygame.transform.rotate(self.__icon_surface, self.__angle)
             rotated_rect = rotated_icon.get_rect(center = self.__icon_surface_center)
             tmp_surface.blit(rotated_icon, rotated_rect)
-            self.__last_angle = int(self.__angle)
+            self.__update_changed_values()
             return tmp_surface
         else:
             return None
