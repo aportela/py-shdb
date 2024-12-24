@@ -16,7 +16,7 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
         self.__icon_surface = super().render(self._icon, self._color)
         self._set_animation_total_frames((self.__max_alpha - self.__min_alpha) * 4)
 
-    def render(self) -> pygame.Surface:
+    def __animate(self) -> None:
         self._set_animation_duration()
         if self.__fade_in:
             if self.__current_alpha < self.__max_alpha:
@@ -28,9 +28,20 @@ class FontAwesomeIconFadeEffect(FontAwesomeIconBaseEffect):
                 self.__current_alpha -= self._frame_skip
             else:
                 self.__fade_in = True
-        if self.__last_alpha != int(self.__current_alpha):
+
+    @property
+    def __changed(self) -> bool:
+        return self.__last_alpha != int(self.__current_alpha)
+
+    def __update_changed_values(self) -> None:
+        self.__last_alpha = int(self.__current_alpha)
+
+    def render(self) -> pygame.Surface:
+        self._set_animation_duration()
+        self.__animate()
+        if self.__changed:
             self.__icon_surface.set_alpha(int(self.__current_alpha))
-            self.__last_alpha = int(self.__current_alpha)
+            self.__update_changed_values()
             return self.__icon_surface
         else:
             return None
