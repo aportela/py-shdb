@@ -10,31 +10,7 @@ from .icon import Icon as FontAwesomeIcon
 from ....utils.logger import Logger
 from ...fps import FPS
 
-# SIMULATE animations of https://docs.fontawesome.com/web/style/animate#_top
-class FontAwesomeAnimationType(Enum):
-    NONE = 0
-    BEAT = 1
-    FADE = 2
-    BEAT_AND_FADE = 3
-    BOUNCE = 4
-    HORIZONTAL_FLIP = 5
-    VERTICAL_FLIP = 6
-    SHAKE = 7
-    SPIN_CLOCKWISE = 8
-    SPIN_COUNTERCLOCKWISE = 9
-
-class FontAwesomeAnimationSpeed(Enum):
-    SLOW = 1
-    MEDIUM = 4
-    FAST = 8
-
-class FontAwesomeAnimationFlipAxis(Enum):
-    HORIZONTAL = 1
-    VERTICAL = 2
-
-class FontAwesomeAnimationSpinDirection(Enum):
-    CLOCKWISE = 1
-    COUNTERCLOCKWISE = 2
+from .enums import AnimationType as FontAwesomeAnimationType, AnimationSpeed as FontAwesomeAnimationSpeed, FlipAnimationAxis as FontAwesomeAnimationFlipAxis, SpinAnimationDirection as FontAwesomeAnimationSpinDirection
 
 class FontAwesomeIconBaseEffect(FontAwesomeIcon):
     def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcons, font_file_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), animation_total_frames: int = 0) -> None:
