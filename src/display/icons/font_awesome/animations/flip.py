@@ -26,6 +26,7 @@ class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
         self._set_animation_total_frames((self.__width if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP else self.__height) * 4)
 
     def __animate(self) -> None:
+        self._set_animation_duration()
         if self.__shrinking:
             if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
                 self.__current_width -= self._frame_skip
@@ -60,7 +61,6 @@ class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
 
 
     def render(self) -> pygame.Surface:
-        self._set_animation_duration()
         self.__animate()
         if self.__changed:
             tmp_surface = pygame.Surface(self.__real_surface_size, pygame.SRCALPHA)
