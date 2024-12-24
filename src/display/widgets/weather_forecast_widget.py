@@ -7,8 +7,13 @@ from .widget_font import WidgetFont
 from ..icons.font_awesome.icon_list import IconList as FontAwesomeIcons
 from ..icons.font_awesome.icon import Icon as FontAwesomeIcon
 
-from ..icons.font_awesome.enums import AnimationSpeed as FontAwesomeAnimationSpeed
+from ..icons.font_awesome.enums import AnimationSpeed as FontAwesomeAnimationSpeed, FlipAnimationAxis as FontAwesomeAnimationFlipAxis, SpinAnimationDirection as FontAwesomeAnimationSpinDirection
 from ..icons.font_awesome.animations.beat import FontAwesomeIconBeatEffect
+from ..icons.font_awesome.animations.beat_and_fade import FontAwesomeIconBeatAndFadeEffect
+from ..icons.font_awesome.animations.bounce import FontAwesomeIconBounceEffect
+from ..icons.font_awesome.animations.fade import FontAwesomeIconFadeEffect
+from ..icons.font_awesome.animations.flip import FontAwesomeIconFlipEffect
+from ..icons.font_awesome.animations.spin import FontAwesomeIconSpinEffect
 
 class WeatherForecastWidget(Widget):
 
@@ -20,14 +25,15 @@ class WeatherForecastWidget(Widget):
         if not text:
             raise RuntimeError("Text not set")
         self.__text = text
-        self._icon = FontAwesomeIconBeatEffect(parent_surface = self.parent_surface,
-                                               x = 10, y = 40,
+        self._icon = FontAwesomeIconBounceEffect(parent_surface = self.parent_surface,
                                                icon = FontAwesomeIcons.ICON_CLOUD_BOLT,
                                                font_path= "resources/fonts/fa-solid-900.ttf",
                                                size = 50,
                                                color = (255,255,255),
-                                               speed = FontAwesomeAnimationSpeed.MEDIUM,
-                                               max_size = 60
+                                               speed = FontAwesomeAnimationSpeed.SLOW,
+                                               #max_size = 60
+                                               #axis = FontAwesomeAnimationFlipAxis.HORIZONTAL
+                                               #direction = FontAwesomeAnimationSpinDirection.CLOCKWISE
         )
 
     def __blit_defaults(self):
@@ -57,7 +63,7 @@ class WeatherForecastWidget(Widget):
             y+= 60
 
     def refresh(self, force: bool = False) -> bool:
-        icon_surface = self._icon.render()
+        icon_surface = self._icon.render_animation()
         self._render_required = icon_surface is not None
         if force or self._render_required:
             super()._clear()

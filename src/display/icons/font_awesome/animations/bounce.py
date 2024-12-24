@@ -17,10 +17,9 @@ class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
         self.__current_y = 0
         self.__last_y = 0
         self.__falling = True
-        self._set_animation_total_frames(self.__distance * 8)
+        self._set_total_frames(self.__distance * 8)
 
-    def __animate(self) -> None:
-        self._set_animation_duration()
+    def _animate(self) -> None:
         if self.__min_y < self.__max_y:
             if self.__falling:
                 if self.__current_y < self.__max_y:
@@ -35,18 +34,13 @@ class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
                     self.__falling = True
 
     @property
-    def __changed(self) -> bool:
+    def _changed(self) -> bool:
         return self.__last_y != int(self.__current_y)
 
-    def __update_changed_values(self) -> None:
+    def _update_changed_values(self) -> None:
         self.__last_y = int(self.__current_y)
 
-    def render(self) -> pygame.Surface:
-        self.__animate()
-        if self.__changed:
-            tmp_surface = pygame.Surface(self.__real_surface_size, pygame.SRCALPHA)
-            tmp_surface.blit(self.__icon_surface, (0, self.__current_y))
-            self.__update_changed_values()
-            return tmp_surface
-        else:
-            return None
+    def _render_animation(self) -> pygame.Surface:
+        tmp_surface = pygame.Surface(self.__real_surface_size, pygame.SRCALPHA)
+        tmp_surface.blit(self.__icon_surface, (0, self.__current_y))
+        return tmp_surface

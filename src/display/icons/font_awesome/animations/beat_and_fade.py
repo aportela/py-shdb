@@ -25,10 +25,9 @@ class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
         super().set_size(self.__original_size)
         icon_surface = super().render(self._icon, self._color)
         small_size_cached = icon_surface.get_size()
-        self._set_animation_total_frames((max(big_size_cached) - max(small_size_cached)) * 4)
+        self._set_total_frames((max(big_size_cached) - max(small_size_cached)) * 4)
 
-    def __animate(self) -> None:
-        self._set_animation_duration()
+    def _animate(self) -> None:
         if self.__increase_size:
             if self.__current_size < self.__max_size:
                 self.__current_size += self._frame_skip
@@ -41,23 +40,18 @@ class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
                 self.__increase_size = True
 
     @property
-    def __changed(self) -> bool:
+    def _changed(self) -> bool:
         return self.__last_size != int(self.__current_size)
 
-    def __update_changed_values(self) -> None:
+    def _update_changed_values(self) -> None:
         self.__last_size = int(self.__current_size)
 
-    def render(self) -> pygame.Surface:
-        self.__animate()
-        if self.__changed:
-            tmp_surface = pygame.Surface(self.__real_surface_size, pygame.SRCALPHA)
-            super().set_size(int(self.__current_size))
-            icon_surface = super().render(self._icon, self._color)
-            icon_surface.set_alpha(self.__alpha)
-            x = (self.__real_surface_size[0] - icon_surface.get_width()) // 2
-            y = (self.__real_surface_size[1] - icon_surface.get_height()) // 2
-            tmp_surface.blit(icon_surface, (x, y))
-            self.__update_changed_values()
-            return tmp_surface
-        else:
-            return None
+    def _render_animation(self) -> pygame.Surface:
+        tmp_surface = pygame.Surface(self.__real_surface_size, pygame.SRCALPHA)
+        super().set_size(int(self.__current_size))
+        icon_surface = super().render(self._icon, self._color)
+        icon_surface.set_alpha(self.__alpha)
+        x = (self.__real_surface_size[0] - icon_surface.get_width()) // 2
+        y = (self.__real_surface_size[1] - icon_surface.get_height()) // 2
+        tmp_surface.blit(icon_surface, (x, y))
+        return tmp_surface

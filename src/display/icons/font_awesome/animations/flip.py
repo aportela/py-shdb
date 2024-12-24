@@ -23,10 +23,9 @@ class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
         self.__current_height = self.__height
         self.__last_height = self.__current_height
         self.__shrinking = True
-        self._set_animation_total_frames((self.__width if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP else self.__height) * 4)
+        self._set_total_frames((self.__width if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP else self.__height) * 4)
 
-    def __animate(self) -> None:
-        self._set_animation_duration()
+    def _animate(self) -> None:
         if self.__shrinking:
             if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
                 self.__current_width -= self._frame_skip
@@ -54,29 +53,24 @@ class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
         return True
 
     @property
-    def __changed(self) -> bool:
+    def _changed(self) -> bool:
         if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
             return self.__last_width != int(self.__current_width)
         else:
             return self.__last_height != int(self.__current_height)
 
-    def __update_changed_values(self) -> None:
+    def _update_changed_values(self) -> None:
         if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
             self.__last_width = int(self.__current_width)
         else:
             self.__last_height = int(self.__current_height)
 
-    def render(self) -> pygame.Surface:
-        self.__animate()
-        if self.__changed:
-            tmp_surface = pygame.Surface(self.__real_surface_size, pygame.SRCALPHA)
-            streched_icon = pygame.transform.scale(self.__icon_surface if self.__flip else self.__icon_surface_flipped, (self.__current_width, self.__current_height))
-            if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
-                dest = ((self.__width - self.__current_width) // 2, 0)
-            else:
-                dest = (0, (self.__height - self.__current_height) // 2)
-            tmp_surface.blit(streched_icon, dest)
-            self.__update_changed_values()
-            return tmp_surface
+    def _render_animation(self) -> pygame.Surface:
+        tmp_surface = pygame.Surface(self.__real_surface_size, pygame.SRCALPHA)
+        streched_icon = pygame.transform.scale(self.__icon_surface if self.__flip else self.__icon_surface_flipped, (self.__current_width, self.__current_height))
+        if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
+            dest = ((self.__width - self.__current_width) // 2, 0)
         else:
-            return None
+            dest = (0, (self.__height - self.__current_height) // 2)
+        tmp_surface.blit(streched_icon, dest)
+        return tmp_surface
