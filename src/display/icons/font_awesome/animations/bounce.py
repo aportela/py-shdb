@@ -5,8 +5,8 @@ from ..icon_list import IconList as FontAwesomeIcons
 from ..enums import AnimationType as FontAwesomeAnimationType, AnimationSpeed as FontAwesomeAnimationSpeed
 
 class FontAwesomeIconBounceEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcons, font_file_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM) -> None:
-        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_file_path = font_file_path, size = size, color = color, background_color = background_color, speed = speed)
+    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcons, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM) -> None:
+        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_path = font_path, size = size, color = color, background_color = background_color, speed = speed)
         self._animation_type = FontAwesomeAnimationType.BOUNCE
         self.__icon_surface = super().render(self._icon, self._color)
         total_height = self.__icon_surface.get_height() + (self.__icon_surface.get_height() // 2)

@@ -41,7 +41,7 @@ class AppSettings (Configuration):
     def __apply(self) -> bool:
         if self._loaded_configuration is not None:
             locale.setlocale(locale.LC_TIME, self._loaded_configuration.get('app', {}).get("locale", "en_EN.UTF-8"))
-            FontAwesomeIcon.set_default_font_filepath(self._loaded_configuration.get('resources', {}).get('font_awesome_path', None))
+            FontAwesomeIcon.set_default_font_path(self._loaded_configuration.get('resources', {}).get('font_awesome_path', None))
             FPS.set_default_fps(self._loaded_configuration.get('app', {}).get('max_fps', 30))
             return True
         else:

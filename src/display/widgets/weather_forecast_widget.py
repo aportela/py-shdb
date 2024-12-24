@@ -23,7 +23,7 @@ class WeatherForecastWidget(Widget):
         self._icon = FontAwesomeIconBeatEffect(parent_surface = self.parent_surface,
                                                x = 10, y = 40,
                                                icon = FontAwesomeIcons.ICON_CLOUD_BOLT,
-                                               font_file_path= "resources/fonts/fa-solid-900.ttf",
+                                               font_path= "resources/fonts/fa-solid-900.ttf",
                                                size = 50,
                                                color = (255,255,255),
                                                background_color = background_color,

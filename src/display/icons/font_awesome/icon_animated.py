@@ -4,15 +4,15 @@ import datetime
 import pygame
 
 from .icon_list import IconList as FontAwesomeIcons
-from .icon import Icon as FontAwesomeIcon
+from .icon import Icon
 from ....utils.logger import Logger
 from ...fps import FPS
 
 from .enums import AnimationType as FontAwesomeAnimationType, AnimationSpeed as FontAwesomeAnimationSpeed
 
-class IconAnimated(FontAwesomeIcon):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcons, font_file_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), animation_total_frames: int = 0) -> None:
-        super().__init__(font_file_path = font_file_path, size = size, color = color)
+class IconAnimated(Icon):
+    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcons, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), animation_total_frames: int = 0) -> None:
+        super().__init__(font_path = font_path, size = size, color = color)
         self._log = Logger()
         self._parent_surface = parent_surface
         self.__tmp_surface = None
