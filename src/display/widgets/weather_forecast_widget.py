@@ -9,7 +9,6 @@ from ..icons.font_awesome.icon import Icon as FontAwesomeIcon
 
 from ..icons.font_awesome.enums import AnimationSpeed as FontAwesomeAnimationSpeed
 from ..icons.font_awesome.animations.beat import FontAwesomeIconBeatEffect
-#from ..icons.font_awesome.animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect, FontAwesomeIconSpinEffect, FontAwesomeIconFlipEffect, FontAwesomeAnimationFlipAxis, FontAwesomeIconFadeEffect, FontAwesomeIconBeatAndFadeEffect
 
 class WeatherForecastWidget(Widget):
 

@@ -1,9 +1,8 @@
 from typing import Optional
 import pygame
-
-from ..animated_icon import FontAwesomeIconBaseEffect
+from ..icon_animated import IconAnimated as FontAwesomeIconBaseEffect
 from ..icon_list import IconList as FontAwesomeIcons
-from ..enums import AnimationType as FontAwesomeAnimationType, AnimationSpeed as FontAwesomeAnimationSpeed
+from ..enums import AnimationType as FontAwesomeAnimationType, AnimationSpeed as FontAwesomeAnimationSpeed, FlipAnimationAxis as FontAwesomeAnimationFlipAxis
 
 class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
 
