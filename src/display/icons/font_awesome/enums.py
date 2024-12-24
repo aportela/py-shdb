@@ -15,8 +15,8 @@ class AnimationType(Enum):
 
 class AnimationSpeed(Enum):
     SLOW = 1
-    MEDIUM = 4
-    FAST = 8
+    MEDIUM = 2
+    FAST = 3
 
 class FlipAnimationAxis(Enum):
     HORIZONTAL = 1
