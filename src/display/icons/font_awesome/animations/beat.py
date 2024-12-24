@@ -47,7 +47,6 @@ class FontAwesomeIconBeatEffect(FontAwesomeIconBaseEffect):
         self.__last_size = int(self.__current_size)
 
     def render(self) -> pygame.Surface:
-        self._set_animation_duration()
         self.__animate()
         if self.__changed:
             tmp_surface = pygame.Surface(self.__real_surface_size, pygame.SRCALPHA)
