@@ -20,7 +20,6 @@ class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
         super().set_size(self.__max_size)
         icon_surface = super().render(self._icon, self._color)
         big_size_cached = icon_surface.get_size()
-        #super()._create_temporal_surface(big_size_cached)
         self.__real_surface_size = big_size_cached
         # restore original size
         super().set_size(self.__original_size)
@@ -28,25 +27,29 @@ class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
         small_size_cached = icon_surface.get_size()
         self._set_animation_total_frames((max(big_size_cached) - max(small_size_cached)) * 4)
 
-    def render(self) -> pygame.Surface:
+    def __animate(self) -> None:
         self._set_animation_duration()
         if self.__increase_size:
             if self.__current_size < self.__max_size:
                 self.__current_size += self._frame_skip
-                if self.__alpha < 255:
-                    self.__alpha += 4
-
             else:
                 self.__increase_size = False
         else:
             if self.__current_size > self.__original_size:
                 self.__current_size -= self._frame_skip
-                if self.__alpha > 72:
-                    self.__alpha -= 4
-
             else:
                 self.__increase_size = True
-        if self.__last_size != int(self.__current_size):
+
+    @property
+    def __changed(self) -> bool:
+        return self.__last_size != int(self.__current_size)
+
+    def __update_changed_values(self) -> None:
+        self.__last_size = int(self.__current_size)
+
+    def render(self) -> pygame.Surface:
+        self.__animate()
+        if self.__changed:
             tmp_surface = pygame.Surface(self.__real_surface_size, pygame.SRCALPHA)
             super().set_size(int(self.__current_size))
             icon_surface = super().render(self._icon, self._color)
@@ -54,7 +57,7 @@ class FontAwesomeIconBeatAndFadeEffect(FontAwesomeIconBaseEffect):
             x = (self.__real_surface_size[0] - icon_surface.get_width()) // 2
             y = (self.__real_surface_size[1] - icon_surface.get_height()) // 2
             tmp_surface.blit(icon_surface, (x, y))
-            self.__last_size = int(self.__current_size)
+            self.__update_changed_values()
             return tmp_surface
         else:
             return None
