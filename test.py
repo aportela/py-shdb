@@ -24,7 +24,7 @@ from src.display.widgets.month_calendar_widget import MonthCalendarWidget
 from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
-from src.display.icons.font_awesome.animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBeatEffect, FontAwesomeIconBounceEffect, FontAwesomeIconSpinEffect, FontAwesomeIconFlipEffect, FontAwesomeAnimationFlipAxis, FontAwesomeIconFadeEffect, FontAwesomeIconBeatAndFadeEffect
+from src.display.icons.font_awesome.animated_icon import FontAwesomeAnimationSpeed, FontAwesomeAnimationSpinDirection, FontAwesomeIconBounceEffect, FontAwesomeIconSpinEffect, FontAwesomeIconFlipEffect, FontAwesomeAnimationFlipAxis, FontAwesomeIconFadeEffect, FontAwesomeIconBeatAndFadeEffect
 from src.display.icons.font_awesome.icon_list import IconList as FontAwesomeIcons
 from src.display.icons.font_awesome.icon import Icon as FontAwesomeIcon
 
@@ -324,43 +324,6 @@ running = True
 
 click_event = None
 
-speeds = [ FontAwesomeAnimationSpeed.FAST, FontAwesomeAnimationSpeed.MEDIUM, FontAwesomeAnimationSpeed.SLOW ]
-icon_names = [ FontAwesomeIcons.ICON_BASKETBALL, FontAwesomeIcons.ICON_SUN, FontAwesomeIcons.ICON_COG, FontAwesomeIcons.ICON_COMPACT_DISC, FontAwesomeIcons.ICON_COMPUTER, FontAwesomeIcons.ICON_FROG ]
-colors = [ (255, 234, 0), (155, 234, 0), (55, 34, 200) ]
-icons = []
-icons_size = 30
-x = 50
-y = 30
-for j in range(len(icon_names)):
-    for i in range(len(speeds)):
-        if j == 0:
-            icons.append(
-                FontAwesomeIconBounceEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i])
-            )
-        elif j == 1:
-            icons.append(
-                FontAwesomeIconBeatEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], max_size = 36)
-            )
-        elif j == 2:
-            icons.append(
-                FontAwesomeIconSpinEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], direction = FontAwesomeAnimationSpinDirection.CLOCKWISE)
-            )
-        elif j == 3:
-            icons.append(
-                FontAwesomeIconFlipEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], axis = FontAwesomeAnimationFlipAxis.HORIZONTAL)
-            )
-        elif j == 4:
-                icons.append(
-                FontAwesomeIconFadeEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i])
-            )
-        elif j == 5:
-                icons.append(
-                FontAwesomeIconBeatAndFadeEffect(parent_surface = current_screen_surface, x = current_screen_surface.get_width() - x , y = y, icon = icon_names[j], size = icons_size, color = colors[i], background_color = background_color, speed = speeds[i], max_size = 36)
-            )
-        x += 50
-    y += 80
-    x = 50
-
 if app_settings.hide_mouse_cursor:
     pygame.mouse.set_visible(False)
 
@@ -407,7 +370,6 @@ while running:
         if current_time - last_mouse_motion_event > inactive_time:
             if pygame.mouse.get_visible():
                 pygame.mouse.set_visible(False)
-
 
 if app_settings.hide_mouse_cursor:
     pygame.mouse.set_visible(True)
