@@ -26,7 +26,6 @@ class WeatherForecastWidget(Widget):
                                                font_path= "resources/fonts/fa-solid-900.ttf",
                                                size = 50,
                                                color = (255,255,255),
-                                               background_color = background_color,
                                                speed = FontAwesomeAnimationSpeed.MEDIUM,
                                                max_size = 60
         )

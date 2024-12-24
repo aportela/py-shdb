@@ -1,9 +1,8 @@
 from typing import Optional
-
 import datetime
 import pygame
 
-from .icon_list import IconList as FontAwesomeIcons
+from .icon_list import IconList as FontAwesomeIcon
 from .icon import Icon
 from ....utils.logger import Logger
 from ...fps import FPS
@@ -11,7 +10,7 @@ from ...fps import FPS
 from .enums import AnimationType as FontAwesomeAnimationType, AnimationSpeed as FontAwesomeAnimationSpeed
 
 class IconAnimated(Icon):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcons, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), animation_total_frames: int = 0) -> None:
+    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcon, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), animation_total_frames: int = 0) -> None:
         super().__init__(font_path = font_path, size = size, color = color)
         self._log = Logger()
         self._parent_surface = parent_surface
@@ -20,8 +19,6 @@ class IconAnimated(Icon):
         self.__y = y
         self._icon = icon
         self._color = color
-        self.__background_color = background_color
-        self.__transparent = background_color == None
         self._speed = speed
         self._set_animation_duration_coefficients(animation_duration_coefficients)
         self._sprite_count = 0

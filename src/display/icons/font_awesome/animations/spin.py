@@ -6,8 +6,8 @@ from ..icon_list import IconList as FontAwesomeIcons
 from ..enums import AnimationType as FontAwesomeAnimationType, AnimationSpeed as FontAwesomeAnimationSpeed, SpinAnimationDirection as FontAwesomeAnimationSpinDirection
 
 class FontAwesomeIconSpinEffect(FontAwesomeIconBaseEffect):
-    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcons, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), background_color: tuple[int, int, int] = None, speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
-        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_path = font_path, size = size, color = color, background_color = background_color, speed = speed, animation_duration_coefficients = animation_duration_coefficients, animation_total_frames = 359)
+    def __init__(self, parent_surface: pygame.Surface, x: int, y: int, icon: FontAwesomeIcons, font_path: Optional[str] = None, size: int = 16, color: tuple[int, int, int] = (255, 255, 255), speed: FontAwesomeAnimationSpeed = FontAwesomeAnimationSpeed.MEDIUM, animation_duration_coefficients: tuple[int, int, int] = (1, 2, 4), direction: FontAwesomeAnimationSpinDirection = FontAwesomeAnimationSpinDirection.CLOCKWISE) -> None:
+        super().__init__(parent_surface = parent_surface, x = x, y = y, icon = icon, font_path = font_path, size = size, color = color, speed = speed, animation_duration_coefficients = animation_duration_coefficients, animation_total_frames = 359)
         if direction == FontAwesomeAnimationSpinDirection.CLOCKWISE:
             self._animation_type = FontAwesomeAnimationType.SPIN_CLOCKWISE
             self.__angle = 0
