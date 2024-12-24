@@ -53,12 +53,18 @@ class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
                     self.__shrinking = True
         return True
 
+    @property
     def __changed(self) -> bool:
         if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
             return self.__last_width != int(self.__current_width)
         else:
             return self.__last_height != int(self.__current_height)
 
+    def __update_changed_values(self) -> None:
+        if self._animation_type == FontAwesomeAnimationType.HORIZONTAL_FLIP:
+            self.__last_width = int(self.__current_width)
+        else:
+            self.__last_height = int(self.__current_height)
 
     def render(self) -> pygame.Surface:
         self.__animate()
@@ -70,8 +76,7 @@ class FontAwesomeIconFlipEffect(FontAwesomeIconBaseEffect):
             else:
                 dest = (0, (self.__height - self.__current_height) // 2)
             tmp_surface.blit(streched_icon, dest)
-            self.__last_width = int(self.__current_width)
-            self.__last_height = int(self.__current_height)
+            self.__update_changed_values()
             return tmp_surface
         else:
             return None
