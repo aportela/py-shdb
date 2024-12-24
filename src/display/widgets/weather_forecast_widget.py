@@ -41,20 +41,20 @@ class WeatherForecastWidget(Widget):
         self._render_required = True
 
         self.__font.update_font(size = 32)
-        super()._blit(self.__font.render("NOW"), (80, 52))
+        super()._blit(self.__font.render("NOW"), (80, 72))
         self.__font.update_font(size = 14)
-        super()._blit(self.__font.render("Rain probability : 50%"), (160, 50))
-        super()._blit(self.__font.render("Temperature      : 11º"), (160, 70))
-        super()._blit(self.__font.render("Wind speed       : 7Km/h"), (160, 90))
+        super()._blit(self.__font.render("Rain probability : 50%"), (160, 60))
+        super()._blit(self.__font.render("Temperature      : 11º"), (160, 80))
+        super()._blit(self.__font.render("Wind speed       : 7Km/h"), (160, 100))
 
         self.__font.update_font(size = 50)
         hours = ["16:00", "17:00", "18:00", "19:00", "20:00", "21:00" ]
         x = 4
-        y = 110
-        icons1 = [ FontAwesomeIcons.ICON_SUN, FontAwesomeIcons.ICON_CLOUD, FontAwesomeIcons.ICON_CLOUD_RAIN, FontAwesomeIcons.ICON_CLOUD_BOLT ]
-        icons2 = [ FontAwesomeIcons.ICON_WIND, FontAwesomeIcons.ICON_WIND, FontAwesomeIcons.ICON_WIND, FontAwesomeIcons.ICON_WIND ]
-        icons3 = [ FontAwesomeIcons.ICON_TEMPERATURE_0, FontAwesomeIcons.ICON_TEMPERATURE_1, FontAwesomeIcons.ICON_TEMPERATURE_2, FontAwesomeIcons.ICON_TEMPERATURE_3, FontAwesomeIcons.ICON_TEMPERATURE_4 ]
-        ic = FontAwesomeIcon(font_file_path = "resources/fonts/fa-solid-900.ttf", size = 32, color = (255, 255, 255))
+        y = 124
+        icons1 = [ FontAwesomeIcons.ICON_SUN] #, FontAwesomeIcons.ICON_CLOUD, FontAwesomeIcons.ICON_CLOUD_RAIN, FontAwesomeIcons.ICON_CLOUD_BOLT ]
+        icons2 = [ FontAwesomeIcons.ICON_WIND ] #, FontAwesomeIcons.ICON_WIND, FontAwesomeIcons.ICON_WIND, FontAwesomeIcons.ICON_WIND ]
+        icons3 = [ FontAwesomeIcons.ICON_TEMPERATURE_0 ] #, FontAwesomeIcons.ICON_TEMPERATURE_1, FontAwesomeIcons.ICON_TEMPERATURE_2, FontAwesomeIcons.ICON_TEMPERATURE_3, FontAwesomeIcons.ICON_TEMPERATURE_4 ]
+        ic = FontAwesomeIcon(font_path = "resources/fonts/fa-solid-900.ttf", size = 32, color = (255, 255, 255))
         for i in range(len(hours)):
             super()._blit(self.__font.render(hours[i]), (x, y))
             super()._blit(ic.render(random.choice(icons1), (random.randint(100, 255), random.randint(100, 255), random.randint(100, 255))), (x+170, y+8))
@@ -67,12 +67,10 @@ class WeatherForecastWidget(Widget):
         self._render_required = icon_surface is not None
         if force or self._render_required:
             super()._clear()
-            #self.__blit_defaults()
-            #self._icon.clear_prev()
-            super()._blit(icon_surface)
-            #self._icon.update_1()
+            self.__blit_defaults()
+            if icon_surface is not None:
+                super()._blit(icon_surface, (0, 50))
             super()._render()
-            self._render_required = False
             return True  # Indicate that the widget was rendered successfully
         else:
             return False  # Return False if the widget doesn't need a refresh
