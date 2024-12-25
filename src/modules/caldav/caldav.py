@@ -20,14 +20,16 @@ class CalDAV():
         calendars = principal.calendars()
         if not calendars:
             print("No calendars found!")
-            exit()
+            exit(1)
         calendar = calendars[0]
         print(f"Using calendar: {calendar.name}")
+        """
         events = calendar.date_search(
             start=datetime(2024, 1, 1),
             end=datetime(2024, 1, 2)
         )
-        print (events)
+        """
+        events = calendar.events()
         for event in events:
             print("Event found:")
             print(event.data)
