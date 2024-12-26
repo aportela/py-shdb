@@ -23,7 +23,7 @@ class RSSFeed:
         self._last_refresh_timestamp = 0
         if cache_path != None:
             path = f"{cache_path}/rss/{hashlib.sha256(self._url.encode('utf-8')).hexdigest()}.rss"
-            self._cache = ModuleCache(cache_path = path,  expire_seconds = default_seconds_refresh_time, purge_expired = True)
+            self._cache = ModuleCache(self.__log, path = path, ttl = default_seconds_refresh_time, purge_expired = True)
             self.__log.debug(f"Cache is enabled: {path}")
         else:
             self._cache = None
