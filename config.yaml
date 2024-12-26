@@ -9,11 +9,11 @@ app:
   show_fps: true
   locale: "es_ES.UTF-8"
   cache_path: "tmp/cache"
-  skin: "skins/default/2560x1440.yaml"
+  skin: "skins/default/1920x1080.yaml"
   # TODO
   # night_skin: "skins/default/1920x1080-night.yaml"
-  hide_mouse_cursor: True
-  show_mouse_cursor_on_mouse_motion_events: True
+  hide_mouse_cursor: true
+  show_mouse_cursor_on_mouse_motion_events: true
   auto_hide_mouse_cursor_timeout: 3
   monitor_index: 0
 
@@ -26,7 +26,7 @@ widget_defaults:
     font_family: "monospace"
     font_size: 18
     font_color: [255, 255, 0]
-    font_style_bold: True
+    font_style_bold: true
 
 resources:
   font_awesome_path: "resources/fonts/fa-solid-900.ttf"
