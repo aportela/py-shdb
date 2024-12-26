@@ -1,127 +1,91 @@
-import time
 from typing import Dict, List, Optional
-import hashlib
 import requests
 import feedparser
-from ..module_cache import ModuleCache
 from ...utils.logger import Logger
 
-class RSSFeed:
-    def __init__(self, logger: Logger, url: str, max_items: int = 8, default_seconds_refresh_time: int = 3600, cache_path: Optional[str] = None):
-        """
-        Initializes the RSSFeed object with the URL of the RSS feed and other configurations.
+# Default user-agent string to be used in the HTTP request headers.
+DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:112.0) Gecko/20100101 Firefox/112.0'
 
-        :param url: The URL of the RSS feed.
-        :param max_items: The maximum number of items to retrieve from the feed (default is 5).
-        :param default_seconds_refresh_time: The time in seconds between feed refreshes (default is 3600 seconds = 1 hour).
+class RSSFeed:
+    def __init__(self, logger: Logger, url: str, timeout: int = 10) -> None:
+        """
+        Initializes the RSSFeed object with the URL of the RSS feed.
+
+        :param logger: A custom logger instance for logging operations.
+        :param url: The URL of the RSS feed to be fetched.
+        :param timeout: Timeout duration for the HTTP request in seconds (default is 10 seconds).
         """
         self.__log = logger
-        self.__log.debug(f"Using {max_items} items from url: {url} (expire time = {default_seconds_refresh_time} seconds)")
-        self._url = url
-        self._max_items = max_items
-        self._default_seconds_refresh_time = default_seconds_refresh_time
-        self._last_refresh_timestamp = 0
-        if cache_path != None:
-            path = f"{cache_path}/rss/{hashlib.sha256(self._url.encode('utf-8')).hexdigest()}.rss"
-            self._cache = ModuleCache(self.__log, path = path, expiration = default_seconds_refresh_time, purge_expired = True)
-            self.__log.debug(f"Cache is enabled: {path}")
-        else:
-            self._cache = None
-            self.__log.debug("Cache is disabled")
-        self._feed_title = None
-        self._feed_items = []
-        self._feed_hash = None
+        self.__url = url
+        self.__timeout = timeout
 
-    def __regenerate_feed_entries_hash(self, feed_entries) -> str:
+    def get(self, url: Optional[str] = None) -> Dict[str, List[Dict[str, str]]]:
         """
-        Generates a consistent hash based on the unique identifiers (e.g., 'link' or 'guid') of the feed entries.
+        Fetches the RSS feed, parses it, and returns a simplified dictionary containing
+        the feed title and a list of parsed feed entries.
 
-        :param feed_entries: A list of feed entry dictionaries to hash.
-        :return: A SHA-256 hash string representing the feed entries.
+        :param url: The URL of the RSS feed to fetch. If None, the URL provided at initialization is used.
+        :return: A dictionary containing the feed title and a list of feed items (each with link, title,
+                 published date, and author).
+        :raises RuntimeError: If there is an error in fetching or parsing the feed.
+        :raises ValueError: If the feed does not contain valid entries.
         """
-        feed_hash = hashlib.sha256()  # Create a new hash object
-        for entry in feed_entries:
-            feed_hash.update(entry.get("link", "").encode('utf-8'))  # Update the hash with the entry's link
-        return feed_hash.hexdigest()  # Return the hex digest of the hash
+        # Use the provided URL or fall back to the default one initialized in the object
+        feed_url = url or self.__url
+        self.__log.info(f"Requesting RSS feed from {feed_url}")
 
-    def __refresh(self, force: bool = False) -> bool:
-        """
-        Refreshes the RSS feed by fetching it from the provided URL and parsing the entries.
+        # Setting custom headers for the HTTP request (including the user-agent)
+        headers = {
+            'User-Agent': DEFAULT_USER_AGENT
+        }
 
-        :param force: Whether to force refresh the feed (ignoring the refresh time).
-        :return: True if the feed was updated, False if the feed is unchanged.
-        """
+        try:
+            # Make the HTTP request to fetch the feed
+            response = requests.get(feed_url, headers=headers, timeout=self.__timeout)
+            response.raise_for_status()  # Raise an exception for 4xx/5xx HTTP error codes
 
-        parsed_feed = None
-        if self._cache != None:
-            parsed_feed = self._cache.load()
+            # Verify that the content type of the response is actually an RSS feed (XML format)
+            content_type = response.headers.get('Content-Type', None)
+            if content_type is None or not (content_type.lower().startswith('application/rss+xml') or content_type.lower().startswith('text/xml')):
+                raise ValueError(f"Expected RSS feed, but received {response.headers.get('Content-Type')}")
 
-        if parsed_feed == None:
-            self.__log.info("Requesting remote data")
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:112.0) Gecko/20100101 Firefox/112.0'
+        except requests.exceptions.Timeout:
+            # Log and raise an error if the request times out
+            self.__log.error(f"Timeout occurred while requesting RSS feed from {feed_url}")
+            raise RuntimeError("Request timed out while fetching RSS feed.")
+
+        except requests.exceptions.RequestException as e:
+            # Log and raise an error for other HTTP or request exceptions (e.g., connection errors)
+            self.__log.error(f"Request error while fetching RSS feed: {str(e)}")
+            raise RuntimeError(f"Error while fetching RSS feed: {str(e)}")
+
+        # Parse the fetched RSS feed using feedparser
+        parsed_feed = feedparser.parse(response.text)
+
+        # Check if the parsed feed contains valid entries
+        if hasattr(parsed_feed, 'entries') and parsed_feed.entries:
+            items = []
+
+            # Loop through each entry in the RSS feed and simplify the structure
+            for entry in parsed_feed.entries:
+                simplified_item = {
+                    'link': entry.get('link', ''),       # Link to the full article or content
+                    'title': entry.get('title', ''),     # Title of the feed item
+                    'published': entry.get('published', ''),  # Publication date of the item
+                    'author': entry.get('author', '')    # Author of the item (if available)
+                }
+                items.append(simplified_item)
+
+            # Log the number of entries successfully parsed
+            self.__log.info(f"Successfully parsed {len(items)} entries from {feed_url}")
+
+            # Return the parsed feed title and the list of simplified items
+            return {
+                "title": parsed_feed.feed.title,  # Title of the RSS feed
+                "items": items                    # List of simplified feed items
             }
 
-            try:
-                response = requests.get(self._url, headers=headers, timeout=10)  # Fetch the feed with a timeout
-                response.raise_for_status()  # Raise an error for bad status codes (4xx, 5xx)
-            except requests.exceptions.RequestException as e:
-                raise RuntimeError(f"Error while fetching RSS feed: {str(e)}")
-
-            parsed_feed = feedparser.parse(response.text)
-
-            if self._cache != None:
-                self._cache.save(parsed_feed)
-
-        self._feed_title = parsed_feed.feed.title  # Store the feed title
-        self._feed_items = []  # Reset the feed items
-
-        # Ensure that 'entries' contains valid data
-        if hasattr(parsed_feed, 'entries') and parsed_feed.entries:
-            for entry in parsed_feed.entries[:self._max_items]:
-                # Simplify each entry and append it to the feed items
-                simplified_item = {
-                    'link': entry.get('link', ''),
-                    'title': entry.get('title', ''),
-                    'published': entry.get('published', ''),
-                    'author': entry.get('author', '')
-                }
-                self._feed_items.append(simplified_item)
         else:
+            # Log a warning if the feed does not contain any valid entries
+            self.__log.warning(f"The RSS feed from {feed_url} does not contain any valid entries.")
             raise ValueError("The RSS feed does not contain valid entries.")
-
-        # Generate a hash for the current feed items
-        current_feed_hash = self.__regenerate_feed_entries_hash(self._feed_items)
-
-        # Compare the new hash with the previous hash to check if the feed content has changed
-        if current_feed_hash != self._feed_hash:
-            self._feed_hash = current_feed_hash  # Update the feed hash if it's different
-            self.__log.info("New feed data available!")
-            return True  # Return True to indicate the feed has changed
-        else:
-            return False  # Return False to indicate no change in the feed
-
-    def get(self, force: bool = False) -> Dict[str, List[Dict[str, str]]]:
-        """
-        Returns the latest RSS feed data. If the feed hasn't been refreshed recently, it will refresh the feed.
-
-        :param force: Whether to force refresh the feed even if the refresh time hasn't passed.
-        :return: A dictionary containing the feed status, title, and items.
-        """
-
-        changed = False
-        current_time = time.time()  # Get the current time in seconds since the epoch
-        if force or current_time - self._last_refresh_timestamp >= self._default_seconds_refresh_time:
-            self.__log.debug("Forcing new refresh")
-            try:
-                changed = self.__refresh(force)  # Refresh the feed and check if it changed
-                self._last_refresh_timestamp = current_time  # Update the timestamp of the last refresh
-            except Exception as e:
-                raise RuntimeError(f"Error while refreshing RSS feed: {str(e)}")
-
-        # Return the feed status and content
-        return {
-            "changed": changed,
-            "title": self._feed_title,
-            "items": self._feed_items
-        }
