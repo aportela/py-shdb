@@ -33,25 +33,25 @@ class ModuleCache:
         """
         self.__log = logger
         self.__base_path = os.path.dirname(base_path)
-        self.__filename = filename
+        self.__check_path()
         self.__fullpath = os.path.join(base_path, filename)
         self.__expiration  = expiration
         self.__purge_expired = purge_expired
         self.__last_change = None
-        self.__check_path()
+        self.is_cache_valid()
 
     def set_path(self, path: str) -> None:
         self.__path = path
         self.__check_path()
 
-    def __check_path(self) -> None:
+    def __check_path(self, path: str) -> None:
         """Ensure the cache directory exists."""
-        if not os.path.exists(self.__base_path):
+        if not os.path.exists(path):
             try:
-                self.__log.warning(f"Cache directory path ({self.__base_path}) not found. Creating it.")
-                os.makedirs(self.__base_path, exist_ok=True)
+                self.__log.warning(f"Cache directory path ({path}) not found. Creating it.")
+                os.makedirs(path, exist_ok=True)
             except Exception as e:
-                raise CacheError(f"Error creating cache directory path ({self.__base_path}): {e}")
+                raise CacheError(f"Error creating cache directory path ({path}): {e}")
 
     @property
     def last_change(self) -> Optional[float]:
