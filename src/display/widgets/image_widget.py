@@ -17,21 +17,21 @@ class ImageWidget(Widget):
             self.__load(path)
         elif url is not None:
             self._log.debug(f"Using remote url {url}")
-            cache_file_path = f"{cache_path}/images/{hashlib.sha256(url.encode('utf-8')).hexdigest()[:64]}.image"
-            if os.path.exists(cache_file_path):
-                self._log.debug(f"Remote url image cache found on {cache_file_path}")
-                self.__load(cache_file_path)
+            mcache = ModuleCache(os.path.join(cache_path, "images"), f"{hashlib.sha256(url.encode('utf-8')).hexdigest()[:64]}.image")
+            if mcache.is_cached:
+                self._log.debug(f"Remote url image cache found on {mcache.full_cache_path}")
+                self.__load(mcache.full_cache_path)
             else:
                 try:
                     response = requests.get(url, timeout=10)
                     response.raise_for_status()
                     if 'image' not in response.headers['Content-Type']:
                         raise ValueError("The URL does not point to a valid image.")
-                    cache = ModuleCache(cache_file_path)
-                    if cache.save_bytes(response.content) is False:
-                        raise ValueError("Error saving cache of remote image.")
+                    if mcache.save_bytes(response.content):
+                        self.__load(mcache.full_cache_path)
                     else:
-                        self.__load(cache_file_path)
+                        raise ValueError("Error saving cache of remote image.")
+
                 except requests.exceptions.RequestException as e:
                     raise ValueError(f"Error fetching image from URL: {e}")
         else:
