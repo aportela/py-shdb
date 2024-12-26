@@ -69,15 +69,16 @@ class ModuleCache:
             True if the cache is valid (not expired or expiration is disabled).
             False if the cache is expired.
         """
-        # If expiration is None, cache never expires
-        if self.__expiration is None:
-            return True
 
         try:
             # Check if the cache file exists
             if not os.path.exists(self.__fullpath):
                 self.__log.info("Cache file does not exist.")
                 return False
+
+        # If expiration is None, cache never expires
+        if self.__expiration is None:
+            return True
 
             # Get the modification time of the cache file
             file_mod_time = os.path.getmtime(self.__fullpath)
