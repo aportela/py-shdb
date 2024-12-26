@@ -25,6 +25,8 @@ from src.display.widgets.image_widget import ImageWidget
 from src.display.widgets.weather_forecast_widget import WeatherForecastWidget
 from src.display.widgets.widget_font import WidgetFont
 
+from src.data_provider.rss.rss_data_provider import RSSDataProvider
+
 from src.display.fps import FPS
 
 logger = Logger("py-shdb")
@@ -99,21 +101,22 @@ def set_background_image(path: str):
 def dump_background():
 
     if skin_settings.background_image_url is not None:
-        cache_file_path = f"{app_settings.cache_path}/images/{hashlib.sha256(skin_settings.background_image_url.encode('utf-8')).hexdigest()[:64]}.image"
-        if os.path.exists(cache_file_path):
-            logger.debug(f"Remote background url image cache found on {cache_file_path}")
-            set_background_image(cache_file_path)
+
+        cache_background = ModuleCache( base_path = os.path.join(app_settings.cache_path, "images"), filename= f"{hashlib.sha256(skin_settings.background_image_url.encode('utf-8')).hexdigest()[:64]}.image")
+
+        if cache_background.is_cached:
+            logger.debug(f"Remote background url image cache found on {cache_background.full_cache_path}")
+            set_background_image(cache_background.full_cache_path)
         else:
             try:
                 response = requests.get(skin_settings.background_image_url, timeout=10)
                 response.raise_for_status()
                 if 'image' not in response.headers['Content-Type']:
                     raise ValueError("The URL does not point to a valid image.")
-                cache = ModuleCache(cache_file_path)
-                if cache.save_bytes(response.content) is False:
-                    raise ValueError("Error saving cache of remote url background image.")
+                if cache_background.save_bytes(response.content):
+                    set_background_image(cache_background.full_cache_path)
                 else:
-                    set_background_image(cache_file_path)
+                    raise ValueError("Error saving cache of remote url background image.")
             except requests.exceptions.RequestException as e:
                 raise ValueError(f"Error fetching image from URL: {e}")
     elif skin_settings.background_image is not None:
@@ -123,7 +126,6 @@ def dump_background():
 
 dump_background()
 pygame.display.flip() # update screen with background color, required becase widgets only update owned area
-
 
 widgets = []
 
@@ -242,6 +244,8 @@ def load_widgets():
                 if text == None or text == "":
                     rss_url = widget_config.get('rss_url', "")
                     if (rss_url != None and rss_url != ""):
+                        mcache = ModuleCache(logger = logger, base_path=app_settings.cache_path, filename = )
+                        rdp = RSSDataProvider(logger, rss_url, 8)
                         feed = RSSFeed(logger = logger, url = rss_url, max_items=16, default_seconds_refresh_time= 600, cache_path = app_settings.cache_path)
                         text = " # ".join(f"[{item['published']}] - {item['title']}" for item in feed.get()['items'])
                 widgets.append(
@@ -281,6 +285,7 @@ def load_widgets():
                 )
             elif (widget_config.get("type", "") == "image"):
                 widgets.append(
+                    mCache = ModuleCache(logger = logger, base_path = app_settings.cache_path, filename=)
                     ImageWidget(
                         parent_surface = current_screen_surface,
                         name = widget_name,
@@ -289,7 +294,8 @@ def load_widgets():
                         border = app_settings.debug_widgets,
                         path = widget_config.get('path', None),
                         url = widget_config.get('url', None),
-                        cache_path = app_settings.cache_path
+                        cache_path = app_settings.cache_path,
+
                     )
                 )
             elif (widget_config.get("type", "") == "weather_forecast"):
