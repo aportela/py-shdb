@@ -40,10 +40,6 @@ class ModuleCache:
         self.__last_change = None
         self.is_cache_valid()
 
-    def set_path(self, path: str) -> None:
-        self.__path = path
-        self.__check_path()
-
     def __check_path(self, path: str) -> None:
         """Ensure the cache directory exists."""
         if not os.path.exists(path):
@@ -52,6 +48,14 @@ class ModuleCache:
                 os.makedirs(path, exist_ok=True)
             except Exception as e:
                 raise CacheError(f"Error creating cache directory path ({path}): {e}")
+
+    @property
+    def is_cached(self) -> bool:
+        return os.path.exists(self.__fullpath)
+
+    @property
+    def full_cache_path(self) -> str:
+        return self.__fullpath
 
     @property
     def last_change(self) -> Optional[float]:
