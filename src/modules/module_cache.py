@@ -2,6 +2,7 @@ from typing import Any, Optional
 import os
 import pickle
 import time
+from datetime import datetime
 from ..utils.logger import Logger
 
 
@@ -11,7 +12,7 @@ class CacheError(Exception):
 
 
 class ModuleCache:
-    def __init__(self, logger: Logger, path: str, expiration: Optional[int] = None, purge_expired: bool = True) -> None:
+    def __init__(self, logger: Logger, base_path: str, filename: str, expiration: Optional[int] = None, purge_expired: bool = True) -> None:
         """
         Initialize the cache module.
 
@@ -31,20 +32,30 @@ class ModuleCache:
             If False, expired cache files will remain on the disk.
         """
         self.__log = logger
-        self.__path = path
+        self.__base_path = os.path.dirname(base_path)
+        self.__filename = filename
+        self.__fullpath = os.path.join(base_path, filename)
         self.__expiration  = expiration
         self.__purge_expired = purge_expired
+        self.__last_change = None
+        self.__check_path()
+
+    def set_path(self, path: str) -> None:
+        self.__path = path
         self.__check_path()
 
     def __check_path(self) -> None:
         """Ensure the cache directory exists."""
-        directory_path = os.path.dirname(self.__path)
-        if not os.path.exists(directory_path):
+        if not os.path.exists(self.__base_path):
             try:
-                self.__log.warning(f"Cache directory path ({directory_path}) not found. Creating it.")
-                os.makedirs(directory_path, exist_ok=True)
+                self.__log.warning(f"Cache directory path ({self.__base_path}) not found. Creating it.")
+                os.makedirs(self.__base_path, exist_ok=True)
             except Exception as e:
-                raise CacheError(f"Error creating cache directory path ({directory_path}): {e}")
+                raise CacheError(f"Error creating cache directory path ({self.__base_path}): {e}")
+
+    @property
+    def last_change(self) -> Optional[float]:
+        return self.__last_change
 
     def is_cache_valid(self) -> bool:
         """
@@ -60,12 +71,12 @@ class ModuleCache:
 
         try:
             # Check if the cache file exists
-            if not os.path.exists(self.__path):
+            if not os.path.exists(self.__fullpath):
                 self.__log.info("Cache file does not exist.")
                 return False
 
             # Get the modification time of the cache file
-            file_mod_time = os.path.getmtime(self.__path)
+            file_mod_time = os.path.getmtime(self.__fullpath)
             current_time = time.time()
 
             # Calculate the age of the cache
@@ -74,7 +85,9 @@ class ModuleCache:
 
             if not is_valid:
                 self.__log.info(f"Cache expired. Age: {cache_age}s, Expiration: {self.__expiration}s.")
+                self.__last_change = None
 
+            self.__last_change = file_mod_time
             return is_valid
         except Exception as e:
             self.__log.error(f"Error checking cache validity: {e}")
@@ -88,12 +101,13 @@ class ModuleCache:
         :return: True if the data was successfully saved, False otherwise.
         """
         try:
-            with open(self.__path, "wb") as cache_file:
+            with open(self.__fullpath, "wb") as cache_file:
                 pickle.dump(data, cache_file)
-            self.__log.info(f"Cache saved to ({self.__path})")
+            self.__last_change = datetime.now
+            self.__log.info(f"Cache saved to ({self.__fullpath})")
             return True
         except Exception as e:
-            self.__log.error(f"Error saving cache to ({self.__path}): {e}")
+            self.__log.error(f"Error saving cache to ({self.__fullpath}): {e}")
             return False
 
     def save_bytes(self, data: bytes) -> bool:
@@ -108,12 +122,13 @@ class ModuleCache:
             return False
 
         try:
-            with open(self.__path, "wb") as cache_file:
+            with open(self.__fullpath, "wb") as cache_file:
                 cache_file.write(data)
-            self.__log.info(f"Cache saved to ({self.__path})")
+            self.__last_change = datetime.now
+            self.__log.info(f"Cache saved to ({self.__fullpath})")
             return True
         except OSError as e:
-            self.__log.error(f"Error saving cache to ({self.__path}): {e}")
+            self.__log.error(f"Error saving cache to ({self.__fullpath}): {e}")
             return False
 
     def load(self) -> Optional[Any]:
@@ -123,20 +138,21 @@ class ModuleCache:
         :return: The cached data if available and valid, otherwise None.
         """
         if not self.is_cache_valid():
-            self.__log.warning(f"Cache file is invalid or expired ({self.__path})")
-            if self.__purge_expired and os.path.exists(self.__path):
+            self.__log.warning(f"Cache file is invalid or expired ({self.__fullpath})")
+            if self.__purge_expired and os.path.exists(self.__fullpath):
                 try:
-                    self.__log.info(f"Removing invalid or expired cache file ({self.__path})")
-                    os.remove(self.__path)
+                    self.__log.info(f"Removing invalid or expired cache file ({self.__fullpath})")
+                    os.remove(self.__fullpath)
+                    self.__last_change = None
                 except Exception as e:
-                    self.__log.error(f"Failed to remove expired cache file ({self.__path}): {e}")
+                    self.__log.error(f"Failed to remove expired cache file ({self.__fullpath}): {e}")
             return None
 
         try:
-            with open(self.__path, "rb") as cache_file:
+            with open(self.__fullpath, "rb") as cache_file:
                 data = pickle.load(cache_file)
-            self.__log.info(f"Cache loaded successfully from ({self.__path})")
+            self.__log.info(f"Cache loaded successfully from ({self.__fullpath})")
             return data
         except Exception as e:
-            self.__log.error(f"Error loading cache from ({self.__path}): {e}")
+            self.__log.error(f"Error loading cache from ({self.__fullpath}): {e}")
             return None
