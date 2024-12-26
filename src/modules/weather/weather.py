@@ -18,7 +18,7 @@ class Weather(ABC):
     Abstract base class for managing weather data. Subclasses should implement the actual data fetching logic.
     """
 
-    def __init__(self, latitude: float , longitude: float,
+    def __init__(self, logger: Logger, latitude: float , longitude: float,
                  data_interval: WeatherDataType,
                  default_seconds_refresh_time: int = 600, cache_path: Optional[str] = None):
         """
@@ -29,7 +29,7 @@ class Weather(ABC):
         :param data_interval: Time period for weather data (e.g., TODAY, NEXT_7_DAYS).
         :param default_seconds_refresh_time: Time in seconds between automatic refreshes.
         """
-        self._log = Logger()
+        self._log = logger
         self._log.debug(f"Using coordinates: {latitude},{longitude} (expire time = {default_seconds_refresh_time} seconds)")
         self._latitude = latitude
         self._longitude = longitude

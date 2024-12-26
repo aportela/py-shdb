@@ -7,7 +7,7 @@ from ..module_cache import ModuleCache
 from ...utils.logger import Logger
 
 class RSSFeed:
-    def __init__(self, url: str, max_items: int = 8, default_seconds_refresh_time: int = 3600, cache_path: Optional[str] = None):
+    def __init__(self, logger: Logger, url: str, max_items: int = 8, default_seconds_refresh_time: int = 3600, cache_path: Optional[str] = None):
         """
         Initializes the RSSFeed object with the URL of the RSS feed and other configurations.
 
@@ -15,7 +15,7 @@ class RSSFeed:
         :param max_items: The maximum number of items to retrieve from the feed (default is 5).
         :param default_seconds_refresh_time: The time in seconds between feed refreshes (default is 3600 seconds = 1 hour).
         """
-        self.__log = Logger()
+        self.__log = logger
         self.__log.debug(f"Using {max_items} items from url: {url} (expire time = {default_seconds_refresh_time} seconds)")
         self._url = url
         self._max_items = max_items

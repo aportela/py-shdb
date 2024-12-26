@@ -3,12 +3,13 @@ from typing import List, Dict, Any
 import requests
 from .weather import Weather, WeatherDataType
 import json
+from ...utils.logger import Logger
 
 class OpenMeteo (Weather):
-    def __init__(self, latitude: float , longitude: float,
+    def __init__(self, logger: Logger, latitude: float , longitude: float,
                  data_interval: WeatherDataType,
                  default_seconds_refresh_time: int = 600):
-        super().__init__(latitude = latitude, longitude = longitude, data_interval = data_interval, default_seconds_refresh_time = default_seconds_refresh_time)
+        super().__init__(logger = logger, latitude = latitude, longitude = longitude, data_interval = data_interval, default_seconds_refresh_time = default_seconds_refresh_time)
         self._api_url = "https://api.open-meteo.com/v1/forecast"
         self._api_params = {
             "latitude": latitude,
