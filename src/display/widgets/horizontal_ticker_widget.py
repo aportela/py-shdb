@@ -18,8 +18,17 @@ class HorizontalTickerSpeed(Enum):
 class HorizontalTickerWidgetSource(ABC):
     def __init__(self):
         self.__type = 0
+
     @abstractmethod
     def changed(self) -> bool:
+        pass
+
+    @abstractmethod
+    def reload(self) -> None:
+        pass
+
+    @abstractmethod
+    def get_text(self) -> str:
         pass
 
 class HorizontalTickerWidgetStringSource(HorizontalTickerWidgetSource):
@@ -31,6 +40,9 @@ class HorizontalTickerWidgetStringSource(HorizontalTickerWidgetSource):
     def changed(self) -> bool:
         return False
 
+    def reload(self) -> None:
+        pass
+
     @property
     def text(self) -> str:
         return self.__text
@@ -39,37 +51,43 @@ class HorizontalTickerWidgetRSSSource(HorizontalTickerWidgetSource):
     def __init__(self, cache: RSSCache, item_count: Optional[int] = 16):
         self.__text = None
         self.__cache = cache
-        self.reload(item_count)
+        self.__item_count = item_count
+        self.reload()
 
-    def reload(self, item_count: int) -> None:
+    def reload(self) -> None:
         rss_data = self.__cache.load()
         self.__last_change = self.__cache.last_change
-        self.__text = " # ".join(f"[{item['published']}] - {item['title']}" for item in rss_data['items'][:item_count])
+        self.__text = " # ".join(f"[{item['published']}] - {item['title']}" for item in rss_data['items'][:self.__item_count])
 
     @property
     def changed(self) -> bool:
         return self.__last_change != self.__cache.last_change
 
-    @property
-    def text(self) -> str:
+    def get_text(self) -> str:
         return self.__text
 
 class HorizontalTickerWidget(Widget):
 
-    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, font: WidgetFont = None, text: Optional[str] = None, speed: int = 1) -> None:
+    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, font: WidgetFont = None, speed: int = 1, source: Optional[HorizontalTickerWidgetSource] = None) -> None:
         super().__init__(parent_surface = parent_surface, name = name, rect = rect, background_color = background_color, border = border, border_color = border_color)
         if not font:
             raise RuntimeError("Font not set")
+        if not source:
+            raise RuntimeError("Source not set")
         self.__font = font
-        if not text:
-            raise RuntimeError("Text not set")
-        self.__text_surface = self.__font.render(f"{text} {SEPARATOR} ")
+        self.__source = source
+        self.__text_surface = self.__font.render(f"{source.get_text()} {SEPARATOR} ")
         self.__speed = speed
         self.__x_offset = 0
         self.__y_offset = (self.height - self.__text_surface.get_height()) // 2
         self.__render_required = True
 
     def refresh(self, force: bool = False) -> bool:
+        if self.__source.changed:
+            self.__source.reload()
+            self.__text_surface = self.__font.render(f"{self.__source.get_text()} {SEPARATOR} ")
+            self.__x_offset = 0
+            self.__render_required = True
         if force or self.__render_required:
             super()._clear()
             text_width = self.__text_surface.get_width()
@@ -81,12 +99,8 @@ class HorizontalTickerWidget(Widget):
             if self.__x_offset < -text_width:
                 self.__x_offset += text_width
             super()._render()
+            self.__render_required = self.__source.changed or True
         return True
-
-    def update_text(self, text: str):
-        self.__text_surface = self.__font.render(f"{text} {SEPARATOR} ")
-        self.__x_offset = 0
-        self.__render_required = True
 
     def on_click(self):
         self._log.debug("detected widget click event, forcing refresh")

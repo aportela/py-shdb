@@ -14,7 +14,7 @@ from .display.widgets.fps_widget import FPSWidget
 from .display.widgets.simple_label_widget import SimpleLabelWidget
 from .display.widgets.date_widget import DateWidget
 from .display.widgets.time_widget import TimeWidget
-from .display.widgets.horizontal_ticker_widget import HorizontalTickerWidget
+from .display.widgets.horizontal_ticker_widget import HorizontalTickerWidget, HorizontalTickerWidgetStringSource, HorizontalTickerWidgetRSSSource
 from .display.widgets.month_calendar_widget import MonthCalendarWidget
 from .display.widgets.image_widget import ImageWidget
 from .display.widgets.weather_forecast_widget import WeatherForecastWidget
@@ -193,20 +193,15 @@ class Boot:
                     )
                 elif (widget_settings.get("type", None) == "horizontal_ticker"):
                     text = None
+                    source = None
                     url = widget_settings.get('rss_url', None)
                     if url is not None:
-                        try:
-                            cache = RSSCache(self.__logger, self.__app_settings.cache_path, url)
-                            rss_data = cache.load()
-                            item_count = widget_settings.get("rss_item_count", 16)
-                            text = " # ".join(f"[{item['published']}] - {item['title']}" for item in rss_data['items'][:item_count])
-                        except Exception as e:
-                            self.__logger.error(f"Cache error in widget {widget_name} rss ({url})")
-                            self.__logger.debug(e)
+                        source = HorizontalTickerWidgetRSSSource(
+                            cache = RSSCache(self.__logger, self.__app_settings.cache_path, url),
+                            item_count = 16
+                        )
                     else:
-                        text = widget_settings.get('text', None)
-                        # TODO: add widget source param (text, rss...)
-                        # TODO: pass cache to check changes
+                        source = HorizontalTickerWidgetStringSource(text = widget_settings.get('text', None))
                     self.__widgets.append(
                         HorizontalTickerWidget(
                             parent_surface = self.__main_surface,
@@ -221,8 +216,8 @@ class Boot:
                                 style_bold = widget_settings.get('font_style_bold', False),
                                 style_italic = widget_settings.get('font_style_italic', False)
                             ),
-                            text = text,
-                            speed = widget_settings.get('speed', 1)
+                            speed = widget_settings.get('speed', 1),
+                            source = source
                         )
                     )
                 elif (widget_settings.get("type", None) == "month_calendar"):
