@@ -43,10 +43,10 @@ class ModuleCache:
         """Delete the cache file if it exists."""
         if os.path.exists(self.__fullpath):
             try:
-                self._log.info(f"Removing cache file ({self.__fullpath})")
                 os.remove(self.__fullpath)
+                self._log.info(f"Cache file ({self.__fullpath}) removed.")
                 self.__last_change = None
-            except Exception as e:
+            except (OSError, IOError) as e:
                 raise CacheError(f"Failed to remove cache file ({self.__fullpath}): {e}")
 
     @property
