@@ -234,19 +234,25 @@ class Boot:
                             )
                         )
                     )
-                elif (False and widget_settings.get("type", "") == "image"):
+                elif (widget_settings.get("type", "") == "image"):
+                    image_path = None
+                    url = widget_settings.get('url', None)
+                    if url is not None:
+                        try:
+                            cache = RemoteImageCache(self.__logger, self.__app_settings.cache_path, url)
+                            image_path = cache.full_cache_path
+                        except Exception as e:
+                            self.__logger.error(f"Cache error in widget {widget_name} remote image (url): {e}")
+                    else :
+                        image_path = widget_settings.get('path', None)
                     self.__widgets.append(
-                        #mCache = ModuleCache(logger = logger, base_path = app_settings.cache_path, filename=)
                         ImageWidget(
                             parent_surface = self.__main_surface,
                             name = widget_name,
                             rect = self.get_widget_rect_from_config(widget_settings),
                             background_color = widget_settings.get('background_color', None),
                             border = self.__app_settings.debug_widgets,
-                            path = widget_settings.get('path', None),
-                            url = widget_settings.get('url', None),
-                            cache_path = app_settings.cache_path,
-
+                            path = image_path
                         )
                     )
                 elif (False and widget_settings.get("type", "") == "weather_forecast"):

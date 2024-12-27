@@ -1,41 +1,18 @@
 from typing import Optional
 import pygame
 import os
-import hashlib
-import requests
 
 from .widget import Widget, DEFAULT_WIDGET_BORDER_COLOR
-from ...modules.module_cache import ModuleCache
 
 class ImageWidget(Widget):
 
-    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, path: Optional[str] = None, url: Optional[str] = None, cache_path: Optional[str] = None) -> None:
+    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, path: Optional[str] = None) -> None:
         super().__init__(parent_surface = parent_surface, name = name, rect = rect, background_color = background_color, border = border, border_color = border_color)
         self.__image = None
-        if path is not None:
-            self._log.debug(f"Using local path {path}")
-            self.__load(path)
-        elif url is not None:
-            self._log.debug(f"Using remote url {url}")
-            mcache = ModuleCache(os.path.join(cache_path, "images"), f"{hashlib.sha256(url.encode('utf-8')).hexdigest()[:64]}.image")
-            if mcache.is_cached:
-                self._log.debug(f"Remote url image cache found on {mcache.full_cache_path}")
-                self.__load(mcache.full_cache_path)
-            else:
-                try:
-                    response = requests.get(url, timeout=10)
-                    response.raise_for_status()
-                    if 'image' not in response.headers['Content-Type']:
-                        raise ValueError("The URL does not point to a valid image.")
-                    if mcache.save_bytes(response.content):
-                        self.__load(mcache.full_cache_path)
-                    else:
-                        raise ValueError("Error saving cache of remote image.")
-
-                except requests.exceptions.RequestException as e:
-                    raise ValueError(f"Error fetching image from URL: {e}")
-        else:
-            raise ValueError("Image path/url not set")
+        if path is None:
+            raise ValueError(f"Image path not set")
+        self._log.debug(f"Using local path {path}")
+        self.__load(path)
         self._render_required = True
 
     def __load(self, path: str):
