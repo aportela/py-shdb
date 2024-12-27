@@ -3,7 +3,6 @@ from abc import abstractmethod
 import os
 import pickle
 import time
-from datetime import datetime
 from ..utils.logger import Logger
 from pathlib import Path
 import threading
@@ -110,7 +109,7 @@ class ModuleCache:
         try:
             with open(self.__fullpath, "wb") as cache_file:
                 pickle.dump(data, cache_file)
-            self.__last_change = datetime.now
+            self.__last_change = time.time()
             self._log.info(f"Cache saved to ({self.__fullpath})")
             return True
         except Exception as e:
@@ -129,7 +128,7 @@ class ModuleCache:
         try:
             with open(self.__fullpath, "wb") as cache_file:
                 cache_file.write(data)
-            self.__last_change = datetime.now
+            self.__last_change = time.time()
             self._log.info(f"Cache saved to ({self.__fullpath})")
             return True
         except Exception as e:
