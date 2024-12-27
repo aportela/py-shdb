@@ -6,6 +6,7 @@ import time
 from datetime import datetime
 from ..utils.logger import Logger
 from pathlib import Path
+import threading
 
 class CacheError(Exception):
     """Custom exception for cache-related errors."""
@@ -134,9 +135,19 @@ class ModuleCache:
             raise CacheError(f"Error loading cache ({self.__fullpath}): {e}")
 
     @abstractmethod
-    def _refresh(self) -> None:
+    def _refresh(self, force: bool = False) -> None:
         pass
 
     def _check(self) -> None:
-        if not self.valid:
-            self._refresh()
+        if self.__expiration is not None:
+                if not self.valid:
+                    self._refresh()
+                def refresh_periodically():
+                    while True:
+                        time.sleep(self.__expiration)
+                        self._refresh()
+                thread = threading.Thread(target=refresh_periodically, daemon=True)
+                thread.start()
+        else:
+            if not self.valid:
+                self._refresh()
