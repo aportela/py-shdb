@@ -2,12 +2,11 @@ import pygame
 from abc import ABC, abstractmethod
 from typing import Optional
 from ...utils.logger import Logger
-from ...data_provider.data_provider import DataProvider
 
 DEFAULT_WIDGET_BORDER_COLOR=(255, 105, 180) # PINK
 
 class Widget(ABC):
-    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, data_provider: Optional[DataProvider] = None) -> None:
+    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:
         self._log = Logger()
         self.__parent_surface = parent_surface
         if not name:
@@ -19,7 +18,6 @@ class Widget(ABC):
         self.__border = border
         self.__border_color = border_color
         self._tmp_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA if background_color is None else 0)
-        self._data_provider = data_provider
 
     @property
     def parent_surface(self) -> pygame.Surface:
