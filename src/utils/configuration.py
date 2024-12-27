@@ -1,6 +1,7 @@
 import yaml
 import locale
 import os
+from typing import Optional
 from .logger import Logger
 from ..display.icons.font_awesome.icon import Icon as FontAwesomeIcon
 from ..display.fps import FPS
@@ -29,7 +30,6 @@ class Configuration:
         except yaml.YAMLError as e:
             raise RuntimeError("Error: Invalid YAML format in '{configuration_path}': {e}")
 
-
 class AppSettings (Configuration):
 
     def __init__(self, logger: Logger, path: str):
@@ -56,11 +56,11 @@ class AppSettings (Configuration):
         return self._loaded_configuration.get('app', {}).get('app_name', "Python Smart Home Dashboard")
 
     @property
-    def cache_path(self) -> str:
+    def cache_path(self) -> Optional[str]:
         return self._loaded_configuration.get('app', {}).get('cache_path', None)
 
     @property
-    def show_fps(self) -> int:
+    def show_fps(self) -> bool:
         return self._loaded_configuration.get('app', {}).get('show_fps', False)
 
     @property
@@ -84,9 +84,8 @@ class AppSettings (Configuration):
         return self._loaded_configuration.get('app', {}).get('monitor_index', 0)
 
     @property
-    def skin(self) -> str:
+    def skin(self) -> Optional[str]:
         return self._loaded_configuration.get('app', {}).get('skin', None)
-
 
 class SkinSettings (Configuration):
 
@@ -107,21 +106,21 @@ class SkinSettings (Configuration):
         return self.__apply()
 
     @property
-    def background_image_url(self) -> str:
+    def background_image_url(self) -> Optional[str]:
         return self._loaded_configuration.get('skin', {}).get('background_image_url', None)
 
     @property
-    def background_image(self) -> str:
+    def background_image(self) -> Optional[str]:
         return self._loaded_configuration.get('skin', {}).get('background_image', None)
 
     @property
-    def background_color(self) -> str:
+    def background_color(self) -> Optional[str]:
         return self._loaded_configuration.get('skin', {}).get('background_color', None)
 
     @property
-    def width(self) -> int:
-        return self._loaded_configuration.get('skin', {}).get('width', False)
+    def width(self) -> Optional[int]:
+        return self._loaded_configuration.get('skin', {}).get('width', None)
 
     @property
-    def height(self) -> int:
-        return self._loaded_configuration.get('skin', {}).get('height', False)
+    def height(self) -> Optional[int]:
+        return self._loaded_configuration.get('skin', {}).get('height', None)
