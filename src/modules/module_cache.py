@@ -78,30 +78,14 @@ class ModuleCache:
         """
         try:
             if not self.exists:
-                self._log.info(f"Cache ({self.__fullpath}) not found.")
                 return False
-
-            self._log.info(f"Cache ({self.__fullpath}) found.")
-
             if self.__expiration is None:
                 return True
-
             file_mod_time = os.path.getmtime(self.__fullpath)
-            current_time = time.time()
-
-            cache_age = current_time - file_mod_time
-            is_valid = cache_age < self.__expiration
-
-            if not is_valid:
-                self._log.info(f"Cache expired. Age: {cache_age}s, Expiration: {self.__expiration}s.")
-                if self.__purge_expired:
-                    self._purge()
-                self.__last_change = None
-
-            self.__last_change = file_mod_time
-            return is_valid
+            return (time.time() - file_mod_time) < self.__expiration
         except Exception as e:
-            raise CacheError(f"Error checking cache existence/expiration: {e}")
+            self._log.error(f"Error checking cache validity: {e}")
+            return False
 
     def save(self, data: Any) -> bool:
         """
