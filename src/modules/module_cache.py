@@ -167,15 +167,18 @@ class ModuleCache:
 
         If expiration is None, the cache will only be refreshed if it's invalid.
         """
+        def refresh_periodically(stop_event):
+            while not stop_event.is_set():
+                time.sleep(self.__expiration)
+                self._refresh()
+
         if self.__expiration is not None:
             if not self.valid:
                 self._refresh()
-            def refresh_periodically():
-                while True:
-                    time.sleep(self.__expiration)
-                    self._refresh()
-            thread = threading.Thread(target=refresh_periodically, daemon=True)
-            thread.start()
+            if not hasattr(self, "_stop_event"):
+                self._stop_event = threading.Event()
+                thread = threading.Thread(target=refresh_periodically, args=(self._stop_event,), daemon=True)
+                thread.start()
         else:
             if not self.valid:
                 self._refresh()
