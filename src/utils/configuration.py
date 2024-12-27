@@ -1,7 +1,7 @@
 import yaml
 import locale
 import os
-from typing import Optional
+from typing import Optional, Any
 from .logger import Logger
 from ..display.icons.font_awesome.icon import Icon as FontAwesomeIcon
 from ..display.fps import FPS
@@ -87,23 +87,19 @@ class AppSettings (Configuration):
     def skin(self) -> Optional[str]:
         return self._loaded_configuration.get('app', {}).get('skin', None)
 
+    def get_widget_defaults(self, widget: str) -> Optional[Any]:
+        return self._loaded_configuration.get('widget_defaults', {}).get(widget, None)
+
+
 class SkinSettings (Configuration):
 
     def __init__(self, logger: Logger, path: str):
         super().__init__(logger = logger, path = path)
         self._logger.debug(f"Skin file: {path}")
         super()._load(path)
-        self.__apply()
-
-    def __apply(self) -> bool:
-        if self._loaded_configuration is not None:
-            return True
-        else:
-            return False
 
     def reload(self) -> bool:
         super()._load()
-        return self.__apply()
 
     @property
     def background_image_url(self) -> Optional[str]:
@@ -124,3 +120,7 @@ class SkinSettings (Configuration):
     @property
     def height(self) -> Optional[int]:
         return self._loaded_configuration.get('skin', {}).get('height', None)
+
+    @property
+    def widgets(self) -> Optional[Any]:
+        return self._loaded_configuration.get('skin', {}).get('widgets', {})
