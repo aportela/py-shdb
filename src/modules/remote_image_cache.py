@@ -21,6 +21,8 @@ class RemoteImageCache(ModuleCache):
         if not url.startswith(('http://', 'https://')):
             raise ValueError(f"Invalid URL format: {self.__url}")
         self.__url = url
+        if timeout <= 0:
+            raise ValueError(f"Timeout must be a positive integer: {self.__timeout}")
         self.__timeout = timeout
         super()._check()
 
