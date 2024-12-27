@@ -73,7 +73,7 @@ class Boot:
         elif self.__skin_settings.background_image_url is not None:
             try:
                 cache = RemoteImageCache(self.__logger, self.__app_settings.cache_path, self.__skin_settings.background_image_url)
-                self.__set_background_image(cache.full_cache_path)
+                self.__set_background_image(cache.full_path)
             except Exception as e:
                 self.__logger.error(f"Error setting remote background image: {e}")
         else:
@@ -248,7 +248,7 @@ class Boot:
                     if url is not None:
                         try:
                             cache = RemoteImageCache(self.__logger, self.__app_settings.cache_path, url)
-                            image_path = cache.full_cache_path
+                            image_path = cache.full_path
                         except Exception as e:
                             self.__logger.error(f"Cache error in widget {widget_name} remote image ({url})")
                             self.__logger.debug(e)
