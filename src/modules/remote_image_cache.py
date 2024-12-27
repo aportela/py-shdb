@@ -1,9 +1,8 @@
-from typing import Any, Optional
 import os
-import requests
-from .module_cache import ModuleCache
 import hashlib
+import requests
 
+from .module_cache import ModuleCache
 from ..utils.logger import Logger
 
 DEFAULT_EXPIRATION_TIME=None # never expires
