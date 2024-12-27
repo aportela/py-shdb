@@ -17,7 +17,7 @@ class HorizontalTickerSpeed(Enum):
 
 class HorizontalTickerWidgetSource(ABC):
     def __init__(self):
-        self.__type = 0
+        self._text = None
 
     @abstractmethod
     def changed(self) -> bool:
@@ -27,15 +27,16 @@ class HorizontalTickerWidgetSource(ABC):
     def reload(self) -> None:
         pass
 
-    @abstractmethod
-    def get_text(self) -> str:
-        pass
+    @property
+    def text(self) -> Optional[str]:
+        return self._text
 
 class HorizontalTickerWidgetStringSource(HorizontalTickerWidgetSource):
     def __init__(self, text: Optional[str] = None):
+        super().__init__()
         if not text:
             raise RuntimeError("Text not set")
-        self.__text = text
+        self._text = text
 
     def changed(self) -> bool:
         return False
@@ -43,28 +44,21 @@ class HorizontalTickerWidgetStringSource(HorizontalTickerWidgetSource):
     def reload(self) -> None:
         pass
 
-    @property
-    def text(self) -> str:
-        return self.__text
-
 class HorizontalTickerWidgetRSSSource(HorizontalTickerWidgetSource):
     def __init__(self, cache: RSSCache, item_count: Optional[int] = 16):
-        self.__text = None
+        super().__init__()
         self.__cache = cache
         self.__item_count = item_count
+        self.__last_change = None
         self.reload()
+
+    def changed(self) -> bool:
+        return self.__last_change != self.__cache.last_change
 
     def reload(self) -> None:
         rss_data = self.__cache.load()
         self.__last_change = self.__cache.last_change
-        self.__text = " # ".join(f"[{item['published']}] - {item['title']}" for item in rss_data['items'][:self.__item_count])
-
-    @property
-    def changed(self) -> bool:
-        return self.__last_change != self.__cache.last_change
-
-    def get_text(self) -> str:
-        return self.__text
+        self._text = " # ".join(f"[{item['published']}] - {item['title']}" for item in rss_data['items'][:self.__item_count])
 
 class HorizontalTickerWidget(Widget):
 
@@ -76,16 +70,20 @@ class HorizontalTickerWidget(Widget):
             raise RuntimeError("Source not set")
         self.__font = font
         self.__source = source
-        self.__text_surface = self.__font.render(f"{source.get_text()} {SEPARATOR} ")
+        self.__text_surface = self.__font.render(f"{source.text} {SEPARATOR} ")
         self.__speed = speed
         self.__x_offset = 0
         self.__y_offset = (self.height - self.__text_surface.get_height()) // 2
         self.__render_required = True
 
     def refresh(self, force: bool = False) -> bool:
-        if self.__source.changed:
-            self.__source.reload()
-            self.__text_surface = self.__font.render(f"{self.__source.get_text()} {SEPARATOR} ")
+        if self.__source.changed():
+            try:
+                self.__source.reload()
+                self.__text_surface = self.__font.render(f"{self.__source.text} {SEPARATOR} ")
+            except Exception as e:
+                self._log.error(f"Error updating source: {e}")
+                self.__text_surface = self.__font.render(f"SOURCE UPDATE ERROR {SEPARATOR} ")
             self.__x_offset = 0
             self.__render_required = True
         if force or self.__render_required:
@@ -99,7 +97,6 @@ class HorizontalTickerWidget(Widget):
             if self.__x_offset < -text_width:
                 self.__x_offset += text_width
             super()._render()
-            self.__render_required = self.__source.changed or True
         return True
 
     def on_click(self):
