@@ -1,7 +1,5 @@
-from typing import Optional
 import os
 import hashlib
-import feedparser
 
 from .module_cache import ModuleCache
 from ..utils.logger import Logger
