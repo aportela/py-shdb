@@ -62,7 +62,11 @@ class ModuleCache:
     @property
     def exists(self) -> bool:
         """Check if the cache file exists."""
-        return os.path.exists(self.__fullpath)
+        try:
+            return os.path.exists(self.__fullpath)
+        except Exception as e:
+            self._log.error(f"Error checking if cache file exists: {e}")
+            return False
 
     @property
     def valid(self) -> bool:
