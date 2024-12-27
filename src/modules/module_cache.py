@@ -17,27 +17,22 @@ class ModuleCache:
         """
         Initialize the cache module.
 
-        :param logger:
-            A custom logger instance for logging operations.
-
-        :param expiration:
-            The time-to-live (TTL) for the cache, in seconds.
-            If set to None, the cache will never expire.
-
-        :param purge_expired:
-            If True, expired cache files will be automatically removed when detected.
-            If False, expired cache files will remain on the disk.
+        :param logger: A custom logger instance for logging operations.
+        :param base_path: The base directory where cache files are stored.
+        :param filename: The name of the cache file.
+        :param expiration: Time-to-live (TTL) for the cache, in seconds. If None, the cache never expires.
+        :param purge_expired: If True, expired cache files will be automatically removed.
         """
         self._log = logger
         self.__base_path = os.path.normpath(Path(base_path)) + os.sep
         self.__check_base_path(self.__base_path)
         self.__fullpath = Path(os.path.join(base_path, filename))
-        self.__expiration  = expiration
+        self.__expiration = expiration
         self.__purge_expired = purge_expired
         self.__last_change = None
 
     def __check_base_path(self, path: str) -> None:
-        """Ensure the cache directory exists."""
+        """Ensure the cache directory exists. Create it if it doesn't exist."""
         if not os.path.exists(path):
             try:
                 self._log.warning(f"Cache directory path ({path}) not found. Creating it.")
@@ -46,6 +41,7 @@ class ModuleCache:
                 raise CacheError(f"Error creating cache directory path ({path}): {e}")
 
     def _purge(self) -> None:
+        """Delete the cache file if it exists."""
         if os.path.exists(self.__fullpath):
             try:
                 self._log.info(f"Removing cache file ({self.__fullpath})")
@@ -56,35 +52,40 @@ class ModuleCache:
 
     @property
     def full_path(self) -> str:
+        """Get the full path to the cache file."""
         return self.__fullpath
 
     @property
     def last_change(self) -> Optional[float]:
+        """Get the last modification timestamp of the cache."""
         return self.__last_change
 
     @property
     def exists(self) -> bool:
+        """Check if the cache file exists."""
         return os.path.exists(self.__fullpath)
 
     @property
     def valid(self) -> bool:
+        """
+        Check if the cache file is valid.
+
+        Returns:
+            True if the cache exists and has not expired; otherwise, False.
+        """
         try:
-            # Check if the cache file exists
             if not self.exists:
                 self._log.info(f"Cache ({self.__fullpath}) not found.")
                 return False
 
             self._log.info(f"Cache ({self.__fullpath}) found.")
 
-            # If expiration is None, cache never expires
             if self.__expiration is None:
                 return True
 
-            # Get the modification time of the cache file
             file_mod_time = os.path.getmtime(self.__fullpath)
             current_time = time.time()
 
-            # Calculate the age of the cache
             cache_age = current_time - file_mod_time
             is_valid = cache_age < self.__expiration
 
@@ -100,6 +101,12 @@ class ModuleCache:
             raise CacheError(f"Error checking cache existence/expiration: {e}")
 
     def save(self, data: Any) -> bool:
+        """
+        Save data to the cache file using pickle serialization.
+
+        :param data: The data to be cached.
+        :return: True if the data was saved successfully, otherwise False.
+        """
         try:
             with open(self.__fullpath, "wb") as cache_file:
                 pickle.dump(data, cache_file)
@@ -110,6 +117,12 @@ class ModuleCache:
             raise CacheError(f"Error saving cache to ({self.__fullpath}): {e}")
 
     def save_bytes(self, data: bytes) -> bool:
+        """
+        Save raw bytes to the cache file.
+
+        :param data: Bytes to be saved in the cache.
+        :return: True if the bytes were saved successfully, otherwise False.
+        """
         if not isinstance(data, bytes):
             self._log.error(f"Expected bytes data, got {type(data)}")
             return False
@@ -123,6 +136,11 @@ class ModuleCache:
             raise CacheError(f"Error saving cache to ({self.__fullpath}): {e}")
 
     def load(self) -> Optional[Any]:
+        """
+        Load data from the cache file using pickle deserialization.
+
+        :return: The cached data if it exists and is valid; otherwise, None.
+        """
         if not self.valid:
             self._log.warning(f"Cache file ({self.__fullpath}) is missing or expired.")
             return None
@@ -136,18 +154,28 @@ class ModuleCache:
 
     @abstractmethod
     def _refresh(self, force: bool = False) -> None:
+        """
+        Abstract method for refreshing the cache.
+
+        Subclasses should implement this method to define the cache refresh behavior.
+        """
         pass
 
     def _check(self) -> None:
+        """
+        Check the validity of the cache and refresh it periodically if expiration is set.
+
+        If expiration is None, the cache will only be refreshed if it's invalid.
+        """
         if self.__expiration is not None:
-                if not self.valid:
+            if not self.valid:
+                self._refresh()
+            def refresh_periodically():
+                while True:
+                    time.sleep(self.__expiration)
                     self._refresh()
-                def refresh_periodically():
-                    while True:
-                        time.sleep(self.__expiration)
-                        self._refresh()
-                thread = threading.Thread(target=refresh_periodically, daemon=True)
-                thread.start()
+            thread = threading.Thread(target=refresh_periodically, daemon=True)
+            thread.start()
         else:
             if not self.valid:
                 self._refresh()
