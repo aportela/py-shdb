@@ -7,8 +7,8 @@ from .utils.logger import Logger
 from .display.fps import FPS
 from .utils.commandline import Commandline
 from .utils.configuration import AppSettings, SkinSettings
-from .modules.remote_image_cache import RemoteImageCache
-from .modules.rss_cache import RSSCache
+from .modules.cache.remote_image import RemoteImageCache
+from .modules.cache.rss import RSSCache
 
 from .display.widgets.fps_widget import FPSWidget
 from .display.widgets.simple_label_widget import SimpleLabelWidget

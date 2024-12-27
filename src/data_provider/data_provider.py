@@ -2,7 +2,7 @@ from typing import Any, Optional
 from abc import ABC, abstractmethod
 from datetime import datetime
 from ..utils.logger import Logger
-from ..modules.module_cache import ModuleCache
+from ..modules.cache.cache import ModuleCache
 
 import threading
 import queue

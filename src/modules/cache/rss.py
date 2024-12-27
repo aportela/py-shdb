@@ -1,9 +1,9 @@
 import os
 import hashlib
 
-from .module_cache import ModuleCache, CacheError
-from ..utils.logger import Logger
-from .rss.rss_feed import RSSFeed
+from .cache import ModuleCache, CacheError
+from ...utils.logger import Logger
+from ..rss.rss_feed import RSSFeed
 
 class RSSCacheError(CacheError):
     """Custom exception for RemoteImageCache-related errors."""

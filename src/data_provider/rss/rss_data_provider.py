@@ -3,7 +3,7 @@ import hashlib
 import requests
 from ...utils.logger import Logger
 from ..data_provider import DataProvider, DataProviderType
-from ...modules.module_cache import ModuleCache
+from ...modules.cache.cache import ModuleCache
 from ...modules.rss.rss_feed import RSSFeed
 
 class RSSDataProvider(DataProvider):

@@ -3,8 +3,8 @@ import os
 import hashlib
 import requests
 
-from .module_cache import ModuleCache, CacheError
-from ..utils.logger import Logger
+from .cache import ModuleCache, CacheError
+from ...utils.logger import Logger
 
 class RemoteImageCacheError(CacheError):
     """Custom exception for RemoteImageCache-related errors."""

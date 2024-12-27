@@ -5,7 +5,7 @@ import pygame
 
 from .widget import Widget, DEFAULT_WIDGET_BORDER_COLOR
 from .widget_font import WidgetFont
-from ...modules.rss_cache import RSSCache
+from ...modules.cache.rss import RSSCache
 
 # Separator character used to separate text in the ticker
 SEPARATOR = "#"

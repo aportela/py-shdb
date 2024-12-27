@@ -3,7 +3,7 @@ from abc import abstractmethod
 import os
 import pickle
 import time
-from ..utils.logger import Logger
+from ...utils.logger import Logger
 from pathlib import Path
 import threading
 
