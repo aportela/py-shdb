@@ -1,5 +1,7 @@
+from typing import Optional
 import os
 import hashlib
+import feedparser
 
 from .module_cache import ModuleCache
 from ..utils.logger import Logger
@@ -16,8 +18,7 @@ class RSSCache(ModuleCache):
     def _refresh(self) -> None:
         rss = RSSFeed(self._log, self.__url)
         try:
-            content = rss.get()
-            if not self.save_bytes(content):
+            if not self.save(rss.get(self.__url)):
                 raise ValueError(f"Error saving rss cache from URL: {self.__url} on path: {self.__fullpath}.")
         except Exception as e:
             raise ValueError(f"Error fetching rss from URL: {self.__url}")

@@ -67,8 +67,9 @@ skin:
       font_color: [224, 224, 224]
       font_style_bold: true
       font_style_italic: false
-      text: ""
+      #text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec pharetra ligula a imperdiet facilisis. Etiam convallis purus est, id eleifend est consectetur sit amet. Aliquam aliquet, velit non viverra dapibus, purus lacus egestas nibh, vel congue nibh ante in mauris. Curabitur dictum metus ut varius posuere. Sed porta dui a euismod sollicitudin. Curabitur ut molestie ligula. Pellentesque cursus ante ac ante rutrum, sit amet feugiat dui eleifend. Donec ac iaculis mauris. Sed ut odio eget elit facilisis ultrices. Aenean id velit velit."
       rss_url: "https://www.meneame.net/rss2.php"
+      rss_item_count: 16
       speed: 1
 
     calendar1:

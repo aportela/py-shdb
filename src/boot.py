@@ -8,6 +8,7 @@ from .display.fps import FPS
 from .utils.commandline import Commandline
 from .utils.configuration import AppSettings, SkinSettings
 from .modules.remote_image_cache import RemoteImageCache
+from .modules.rss_cache import RSSCache
 
 from .display.widgets.fps_widget import FPSWidget
 from .display.widgets.simple_label_widget import SimpleLabelWidget
@@ -135,7 +136,7 @@ class Boot:
             )
         for widget_name, widget_settings in self.__skin_settings.widgets.items():
             if (widget_settings.get("visible", False)):
-                if (widget_settings.get("type", "") == "simple_label"):
+                if (widget_settings.get("type", None) == "simple_label"):
                     self.__logger.debug(f"Adding widget: {widget_name} (SimpleLabelWidget)")
                     self.__widgets.append(
                         SimpleLabelWidget(
@@ -154,7 +155,7 @@ class Boot:
                             text = widget_settings.get('text', "")
                         )
                     )
-                elif (widget_settings.get("type", "") == "date"):
+                elif (widget_settings.get("type", None) == "date"):
                     self.__widgets.append(
                         DateWidget(
                             parent_surface = self.__main_surface,
@@ -172,7 +173,7 @@ class Boot:
                             format_mask = widget_settings.get('format_mask', "%A, %d de %B"),
                         )
                     )
-                elif (widget_settings.get("type", "") == "time"):
+                elif (widget_settings.get("type", None) == "time"):
                     self.__widgets.append(
                         TimeWidget(
                             parent_surface = self.__main_surface,
@@ -190,15 +191,22 @@ class Boot:
                             format_mask = widget_settings.get('format_mask', "%I:%M %p"),
                         )
                     )
-                elif (False and widget_settings.get("type", "") == "horizontal_ticker"):
-                    text = widget_settings.get('text', None)
-                    if text == None or text == "":
-                        rss_url = widget_settings.get('rss_url', "")
-                        if (rss_url != None and rss_url != ""):
-                            #mcache = ModuleCache(logger = logger, base_path=app_settings.cache_path, filename = )
-                            rdp = RSSDataProvider(logger, rss_url, 8)
-                            feed = RSSFeed(logger = logger, url = rss_url, max_items=16, default_seconds_refresh_time= 600, cache_path = app_settings.cache_path)
-                            text = " # ".join(f"[{item['published']}] - {item['title']}" for item in feed.get()['items'])
+                elif (widget_settings.get("type", None) == "horizontal_ticker"):
+                    text = None
+                    url = widget_settings.get('rss_url', None)
+                    if url is not None:
+                        try:
+                            cache = RSSCache(self.__logger, self.__app_settings.cache_path, url)
+                            rss_data = cache.load()
+                            item_count = widget_settings.get("rss_item_count", 16)
+                            text = " # ".join(f"[{item['published']}] - {item['title']}" for item in rss_data['items'][:item_count])
+                        except Exception as e:
+                            self.__logger.error(f"Cache error in widget {widget_name} rss ({url})")
+                            self.__logger.debug(e)
+                    else:
+                        text = widget_settings.get('text', None)
+                        # TODO: add widget source param (text, rss...)
+                        # TODO: pass cache to check changes
                     self.__widgets.append(
                         HorizontalTickerWidget(
                             parent_surface = self.__main_surface,
@@ -213,11 +221,11 @@ class Boot:
                                 style_bold = widget_settings.get('font_style_bold', False),
                                 style_italic = widget_settings.get('font_style_italic', False)
                             ),
-                            text = text or "TODO",
+                            text = text,
                             speed = widget_settings.get('speed', 1)
                         )
                     )
-                elif (widget_settings.get("type", "") == "month_calendar"):
+                elif (widget_settings.get("type", None) == "month_calendar"):
                     self.__widgets.append(
                         MonthCalendarWidget(
                             parent_surface = self.__main_surface,
@@ -234,7 +242,7 @@ class Boot:
                             )
                         )
                     )
-                elif (widget_settings.get("type", "") == "image"):
+                elif (widget_settings.get("type", None) == "image"):
                     image_path = None
                     url = widget_settings.get('url', None)
                     if url is not None:
@@ -242,7 +250,8 @@ class Boot:
                             cache = RemoteImageCache(self.__logger, self.__app_settings.cache_path, url)
                             image_path = cache.full_cache_path
                         except Exception as e:
-                            self.__logger.error(f"Cache error in widget {widget_name} remote image (url): {e}")
+                            self.__logger.error(f"Cache error in widget {widget_name} remote image ({url})")
+                            self.__logger.debug(e)
                     else :
                         image_path = widget_settings.get('path', None)
                     self.__widgets.append(
@@ -255,7 +264,7 @@ class Boot:
                             path = image_path
                         )
                     )
-                elif (False and widget_settings.get("type", "") == "weather_forecast"):
+                elif (False and widget_settings.get("type", None) == "weather_forecast"):
                     self.__widgets.append(
                         WeatherForecastWidget(
                             parent_surface = self.__main_surface,
