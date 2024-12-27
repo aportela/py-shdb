@@ -2,7 +2,6 @@ import os
 import hashlib
 
 from .cache import ModuleCache, CacheError
-from ...utils.logger import Logger
 from ..rss.rss_feed import RSSFeed
 
 class RSSCacheError(CacheError):
@@ -12,8 +11,8 @@ class RSSCacheError(CacheError):
 DEFAULT_EXPIRATION_TIME=300 # 5 min
 
 class RSSCache(ModuleCache):
-    def __init__(self, logger: Logger, base_path: str, url: str) -> None:
-        super().__init__(logger=logger, base_path=os.path.join(base_path, "feeds"), filename=f"{hashlib.sha256(url.encode('utf-8')).hexdigest()[:64]}.rss", expiration=DEFAULT_EXPIRATION_TIME)
+    def __init__(self, base_path: str, url: str) -> None:
+        super().__init__(base_path=os.path.join(base_path, "feeds"), filename=f"{hashlib.sha256(url.encode('utf-8')).hexdigest()[:64]}.rss", expiration=DEFAULT_EXPIRATION_TIME)
         if not url.startswith(('http://', 'https://')):
             raise ValueError(f"Invalid URL format: {self.__url}")
         self.__url = url

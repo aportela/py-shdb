@@ -12,7 +12,7 @@ class CacheError(Exception):
     pass
 
 class ModuleCache:
-    def __init__(self, logger: Logger, base_path: str, filename: str, expiration: Optional[int] = None, purge_expired: bool = True) -> None:
+    def __init__(self, base_path: str, filename: str, expiration: Optional[int] = None, purge_expired: bool = True) -> None:
         """
         Initialize the cache module.
 
@@ -22,7 +22,7 @@ class ModuleCache:
         :param expiration: Time-to-live (TTL) for the cache, in seconds. If None, the cache never expires.
         :param purge_expired: If True, expired cache files will be automatically removed.
         """
-        self._log = logger
+        self._log = Logger()
         self.__base_path = os.path.normpath(Path(base_path)) + os.sep
         self.__check_base_path(self.__base_path)
         self.__fullpath = Path(os.path.join(base_path, filename))

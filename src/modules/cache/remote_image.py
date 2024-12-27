@@ -4,7 +4,6 @@ import hashlib
 import requests
 
 from .cache import ModuleCache, CacheError
-from ...utils.logger import Logger
 
 class RemoteImageCacheError(CacheError):
     """Custom exception for RemoteImageCache-related errors."""
@@ -14,8 +13,8 @@ DEFAULT_EXPIRATION_TIME = None # never expires
 DEFAULT_TIMEOUT = 10  # seconds
 
 class RemoteImageCache(ModuleCache):
-    def __init__(self, logger: Logger, base_path: str, url: str, timeout: Optional[int] = DEFAULT_TIMEOUT) -> None:
-        super().__init__(logger=logger, base_path=os.path.join(base_path, "images"),
+    def __init__(self, base_path: str, url: str, timeout: Optional[int] = DEFAULT_TIMEOUT) -> None:
+        super().__init__(base_path=os.path.join(base_path, "images"),
                          filename=f"{hashlib.sha256(url.encode('utf-8')).hexdigest()[:64]}.image",
                          expiration=DEFAULT_EXPIRATION_TIME)
         if not url.startswith(('http://', 'https://')):
