@@ -16,7 +16,6 @@ class ModuleCache:
         """
         Initialize the cache module.
 
-        :param logger: A custom logger instance for logging operations.
         :param base_path: The base directory where cache files are stored.
         :param filename: The name of the cache file.
         :param expiration: Time-to-live (TTL) for the cache, in seconds. If None, the cache never expires.

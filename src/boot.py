@@ -59,8 +59,8 @@ class Boot:
         pygame.quit()
 
     def __load_settings_and_skin(self) -> None:
-        self.__app_settings = AppSettings(self.__logger, self.__command_line.configuration if self.__command_line.configuration is not None else "config.yaml")
-        self.__skin_settings = SkinSettings(self.__logger, self.__command_line.skin if self.__command_line.skin is not None else self.__app_settings.skin)
+        self.__app_settings = AppSettings(path = self.__command_line.configuration if self.__command_line.configuration is not None else "config.yaml")
+        self.__skin_settings = SkinSettings(path = self.__command_line.skin if self.__command_line.skin is not None else self.__app_settings.skin)
 
     def __set_background_image(self, path: str) -> None:
         if os.path.exists(path):

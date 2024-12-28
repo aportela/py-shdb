@@ -8,8 +8,8 @@ from ..display.fps import FPS
 
 class Configuration:
 
-    def __init__(self, logger: Logger, path: str):
-        self._logger = logger
+    def __init__(self, path: str):
+        self._log = Logger()
         self.__path = path
         self._loaded_configuration = None
         self.__last_modified_time = None
@@ -32,9 +32,9 @@ class Configuration:
 
 class AppSettings (Configuration):
 
-    def __init__(self, logger: Logger, path: str):
-        super().__init__(logger = logger, path = path)
-        self._logger.debug(f"Configuration file: {path}")
+    def __init__(self, path: str):
+        super().__init__(path = path)
+        self._log.debug(f"Configuration file: {path}")
         super()._load(path)
         self.__apply()
 
@@ -90,12 +90,11 @@ class AppSettings (Configuration):
     def get_widget_defaults(self, widget: str) -> Optional[Any]:
         return self._loaded_configuration.get('widget_defaults', {}).get(widget, None)
 
-
 class SkinSettings (Configuration):
 
-    def __init__(self, logger: Logger, path: str):
-        super().__init__(logger = logger, path = path)
-        self._logger.debug(f"Skin file: {path}")
+    def __init__(self, path: str):
+        super().__init__(path = path)
+        self._log.debug(f"Skin file: {path}")
         super()._load(path)
 
     def reload(self) -> bool:
