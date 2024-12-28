@@ -41,7 +41,7 @@ class Logger:
                 logging.warning(f"Logger: Failed to introspect caller class: {e}")
 
         # Initialize the logger with the determined or provided name
-        self._logger = logging.getLogger(name)
+        self.__log = logging.getLogger(name)
 
     @staticmethod
     def parse_level(level: Optional[str] = None):
@@ -88,23 +88,23 @@ class Logger:
 
     def info(self, message: Union[str, Any]):
         """Logs an informational message."""
-        self._logger.info(self._prepare_message(message))
+        self.__log.info(self._prepare_message(message))
 
     def warning(self, message: Union[str, Any]):
         """Logs a warning message."""
-        self._logger.warning(self._prepare_message(message))
+        self.__log.warning(self._prepare_message(message))
 
     def error(self, message: Union[str, Any]):
         """Logs an error message."""
-        self._logger.error(self._prepare_message(message))
+        self.__log.error(self._prepare_message(message))
 
     def debug(self, message: Union[str, Any]):
         """Logs a debug message."""
-        self._logger.debug(self._prepare_message(message))
+        self.__log.debug(self._prepare_message(message))
 
     def critical(self, message: Union[str, Any]):
         """Logs a critical message."""
-        self._logger.critical(self._prepare_message(message))
+        self.__log.critical(self._prepare_message(message))
 
     def _prepare_message(self, message: Any) -> str:
         """
