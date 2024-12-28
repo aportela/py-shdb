@@ -23,15 +23,15 @@ from .display.widgets.widget_font import WidgetFont
 
 class Boot:
     def __init__(self, ) -> None:
-        self.__logger = Logger("py-shdb")
-        self.__logger.configure_global(self.__logger.DEBUG)
+        self.__log = Logger("py-shdb")
+        self.__log.configure_global(self.__log.DEBUG)
         # commandline checks
-        self.__command_line = Commandline(self.__logger)
+        self.__command_line = Commandline(self.__log)
         self.__app_settings = None
         # init graphics
         pygame.init()
         self.__screen_info = pygame.display.Info()
-        self.__logger.debug(f"Current screen resolution: {self.__screen_info.current_w}x{self.__screen_info.current_h}")
+        self.__log.debug(f"Current screen resolution: {self.__screen_info.current_w}x{self.__screen_info.current_h}")
         self.__current_screen_resolution = (self.__screen_info.current_w, self.__screen_info.current_h)
         self.__app_settings = None
         self.__skin_settings = None
@@ -78,7 +78,7 @@ class Boot:
                 cache = RemoteImageCache(base_path=self.__app_settings.cache_path, url=self.__skin_settings.background_image_url)
                 self.__set_background_image(cache.full_path)
             except Exception as e:
-                self.__logger.error(f"Error setting remote background image: {e}")
+                self.__log.error(f"Error setting remote background image: {e}")
         else:
             self.__main_surface.fill(self.__skin_settings.background_color or pygame.Color("black"))
         pygame.display.flip()
@@ -117,7 +117,7 @@ class Boot:
         return pygame.Rect(x, y, width, height)
 
     def __load_widgets(self):
-        self.__logger.info("Loading widgets...")
+        self.__log.info("Loading widgets...")
         self.__widgets.clear()
         if self.__app_settings.show_fps:
             widget_settings = self.__app_settings.get_widget_defaults("fps")
@@ -140,7 +140,7 @@ class Boot:
         for widget_name, widget_settings in self.__skin_settings.widgets.items():
             if (widget_settings.get("visible", False)):
                 if (widget_settings.get("type", None) == "simple_label"):
-                    self.__logger.debug(f"Adding widget: {widget_name} (SimpleLabelWidget)")
+                    self.__log.debug(f"Adding widget: {widget_name} (SimpleLabelWidget)")
                     self.__widgets.append(
                         SimpleLabelWidget(
                             parent_surface = self.__main_surface,
@@ -248,8 +248,8 @@ class Boot:
                             cache = RemoteImageCache(base_path=self.__app_settings.cache_path, url=url)
                             image_path = cache.full_path
                         except Exception as e:
-                            self.__logger.error(f"Cache error in widget {widget_name} remote image ({url})")
-                            self.__logger.debug(e)
+                            self.__log.error(f"Cache error in widget {widget_name} remote image ({url})")
+                            self.__log.debug(e)
                     else :
                         image_path = widget_settings.get('path', None)
                     self.__widgets.append(
@@ -325,13 +325,13 @@ class Boot:
                     )
 
 
-        self.__logger.debug(f"Total widgets: {len(self.__widgets)}")
+        self.__log.debug(f"Total widgets: {len(self.__widgets)}")
 
     def loop(self) -> bool:
         # check for exit
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
-                self.__logger.info("See you next time!")
+                self.__log.info("See you next time!")
                 return False
             elif event.type == pygame.MOUSEMOTION and self.__app_settings.show_mouse_cursor_on_mouse_motion_events:
                 if not pygame.mouse.get_visible():
@@ -342,7 +342,7 @@ class Boot:
 
         # DEBUG: check for configuration changes
         if self.__app_settings.debug_widgets and (self.__app_settings.file_changed or self.__skin_settings.file_changed):
-            self.__logger.info("Configuration file changes detected, reloading widgets")
+            self.__log.info("Configuration file changes detected, reloading widgets")
             self.__load_settings_and_skin()
             self.__refresh_background()
             self.__load_widgets()
