@@ -7,15 +7,14 @@ from ...utils.logger import Logger
 DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:112.0) Gecko/20100101 Firefox/112.0'
 
 class RSSFeed:
-    def __init__(self, logger: Logger, url: str, timeout: int = 10) -> None:
+    def __init__(self, url: str, timeout: int = 10) -> None:
         """
         Initializes the RSSFeed object with the URL of the RSS feed.
 
-        :param logger: A custom logger instance for logging operations.
         :param url: The URL of the RSS feed to be fetched.
         :param timeout: Timeout duration for the HTTP request in seconds (default is 10 seconds).
         """
-        self.__log = logger
+        self.__log = Logger()
         self.__url = url
         self.__timeout = timeout
 

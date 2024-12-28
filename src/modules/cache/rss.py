@@ -20,8 +20,8 @@ class RSSCache(ModuleCache):
 
     def _refresh(self) -> None:
         try:
-            rss = RSSFeed(self._log, self.__url)
-            rss_data = rss.get(self.__url)
+            rss = RSSFeed(url = self.__url)
+            rss_data = rss.get()
             if not self.save(rss_data):
                 raise RSSCacheError(f"Error saving cache of rss from {self.__url}")
         except Exception as e:
