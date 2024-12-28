@@ -18,6 +18,7 @@ from .display.widgets.horizontal_ticker_widget import HorizontalTickerWidget, Ho
 from .display.widgets.month_calendar_widget import MonthCalendarWidget
 from .display.widgets.image_widget import ImageWidget
 from .display.widgets.weather_forecast_widget import WeatherForecastWidget
+from .display.widgets.list_widget import ListWidget
 from .display.widgets.widget_font import WidgetFont
 
 class Boot:
@@ -32,6 +33,8 @@ class Boot:
         self.__screen_info = pygame.display.Info()
         self.__logger.debug(f"Current screen resolution: {self.__screen_info.current_w}x{self.__screen_info.current_h}")
         self.__current_screen_resolution = (self.__screen_info.current_w, self.__screen_info.current_h)
+        self.__app_settings = None
+        self.__skin_settings = None
         self.__load_settings_and_skin()
         if (self.__skin_settings.width, self.__skin_settings.height) != self.__current_screen_resolution:
             raise ValueError(f"Error: skin size (width: {self.__skin_settings.width}px, height: {self.__skin_settings.height}px) do not match with current screen resolution (width: {self.__screen_info.current_w}px, height: {self.__screen_info.current_h}px).")
@@ -277,6 +280,18 @@ class Boot:
                             text = widget_settings.get('header_text', 'Weather forecast') # cloud
                         )
                     )
+                elif (widget_settings.get("type", None) == "list"):
+                    self.__widgets.append(
+                        ListWidget(
+                            parent_surface = self.__main_surface,
+                            name = widget_name,
+                            rect = self.get_widget_rect_from_config(widget_settings),
+                            background_color = widget_settings.get('background_color', None),
+                            border = self.__app_settings.debug_widgets
+                        )
+                    )
+
+
         self.__logger.debug(f"Total widgets: {len(self.__widgets)}")
 
     def loop(self) -> bool:
@@ -293,7 +308,7 @@ class Boot:
                 self.__click_event = event
 
         # DEBUG: check for configuration changes
-        if self.__app_settings.debug_widgets and self.__app_settings.file_changed:
+        if self.__app_settings.debug_widgets and (self.__app_settings.file_changed or self.__skin_settings.file_changed):
             self.__logger.info("Configuration file changes detected, reloading widgets")
             self.__load_settings_and_skin()
             self.__refresh_background()
