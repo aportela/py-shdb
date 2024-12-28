@@ -26,7 +26,7 @@ class Boot:
         self.__log = Logger("py-shdb")
         self.__log.configure_global(self.__log.DEBUG)
         # commandline checks
-        self.__command_line = Commandline(self.__log)
+        self.__command_line = Commandline()
         self.__app_settings = None
         # init graphics
         pygame.init()
