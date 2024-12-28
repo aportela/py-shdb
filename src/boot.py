@@ -18,7 +18,7 @@ from .display.widgets.horizontal_ticker_widget import HorizontalTickerWidget, Ho
 from .display.widgets.month_calendar_widget import MonthCalendarWidget
 from .display.widgets.image_widget import ImageWidget
 from .display.widgets.weather_forecast_widget import WeatherForecastWidget
-from .display.widgets.list_widget import ListWidget
+from .display.widgets.list_widget import ListWidget, ListWidgetHeader, ListWidgetBody, ListWidgetItem
 from .display.widgets.widget_font import WidgetFont
 
 class Boot:
@@ -281,13 +281,45 @@ class Boot:
                         )
                     )
                 elif (widget_settings.get("type", None) == "list"):
+                    widget_header_settings = widget_settings.get('header', {})
+                    widget_body_settings = widget_settings.get('body', {})
                     self.__widgets.append(
                         ListWidget(
                             parent_surface = self.__main_surface,
                             name = widget_name,
                             rect = self.get_widget_rect_from_config(widget_settings),
                             background_color = widget_settings.get('background_color', None),
-                            border = self.__app_settings.debug_widgets
+                            border = self.__app_settings.debug_widgets,
+                            header = ListWidgetHeader(
+                                font = WidgetFont(
+                                    family = widget_header_settings.get('font_family', None),
+                                    size = widget_header_settings.get('font_size', 30),
+                                    color = widget_header_settings.get("font_color", pygame.Color("white")),
+                                    style_bold = widget_header_settings.get('font_style_bold', False),
+                                    style_italic = widget_header_settings.get('font_style_italic', False)
+                                ),
+                                text = widget_header_settings.get('text', None)
+                            ),
+                            body = ListWidgetBody(
+                                font = WidgetFont(
+                                    family = widget_body_settings.get('font_family', None),
+                                    size = widget_body_settings.get('font_size', 30),
+                                    color = widget_body_settings.get("font_color", pygame.Color("white")),
+                                    style_bold = widget_body_settings.get('font_style_bold', False),
+                                    style_italic = widget_body_settings.get('font_style_italic', False)
+                                ),
+                                items = [
+                                    ListWidgetItem(text = "- In nunc erat, porta vel vestibulum in, convallis sed mi. Ut scelerisque felis elit, quis porttitor magna viverra eu.", icon = None),
+                                    ListWidgetItem(text = "- Sed nec lectus cursus, vulputate velit sed, accumsan ligula.", icon = None),
+                                    ListWidgetItem(text = "- Duis rutrum mauris ipsum, non ullamcorper neque ullamcorper sit amet.", icon = None),
+                                    ListWidgetItem(text = "- Curabitur convallis urna ut venenatis efficitur.", icon = None),
+                                    ListWidgetItem(text = "- Nunc iaculis ex at libero fringilla, et pharetra velit mattis.", icon = None),
+                                    ListWidgetItem(text = "- Pellentesque vestibulum leo felis, non fermentum arcu egestas nec.", icon = None),
+                                    ListWidgetItem(text = "- Nulla aliquet viverra enim ut porttitor.", icon = None),
+                                    ListWidgetItem(text = "- Aenean porttitor pharetra iaculis. Nullam vitae scelerisque felis, vitae molestie sapien.", icon = None),
+                                    ListWidgetItem(text = "- Nulla varius, magna vel vehicula lobortis, ex est vestibulum nulla, non eleifend dui nunc in dui.", icon = None)
+                                ]
+                            )
                         )
                     )
 

@@ -121,8 +121,16 @@ skin:
       width: 400
       height: 500
       #background_color: [20, 20, 50]
-      font_family: "monospace"
-      font_size: 16
-      font_color: [255, 255, 255]
-      font_style_bold: true
-      font_style_italic: false
+      header:
+        text: "Header text"
+        font_family: "monospace"
+        font_size: 60
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+      body:
+        font_family: "monospace"
+        font_size: 18
+        font_color: [255, 255, 255]
+        font_style_bold: false
+        font_style_italic: false
