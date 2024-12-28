@@ -1,5 +1,6 @@
 from typing import Optional
 import pygame
+from enum import Enum
 
 from .widget import Widget, DEFAULT_WIDGET_BORDER_COLOR
 from .widget_font import WidgetFont
@@ -17,6 +18,12 @@ class ListWidgetHeader():
     def render(self) -> pygame.surface:
         return self.__font.render(self.__text)
 
+class ListWidgetItemMarker(str, Enum):
+    NONE = ""
+    HYPHEN = "-"
+
+    def __str__(self) -> str:
+        return self.value
 
 class ListWidgetItem():
     def __init__(self, text: str, icon: Optional[IconList] = None):
@@ -32,9 +39,10 @@ class ListWidgetItem():
         return self.__icon
 
 class ListWidgetBody():
-    def __init__(self, font: WidgetFont, items: list[ListWidgetItem]):
+    def __init__(self, font: WidgetFont, items: list[ListWidgetItem], item_marker: Optional[ListWidgetItemMarker] = None):
         self.__font = font
         self.__items = items
+        self.__item_marker = item_marker
 
     def clear_items(self) -> None:
         self.__items.clear()
@@ -48,13 +56,12 @@ class ListWidgetBody():
 
     def render_item(self, item_index) -> pygame.surface:
         if item_index >= 0 and item_index < self.item_count:
-            return self.__font.render(self.__items[item_index].text)
+            if (self.__item_marker is not None):
+                return self.__font.render(f"{self.__item_marker} {self.__items[item_index].text}")
+            else:
+                return self.__font.render(self.__items[item_index].text)
         else:
-            print (item_index)
-            print (self.item_count)
-
-            #raise ValueError("Item out of bounds")
-            return pygame.Surface((1,1))
+            raise ValueError("Item out of bounds")
 
     def items(self) -> list[ListWidgetItem]:
         return self.__items
