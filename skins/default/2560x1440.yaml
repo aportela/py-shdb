@@ -113,3 +113,25 @@ skin:
       latitude: 40.4168
       longitude: -3.7038
       header_text: "My Weather forecast"
+
+    list1:
+      visible: true
+      type: "list"
+      x: 1800
+      y: 700
+      width: 600
+      height: 500
+      #background_color: [20, 20, 50]
+      header:
+        text: "Header text"
+        font_family: "monospace"
+        font_size: 60
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+      body:
+        font_family: "monospace"
+        font_size: 18
+        font_color: [255, 255, 255]
+        font_style_bold: false
+        font_style_italic: false
