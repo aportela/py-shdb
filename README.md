@@ -28,6 +28,12 @@ python -m pip install -U requests --user
 python -m pip install -U feedparser --user
 ```
 
+## paho-mqtt
+
+```
+pip install paho-mqtt
+```
+
 ## pyinstaller (for build executable)
 
 ```
