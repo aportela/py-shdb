@@ -134,3 +134,17 @@ skin:
         font_color: [255, 255, 255]
         font_style_bold: false
         font_style_italic: false
+
+    line_chart1:
+      visible: true
+      type: "line_chart"
+      x: 600
+      y: 850
+      width: 200
+      height: 120
+      #background_color: [20, 20, 50]
+      font_family: "line_chart"
+      font_size: 16
+      font_color: [255, 255, 255]
+      font_style_bold: true
+      font_style_italic: false

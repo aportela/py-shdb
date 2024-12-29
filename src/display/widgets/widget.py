@@ -71,4 +71,5 @@ class Widget(ABC):
 
     def on_click(self):
         self._log.debug("detected widget click event, but click event not found")
+        # TODO: Remove & return False
         self.refresh(True)

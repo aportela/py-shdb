@@ -19,6 +19,7 @@ from .display.widgets.month_calendar_widget import MonthCalendarWidget
 from .display.widgets.image_widget import ImageWidget
 from .display.widgets.weather_forecast_widget import WeatherForecastWidget
 from .display.widgets.list_widget import ListWidget, ListWidgetHeader, ListWidgetBody, ListWidgetItem, ListWidgetItemMarker
+from .display.widgets.charts.line_chart_widget import LineChartWidget
 from .display.widgets.widget_font import WidgetFont
 
 class Boot:
@@ -323,7 +324,16 @@ class Boot:
                             )
                         )
                     )
-
+                elif (widget_settings.get("type", None) == "line_chart"):
+                    self.__widgets.append(
+                        LineChartWidget(
+                            parent_surface = self.__main_surface,
+                            name = widget_name,
+                            rect = self.get_widget_rect_from_config(widget_settings),
+                            background_color = widget_settings.get('background_color', None),
+                            border = self.__app_settings.debug_widgets
+                        )
+                    )
 
         self.__log.debug(f"Total widgets: {len(self.__widgets)}")
 
