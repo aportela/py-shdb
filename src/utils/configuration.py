@@ -84,8 +84,12 @@ class AppSettings (Configuration):
         return self._loaded_configuration.get('app', {}).get('monitor_index', 0)
 
     @property
-    def mqtt_broker_url(self) -> Optional[str]:
-        return self._loaded_configuration.get('mqtt', {}).get('broker_url', None)
+    def mqtt_broker_host(self) -> Optional[str]:
+        return self._loaded_configuration.get('mqtt', {}).get('broker_host', None)
+
+    @property
+    def mqtt_broker_port(self) -> Optional[int]:
+        return self._loaded_configuration.get('mqtt', {}).get('broker_port', None)
 
     @property
     def mqtt_username(self) -> Optional[str]:
