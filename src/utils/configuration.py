@@ -84,6 +84,18 @@ class AppSettings (Configuration):
         return self._loaded_configuration.get('app', {}).get('monitor_index', 0)
 
     @property
+    def mqtt_broker_url(self) -> Optional[str]:
+        return self._loaded_configuration.get('mqtt', {}).get('broker_url', None)
+
+    @property
+    def mqtt_username(self) -> Optional[str]:
+        return self._loaded_configuration.get('mqtt', {}).get('username', None)
+
+    @property
+    def mqtt_password(self) -> Optional[str]:
+        return self._loaded_configuration.get('mqtt', {}).get('password', None)
+
+    @property
     def skin(self) -> Optional[str]:
         return self._loaded_configuration.get('app', {}).get('skin', None)
 
