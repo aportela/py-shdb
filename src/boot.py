@@ -22,6 +22,9 @@ from .display.widgets.list_widget import ListWidget, ListWidgetHeader, ListWidge
 from .display.widgets.charts.line_chart_widget import LineChartWidget
 from .display.widgets.widget_font import WidgetFont
 
+from .modules.mqtt.mqtt_client import MQTTClient
+from .modules.mqtt.data_sources.mqtt_data_source import MQTTDataSource, MQTTDataSourceValueType
+
 class Boot:
     def __init__(self, ) -> None:
         self.__log = Logger("py-shdb")
@@ -44,6 +47,12 @@ class Boot:
         self.__refresh_background()
         self.__widgets = []
         self.__load_widgets()
+        self.__mqtt = None
+
+        if self.__app_settings.mqtt_broker_host and self.__app_settings.mqtt_broker_port > 0:
+            self.__mqtt = MQTTClient(broker = self.__app_settings.mqtt_broker_host, port = self.__app_settings.mqtt_broker_port, username = self.__app_settings.mqtt_username, password = self.__app_settings.mqtt_password)
+            #self.__mqtt_data = MQTTDataSource(self.__mqtt, topic = "telegraf/OPNsense.localdomain/net", extract_pattern = r"bytes_recv=(\d+)i", extracted_value_type = MQTTDataSourceValueType.INTEGER, search_pattern = r"interface=pppoe0")
+            self.__mqtt_data = MQTTDataSource(self.__mqtt, topic = "telegraf/OPNsense.localdomain/cpu", extract_pattern = r"usage_idle=([0-9]+\.[0-9]+)", extracted_value_type = MQTTDataSourceValueType.BIG_DECIMAL)
 
         self.__click_event = None
 
@@ -263,7 +272,7 @@ class Boot:
                             path = image_path
                         )
                     )
-                elif (False and widget_settings.get("type", None) == "weather_forecast"):
+                elif (widget_settings.get("type", None) == "weather_forecast"):
                     self.__widgets.append(
                         WeatherForecastWidget(
                             parent_surface = self.__main_surface,
