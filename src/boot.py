@@ -23,7 +23,7 @@ from .display.widgets.charts.line_chart_widget import LineChartWidget
 from .display.widgets.widget_font import WidgetFont
 
 from .modules.mqtt.mqtt_client import MQTTClient
-from .modules.mqtt.data_sources.mqtt_data_source import MQTTDataSource, MQTTDataSourceValueType
+from .modules.mqtt.data_sources.telegraf.mqtt_telegraf_data_source import MQTTTelegrafCPUDataSource
 
 class Boot:
     def __init__(self, ) -> None:
@@ -52,7 +52,7 @@ class Boot:
         if self.__app_settings.mqtt_broker_host and self.__app_settings.mqtt_broker_port > 0:
             self.__mqtt = MQTTClient(broker = self.__app_settings.mqtt_broker_host, port = self.__app_settings.mqtt_broker_port, username = self.__app_settings.mqtt_username, password = self.__app_settings.mqtt_password)
             #self.__mqtt_data = MQTTDataSource(self.__mqtt, topic = "telegraf/OPNsense.localdomain/net", extract_pattern = r"bytes_recv=(\d+)i", extracted_value_type = MQTTDataSourceValueType.INTEGER, search_pattern = r"interface=pppoe0")
-            self.__mqtt_data = MQTTDataSource(self.__mqtt, topic = "telegraf/OPNsense.localdomain/cpu", extract_pattern = r"usage_idle=([0-9]+\.[0-9]+)", extracted_value_type = MQTTDataSourceValueType.BIG_DECIMAL)
+            self.__mqtt_data = MQTTTelegrafCPUDataSource(self.__mqtt, topic = "telegraf/OPNsense.localdomain/cpu")
 
         self.__click_event = None
 
