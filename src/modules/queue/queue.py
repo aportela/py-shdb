@@ -4,7 +4,7 @@ import time
 import queue
 
 class QueueMSG:
-    def __init__(self, value: Any, timestamp: Optional[int] = None):
+    def __init__(self, value: Any, timestamp: Optional[float] = None):
         self.value = value
         if timestamp is not None:
             self.timestamp = timestamp
@@ -17,7 +17,7 @@ class Queue:
         self.__shared_queue = queue.Queue()
 
     def enqueue(self, msg: QueueMSG):
-        self.__log.debug(f"enqueue message: {msg}")
+        self.__log.debug(f"enqueue message: {msg.value} - timestamp: {msg.timestamp}")
         self.__shared_queue.put(msg)
 
     def dequeue(self) -> Optional[QueueMSG]:
