@@ -45,14 +45,17 @@ class Boot:
         self.__main_surface = pygame.display.set_mode(size = self.__current_screen_resolution, flags = pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.NOFRAME, display = self.__app_settings.monitor_index)
         pygame.display.set_caption(self.__app_settings.app_name)
         self.__refresh_background()
-        self.__widgets = []
-        self.__load_widgets()
-        self.__mqtt = None
+
+        self.__mqtt_data = None
 
         if self.__app_settings.mqtt_broker_host and self.__app_settings.mqtt_broker_port > 0:
             self.__mqtt = MQTTClient(broker = self.__app_settings.mqtt_broker_host, port = self.__app_settings.mqtt_broker_port, username = self.__app_settings.mqtt_username, password = self.__app_settings.mqtt_password)
             #self.__mqtt_data = MQTTDataSource(self.__mqtt, topic = "telegraf/OPNsense.localdomain/net", extract_pattern = r"bytes_recv=(\d+)i", extracted_value_type = MQTTDataSourceValueType.INTEGER, search_pattern = r"interface=pppoe0")
-            self.__mqtt_data = MQTTTelegrafCPUDataSource(self.__mqtt, topic = "telegraf/OPNsense.localdomain/cpu")
+            self.__mqtt_data = MQTTTelegrafCPUDataSource(self.__mqtt, topic = "telegraf/openmediavault/cpu")
+
+        self.__widgets = []
+        self.__load_widgets()
+        self.__mqtt = None
 
         self.__click_event = None
 
@@ -340,7 +343,8 @@ class Boot:
                             name = widget_name,
                             rect = self.get_widget_rect_from_config(widget_settings),
                             background_color = widget_settings.get('background_color', None),
-                            border = self.__app_settings.debug_widgets
+                            border = self.__app_settings.debug_widgets,
+                            data_source = self.__mqtt_data
                         )
                     )
 
