@@ -23,7 +23,7 @@ from .display.widgets.charts.line_chart_widget import LineChartWidget
 from .display.widgets.widget_font import WidgetFont
 
 from .modules.mqtt.mqtt_client import MQTTClient
-from .modules.mqtt.data_sources.telegraf.mqtt_telegraf_data_source import MQTTTelegrafCPUDataSource
+from .modules.mqtt.data_sources.telegraf.mqtt_telegraf_data_source import MQTTTelegrafCPUDataSource, MQTTTelegrafCPUTemperatureDataSource
 
 class Boot:
     def __init__(self, ) -> None:
@@ -128,6 +128,14 @@ class Boot:
             x = ((self.__screen_info.current_w // 2) - (width // 2))
             y = self.__screen_info.current_h - height
         return pygame.Rect(x, y, width, height)
+
+    def get_widget_data_source_from_config(self, widget_settings: Dict[str, Any], mqtt: MQTTClient) -> MQTTTelegrafCPUDataSource:
+        if widget_settings.get('type', None) == "cpu_load":
+            return MQTTTelegrafCPUDataSource(mqtt=mqtt, topic = widget_settings.get('mqtt', None).get('topic', None))
+        elif widget_settings.get('type', None) == "cpu_temperature":
+            return MQTTTelegrafCPUTemperatureDataSource(mqtt=mqtt, topic = widget_settings.get('mqtt', None).get('topic', None))
+        else:
+            raise ValueError("TODO")
 
     def __load_widgets(self):
         self.__log.info("Loading widgets...")
@@ -344,9 +352,10 @@ class Boot:
                             rect = self.get_widget_rect_from_config(widget_settings),
                             background_color = widget_settings.get('background_color', None),
                             border = self.__app_settings.debug_widgets,
-                            data_source = self.__mqtt_data
+                            data_source = self.get_widget_data_source_from_config(widget_settings = widget_settings.get('data_source', None), mqtt = self.__mqtt)
                         )
                     )
+                    # TODO: error on widget reload (AttributeError: 'NoneType' object has no attribute 'add_callback')
 
         self.__log.debug(f"Total widgets: {len(self.__widgets)}")
 
