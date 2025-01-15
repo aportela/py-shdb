@@ -5,6 +5,7 @@ from ..mqtt_data_source import MQTTDataSource
 from ...mqtt_client import MQTTClient
 from ....queue.queue import QueueMSG
 
+# TODO: refactor MQTTTelegrafCPULoadDataSource
 class MQTTTelegrafCPUDataSource (MQTTDataSource):
     def __init__(self, mqtt: MQTTClient, topic: str) -> None:
         super().__init__(mqtt = mqtt, topic = topic)

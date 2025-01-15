@@ -139,13 +139,109 @@ skin:
     line_chart1:
       visible: true
       type: "line_chart"
-      x: 500
+      x: 200
       y: 1000
-      width: 500
-      height: 200
+      width: 250
+      height: 100
       #background_color: [20, 20, 50]
       font_family: "line_chart"
       font_size: 16
       font_color: [255, 255, 255]
       font_style_bold: true
       font_style_italic: false
+      data_source:
+        type: "cpu_load"
+        mqtt:
+          topic: "telegraf/OPNsense.localdomain/cpu"
+
+    line_chart2:
+      visible: true
+      type: "line_chart"
+      x: 500
+      y: 1000
+      width: 250
+      height: 100
+      #background_color: [20, 20, 50]
+      font_family: "line_chart"
+      font_size: 16
+      font_color: [255, 255, 255]
+      font_style_bold: true
+      font_style_italic: false
+      data_source:
+        type: "cpu_load"
+        mqtt:
+          topic: "telegraf/openmediavault/cpu"
+
+    line_chart3:
+      visible: true
+      type: "line_chart"
+      x: 800
+      y: 1000
+      width: 250
+      height: 100
+      #background_color: [20, 20, 50]
+      font_family: "line_chart"
+      font_size: 16
+      font_color: [255, 255, 255]
+      font_style_bold: true
+      font_style_italic: false
+      data_source:
+        type: "cpu_load"
+        mqtt:
+          type:
+          topic: "telegraf/proxmox/cpu"
+
+    line_chart4:
+      visible: true
+      type: "line_chart"
+      x: 200
+      y: 1200
+      width: 250
+      height: 100
+      #background_color: [20, 20, 50]
+      font_family: "line_chart"
+      font_size: 16
+      font_color: [255, 255, 255]
+      font_style_bold: true
+      font_style_italic: false
+      data_source:
+        type: "cpu_temperature"
+        mqtt:
+          topic: "telegraf/OPNsense.localdomain/sensors"
+
+    line_chart5:
+      visible: true
+      type: "line_chart"
+      x: 500
+      y: 1200
+      width: 250
+      height: 100
+      #background_color: [20, 20, 50]
+      font_family: "line_chart"
+      font_size: 16
+      font_color: [255, 255, 255]
+      font_style_bold: true
+      font_style_italic: false
+      data_source:
+        type: "cpu_temperature"
+        mqtt:
+          topic: "telegraf/openmediavault/sensors"
+
+    line_chart6:
+      visible: true
+      type: "line_chart"
+      x: 800
+      y: 1200
+      width: 250
+      height: 100
+      #background_color: [20, 20, 50]
+      font_family: "line_chart"
+      font_size: 16
+      font_color: [255, 255, 255]
+      font_style_bold: true
+      font_style_italic: false
+      data_source:
+        type: "cpu_temperature"
+        mqtt:
+          type:
+          topic: "telegraf/proxmox/sensors"

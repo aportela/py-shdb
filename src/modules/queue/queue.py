@@ -17,15 +17,15 @@ class Queue:
         self.__shared_queue = queue.Queue()
 
     def enqueue(self, msg: QueueMSG):
-        self.__log.debug(f"enqueue message: {msg.value} - timestamp: {msg.timestamp}")
+        #self.__log.debug(f"enqueue message: {msg.value} - timestamp: {msg.timestamp}")
         self.__shared_queue.put(msg)
 
     def dequeue(self) -> Optional[QueueMSG]:
         try:
             msg = self.__shared_queue.get_nowait()
-            self.__log.debug(f"dequeue message: {msg}")
+            #self.__log.debug(f"dequeue message: {msg}")
             return msg
         except queue.Empty:
-            self.__log.debug("empty queue")
+            #self.__log.debug("empty queue")
             #time.sleep(0.2)
             return None

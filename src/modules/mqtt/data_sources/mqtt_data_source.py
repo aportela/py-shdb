@@ -17,7 +17,7 @@ class MQTTDataSource:
     def _enqueue(self, msg: QueueMSG) -> None:
         self.__queue.enqueue(msg)
 
-    def _dequeue(self) -> QueueMSG:
+    def dequeue(self) -> QueueMSG:
         return self.__queue.dequeue()
 
     def __on_message_received(self, topic: str, message: str) -> None:
