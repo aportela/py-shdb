@@ -43,3 +43,18 @@ class WidgetFont:
 
     def render(self, text: str, custom_color: tuple[int, int, int] = None) -> pygame.Surface:
         return self.__font.render(text, True, (custom_color if custom_color else self.__color))
+
+    def render_aligned(self, text: str, custom_color: tuple[int, int, int] = None, fixed_width: int = 0, align: str = None) -> pygame.Surface:
+        surface = self.__font.render(text, True, (custom_color if custom_color else self.__color))
+        if (align == "center"):
+            x_offset = (fixed_width - surface.get_width()) // 2
+        elif (align == "right"):
+            x_offset = (fixed_width - surface.get_width())
+        elif (align == "left"):
+            x_offset = 0
+        else:
+            raise ValueError(f"Invalid align param: {align} on WidgetFont::render_aligned() method")
+        final_surface = pygame.Surface((fixed_width, surface.get_height()))
+        final_surface.fill((0,0,0))
+        final_surface.blit(surface, (x_offset, 0))
+        return final_surface
