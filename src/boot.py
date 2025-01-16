@@ -48,6 +48,8 @@ class Boot:
 
         self.__mqtt_data = None
 
+        self.__mqtt = None
+
         if self.__app_settings.mqtt_broker_host and self.__app_settings.mqtt_broker_port > 0:
             self.__mqtt = MQTTClient(broker = self.__app_settings.mqtt_broker_host, port = self.__app_settings.mqtt_broker_port, username = self.__app_settings.mqtt_username, password = self.__app_settings.mqtt_password)
             #self.__mqtt_data = MQTTDataSource(self.__mqtt, topic = "telegraf/OPNsense.localdomain/net", extract_pattern = r"bytes_recv=(\d+)i", extracted_value_type = MQTTDataSourceValueType.INTEGER, search_pattern = r"interface=pppoe0")
@@ -55,7 +57,6 @@ class Boot:
 
         self.__widgets = []
         self.__load_widgets()
-        self.__mqtt = None
 
         self.__click_event = None
 
@@ -355,7 +356,6 @@ class Boot:
                             data_source = self.get_widget_data_source_from_config(widget_settings = widget_settings.get('data_source', None), mqtt = self.__mqtt)
                         )
                     )
-                    # TODO: error on widget reload (AttributeError: 'NoneType' object has no attribute 'add_callback')
 
         self.__log.debug(f"Total widgets: {len(self.__widgets)}")
 
