@@ -188,14 +188,31 @@ skin:
       data_source:
         type: "cpu_load"
         mqtt:
-          type:
           topic: "telegraf/proxmox/cpu"
 
     line_chart4:
       visible: true
       type: "line_chart"
+      x: 1100
+      y: 1000
+      width: 250
+      height: 100
+      #background_color: [20, 20, 50]
+      font_family: "line_chart"
+      font_size: 16
+      font_color: [255, 255, 255]
+      font_style_bold: true
+      font_style_italic: false
+      data_source:
+        type: "cpu_load"
+        mqtt:
+          topic: "telegraf/pihole/cpu"
+
+    line_chart5:
+      visible: true
+      type: "line_chart"
       x: 200
-      y: 1200
+      y: 1150
       width: 250
       height: 100
       #background_color: [20, 20, 50]
@@ -209,11 +226,11 @@ skin:
         mqtt:
           topic: "telegraf/OPNsense.localdomain/sensors"
 
-    line_chart5:
+    line_chart6:
       visible: true
       type: "line_chart"
       x: 500
-      y: 1200
+      y: 1150
       width: 250
       height: 100
       #background_color: [20, 20, 50]
@@ -227,11 +244,11 @@ skin:
         mqtt:
           topic: "telegraf/openmediavault/sensors"
 
-    line_chart6:
+    line_chart7:
       visible: true
       type: "line_chart"
       x: 800
-      y: 1200
+      y: 1150
       width: 250
       height: 100
       #background_color: [20, 20, 50]
@@ -243,5 +260,22 @@ skin:
       data_source:
         type: "cpu_temperature"
         mqtt:
-          type:
           topic: "telegraf/proxmox/sensors"
+
+    line_chart8:
+      visible: true
+      type: "line_chart"
+      x: 1100
+      y: 1150
+      width: 250
+      height: 100
+      #background_color: [20, 20, 50]
+      font_family: "line_chart"
+      font_size: 16
+      font_color: [255, 255, 255]
+      font_style_bold: true
+      font_style_italic: false
+      data_source:
+        type: "cpu_temperature"
+        mqtt:
+          topic: "telegraf/pihole/sensors"
