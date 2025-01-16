@@ -144,11 +144,15 @@ skin:
       width: 250
       height: 100
       #background_color: [20, 20, 50]
-      font_family: "line_chart"
-      font_size: 16
-      font_color: [255, 255, 255]
-      font_style_bold: true
-      font_style_italic: false
+      header:
+        visible: true,
+        font_family: "monospace"
+        font_size: 16
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+        text: "Firewall CPU Load"
+        #masked_text: "Firewall CPU Load %f%%"
       data_source:
         type: "cpu_load"
         mqtt:
@@ -162,11 +166,15 @@ skin:
       width: 250
       height: 100
       #background_color: [20, 20, 50]
-      font_family: "line_chart"
-      font_size: 16
-      font_color: [255, 255, 255]
-      font_style_bold: true
-      font_style_italic: false
+      header:
+        visible: true,
+        font_family: "monospace"
+        font_size: 16
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+        text: "NAS CPU Load"
+        #masked_text: "NAS CPU Load %f%%"
       data_source:
         type: "cpu_load"
         mqtt:
@@ -180,11 +188,15 @@ skin:
       width: 250
       height: 100
       #background_color: [20, 20, 50]
-      font_family: "line_chart"
-      font_size: 16
-      font_color: [255, 255, 255]
-      font_style_bold: true
-      font_style_italic: false
+      header:
+        visible: true,
+        font_family: "monospace"
+        font_size: 16
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+        text: "VM server CPU Load"
+        #masked_text: "VM server CPU Load %f%%"
       data_source:
         type: "cpu_load"
         mqtt:
@@ -198,11 +210,15 @@ skin:
       width: 250
       height: 100
       #background_color: [20, 20, 50]
-      font_family: "line_chart"
-      font_size: 16
-      font_color: [255, 255, 255]
-      font_style_bold: true
-      font_style_italic: false
+      header:
+        visible: true,
+        font_family: "monospace"
+        font_size: 16
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+        text: "DNS CPU Load"
+        #masked_text: "DNS CPU Load %f%%"
       data_source:
         type: "cpu_load"
         mqtt:
@@ -216,11 +232,15 @@ skin:
       width: 250
       height: 100
       #background_color: [20, 20, 50]
-      font_family: "line_chart"
-      font_size: 16
-      font_color: [255, 255, 255]
-      font_style_bold: true
-      font_style_italic: false
+      header:
+        visible: true,
+        font_family: "monospace"
+        font_size: 16
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+        text: "Firewall CPU Temperature"
+        #masked_text: "Firewall CPU Temperature %fC"
       data_source:
         type: "cpu_temperature"
         mqtt:
@@ -234,11 +254,15 @@ skin:
       width: 250
       height: 100
       #background_color: [20, 20, 50]
-      font_family: "line_chart"
-      font_size: 16
-      font_color: [255, 255, 255]
-      font_style_bold: true
-      font_style_italic: false
+      header:
+        visible: true,
+        font_family: "monospace"
+        font_size: 16
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+        text: "NAS CPU Temperature"
+        #masked_text: "NAS CPU Temperature %fC"
       data_source:
         type: "cpu_temperature"
         mqtt:
@@ -252,11 +276,15 @@ skin:
       width: 250
       height: 100
       #background_color: [20, 20, 50]
-      font_family: "line_chart"
-      font_size: 16
-      font_color: [255, 255, 255]
-      font_style_bold: true
-      font_style_italic: false
+      header:
+        visible: true,
+        font_family: "monospace"
+        font_size: 16
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+        text: "VM server CPU Temperature"
+        #masked_text: "VM server CPU Temperature %fC"
       data_source:
         type: "cpu_temperature"
         mqtt:
@@ -270,11 +298,15 @@ skin:
       width: 250
       height: 100
       #background_color: [20, 20, 50]
-      font_family: "line_chart"
-      font_size: 16
-      font_color: [255, 255, 255]
-      font_style_bold: true
-      font_style_italic: false
+      header:
+        visible: true,
+        font_family: "monospace"
+        font_size: 16
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+        text: "DNS CPU Temperature"
+        #masked_text: "DNS CPU Temperature %fC"
       data_source:
         type: "cpu_temperature"
         mqtt:

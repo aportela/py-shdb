@@ -19,6 +19,7 @@ from .display.widgets.month_calendar_widget import MonthCalendarWidget
 from .display.widgets.image_widget import ImageWidget
 from .display.widgets.weather_forecast_widget import WeatherForecastWidget
 from .display.widgets.list_widget import ListWidget, ListWidgetHeader, ListWidgetBody, ListWidgetItem, ListWidgetItemMarker
+from .display.widgets.charts.chart_widget import CharWidgetConfiguration
 from .display.widgets.charts.line_chart_widget import LineChartWidget
 from .display.widgets.widget_font import WidgetFont
 
@@ -130,6 +131,15 @@ class Boot:
             y = self.__screen_info.current_h - height
         return pygame.Rect(x, y, width, height)
 
+    def get_widget_font_from_config(self, widget_settings: Dict[str, Any]) -> WidgetFont:
+        return WidgetFont(
+            family = widget_settings.get('font_family', None),
+            size = widget_settings.get('font_size', 32),
+            color = widget_settings.get("font_color", pygame.Color("white")),
+            style_bold = widget_settings.get('font_style_bold', False),
+            style_italic = widget_settings.get('font_style_italic', False)
+        )
+
     def get_widget_data_source_from_config(self, widget_settings: Dict[str, Any], mqtt: MQTTClient) -> MQTTTelegrafCPUDataSource:
         if widget_settings.get('type', None) == "cpu_load":
             return MQTTTelegrafCPUDataSource(mqtt=mqtt, topic = widget_settings.get('mqtt', None).get('topic', None))
@@ -167,16 +177,10 @@ class Boot:
                         SimpleLabelWidget(
                             parent_surface = self.__main_surface,
                             name = widget_name,
-                            rect = self.get_widget_rect_from_config(widget_settings),
+                            rect = self.get_widget_rect_from_config(widget_settings = widget_settings),
                             background_color = widget_settings.get('background_color', None),
                             border = self.__app_settings.debug_widgets,
-                            font = WidgetFont(
-                                family = widget_settings.get('font_family', None),
-                                size = widget_settings.get('font_size', 30),
-                                color = widget_settings.get("font_color", pygame.Color("white")),
-                                style_bold = widget_settings.get('font_style_bold', False),
-                                style_italic = widget_settings.get('font_style_italic', False)
-                            ),
+                            font = self.get_widget_font_from_config(widget_settings = widget_settings),
                             text = widget_settings.get('text', "")
                         )
                     )
@@ -185,16 +189,10 @@ class Boot:
                         DateWidget(
                             parent_surface = self.__main_surface,
                             name = widget_name,
-                            rect = self.get_widget_rect_from_config(widget_settings),
+                            rect = self.get_widget_rect_from_config(widget_settings = widget_settings),
                             background_color = widget_settings.get('background_color', None),
                             border = self.__app_settings.debug_widgets,
-                            font = WidgetFont(
-                                family = widget_settings.get('font_family', None),
-                                size = widget_settings.get('font_size', 30),
-                                color = widget_settings.get("font_color", pygame.Color("white")),
-                                style_bold = widget_settings.get('font_style_bold', False),
-                                style_italic = widget_settings.get('font_style_italic', False)
-                            ),
+                            font = self.get_widget_font_from_config(widget_settings = widget_settings),
                             format_mask = widget_settings.get('format_mask', "%A, %d de %B"),
                         )
                     )
@@ -203,16 +201,10 @@ class Boot:
                         TimeWidget(
                             parent_surface = self.__main_surface,
                             name = widget_name,
-                            rect = self.get_widget_rect_from_config(widget_settings),
+                            rect = self.get_widget_rect_from_config(widget_settings = widget_settings),
                             background_color = widget_settings.get('background_color', None),
                             border = self.__app_settings.debug_widgets,
-                            font = WidgetFont(
-                                family = widget_settings.get('font_family', None),
-                                size = widget_settings.get('font_size', 30),
-                                color = widget_settings.get("font_color", pygame.Color("white")),
-                                style_bold = widget_settings.get('font_style_bold', False),
-                                style_italic = widget_settings.get('font_style_italic', False)
-                            ),
+                            font = self.get_widget_font_from_config(widget_settings = widget_settings),
                             format_mask = widget_settings.get('format_mask', "%I:%M %p"),
                         )
                     )
@@ -231,16 +223,10 @@ class Boot:
                         HorizontalTickerWidget(
                             parent_surface = self.__main_surface,
                             name = widget_name,
-                            rect = self.get_widget_rect_from_config(widget_settings),
+                            rect = self.get_widget_rect_from_config(widget_settings = widget_settings),
                             background_color = widget_settings.get('background_color', None),
                             border = self.__app_settings.debug_widgets,
-                            font = WidgetFont(
-                                family = widget_settings.get('font_family', None),
-                                size = widget_settings.get('font_size', 30),
-                                color = widget_settings.get("font_color", pygame.Color("white")),
-                                style_bold = widget_settings.get('font_style_bold', False),
-                                style_italic = widget_settings.get('font_style_italic', False)
-                            ),
+                            font = self.get_widget_font_from_config(widget_settings = widget_settings),
                             speed = widget_settings.get('speed', 1),
                             source = source
                         )
@@ -250,16 +236,10 @@ class Boot:
                         MonthCalendarWidget(
                             parent_surface = self.__main_surface,
                             name = widget_name,
-                            rect = self.get_widget_rect_from_config(widget_settings),
+                            rect = self.get_widget_rect_from_config(widget_settings = widget_settings),
                             background_color = widget_settings.get('background_color', None),
                             border = self.__app_settings.debug_widgets,
-                            font = WidgetFont(
-                                family = widget_settings.get('font_family', None),
-                                size = widget_settings.get('font_size', 30),
-                                color = widget_settings.get("font_color", pygame.Color("white")),
-                                style_bold = widget_settings.get('font_style_bold', False),
-                                style_italic = widget_settings.get('font_style_italic', False)
-                            )
+                            font = self.get_widget_font_from_config(widget_settings = widget_settings),
                         )
                     )
                 elif (widget_settings.get("type", None) == "image"):
@@ -289,16 +269,10 @@ class Boot:
                         WeatherForecastWidget(
                             parent_surface = self.__main_surface,
                             name = widget_name,
-                            rect = self.get_widget_rect_from_config(widget_settings),
+                            rect = self.get_widget_rect_from_config(widget_settings = widget_settings),
                             background_color = widget_settings.get('background_color', None),
                             border = self.__app_settings.debug_widgets,
-                            font = WidgetFont(
-                                family = widget_settings.get('font_family', None),
-                                size = widget_settings.get('font_size', 32),
-                                color = widget_settings.get("font_color", pygame.Color("white")),
-                                style_bold = widget_settings.get('font_style_bold', False),
-                                style_italic = widget_settings.get('font_style_italic', False)
-                            ),
+                            font = self.get_widget_font_from_config(widget_settings = widget_settings),
                             text = widget_settings.get('header_text', 'Weather forecast') # cloud
                         )
                     )
@@ -309,27 +283,15 @@ class Boot:
                         ListWidget(
                             parent_surface = self.__main_surface,
                             name = widget_name,
-                            rect = self.get_widget_rect_from_config(widget_settings),
+                            rect = self.get_widget_rect_from_config(widget_settings = widget_settings),
                             background_color = widget_settings.get('background_color', None),
                             border = self.__app_settings.debug_widgets,
                             header = ListWidgetHeader(
-                                font = WidgetFont(
-                                    family = widget_header_settings.get('font_family', None),
-                                    size = widget_header_settings.get('font_size', 30),
-                                    color = widget_header_settings.get("font_color", pygame.Color("white")),
-                                    style_bold = widget_header_settings.get('font_style_bold', False),
-                                    style_italic = widget_header_settings.get('font_style_italic', False)
-                                ),
+                                font = self.get_widget_font_from_config(widget_settings = widget_header_settings),
                                 text = widget_header_settings.get('text', None)
                             ),
                             body = ListWidgetBody(
-                                font = WidgetFont(
-                                    family = widget_body_settings.get('font_family', None),
-                                    size = widget_body_settings.get('font_size', 30),
-                                    color = widget_body_settings.get("font_color", pygame.Color("white")),
-                                    style_bold = widget_body_settings.get('font_style_bold', False),
-                                    style_italic = widget_body_settings.get('font_style_italic', False)
-                                ),
+                                font = self.get_widget_font_from_config(widget_settings = widget_body_settings),
                                 item_marker = ListWidgetItemMarker.HYPHEN,
                                 items = [
                                     ListWidgetItem(text = "In nunc erat, porta vel vestibulum in, convallis sed mi. Ut scelerisque felis elit, quis porttitor magna viverra eu.", icon = None),
@@ -346,14 +308,25 @@ class Boot:
                         )
                     )
                 elif (widget_settings.get("type", None) == "line_chart"):
+                    config = CharWidgetConfiguration()
+                    widget_header_settings = widget_settings.get('header', {})
+
+                    if widget_header_settings.get("visible", False):
+                        config.title = {
+                            "visible": True,
+                            "font": self.get_widget_font_from_config(widget_settings = widget_header_settings),
+                            "text": widget_header_settings.get("text", "TEST"),
+                            "masked_text": None
+                        }
                     self.__widgets.append(
                         LineChartWidget(
                             parent_surface = self.__main_surface,
                             name = widget_name,
-                            rect = self.get_widget_rect_from_config(widget_settings),
+                            rect = self.get_widget_rect_from_config(widget_settings = widget_settings),
                             background_color = widget_settings.get('background_color', None),
                             border = self.__app_settings.debug_widgets,
-                            data_source = self.get_widget_data_source_from_config(widget_settings = widget_settings.get('data_source', None), mqtt = self.__mqtt)
+                            data_source = self.get_widget_data_source_from_config(widget_settings = widget_settings.get('data_source', None), mqtt = self.__mqtt),
+                            config = config
                         )
                     )
 
