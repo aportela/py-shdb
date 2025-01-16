@@ -10,9 +10,15 @@ from ..mqtt_client import MQTTClient
 class MQTTDataSource:
     def __init__(self, mqtt: MQTTClient, topic: str) -> None: #), extract_pattern: str, extracted_value_type: MQTTDataSourceValueType, search_pattern: Optional[str] = None) -> None:
         self._log = Logger()
+        self.__topic = topic
         self.__mqtt = mqtt
         self.__queue = Queue()
         self.__mqtt.add_callback(topic = topic, callback = self.__on_message_received)
+
+
+    def __del__(self):
+        if self.__mqtt is not None:
+            self.__mqtt.remove_callback(topic = self.__topic, callback = self.__on_message_received)
 
     def _enqueue(self, msg: QueueMSG) -> None:
         self.__queue.enqueue(msg)
