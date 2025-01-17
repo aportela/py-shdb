@@ -1,5 +1,18 @@
 from typing import Optional
 import pygame
+from enum import Enum
+
+class WidgetFontTextAlign(Enum):
+    LEFT = 0
+    CENTER = 1
+    RIGHT = 2
+
+    @classmethod
+    def from_string(cls, text_align_str: str):
+        try:
+            return cls[text_align_str.upper()]
+        except KeyError:
+            raise ValueError(f"Invalid text align: '{text_align_str}'. Use 'left', 'centered' or 'right'.")
 
 class WidgetFont:
     def __init__(self, family: Optional[str] = None, file: Optional[str] = None, size: int = 30, color: tuple[int, int, int] = (255, 255, 255),
@@ -44,17 +57,18 @@ class WidgetFont:
     def render(self, text: str, custom_color: tuple[int, int, int] = None) -> pygame.Surface:
         return self.__font.render(text, True, (custom_color if custom_color else self.__color))
 
-    def render_aligned(self, text: str, custom_color: tuple[int, int, int] = None, fixed_width: int = 0, align: str = None) -> pygame.Surface:
-        surface = self.__font.render(text, True, (custom_color if custom_color else self.__color))
-        if (align == "center"):
-            x_offset = (fixed_width - surface.get_width()) // 2
-        elif (align == "right"):
-            x_offset = (fixed_width - surface.get_width())
-        elif (align == "left"):
-            x_offset = 0
+    def render_aligned(self, text: str, fixed_width: int, align: WidgetFontTextAlign, custom_color: tuple[int, int, int] = None) -> pygame.Surface:
+        if fixed_width > 0:
+            surface = self.__font.render(text, True, (custom_color if custom_color else self.__color))
+            if (align == WidgetFontTextAlign.CENTER):
+                x_offset = (fixed_width - surface.get_width()) // 2
+            elif (align == WidgetFontTextAlign.RIGHT):
+                x_offset = (fixed_width - surface.get_width())
+            else:
+                x_offset = 0
+            final_surface = pygame.Surface((fixed_width, surface.get_height()))
+            final_surface.fill((0,0,0))
+            final_surface.blit(surface, (x_offset, 0))
+            return final_surface
         else:
-            raise ValueError(f"Invalid align param: {align} on WidgetFont::render_aligned() method")
-        final_surface = pygame.Surface((fixed_width, surface.get_height()))
-        final_surface.fill((0,0,0))
-        final_surface.blit(surface, (x_offset, 0))
-        return final_surface
+            raise ValueError("Invalid fixed width param")

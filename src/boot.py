@@ -19,9 +19,9 @@ from .display.widgets.month_calendar_widget import MonthCalendarWidget
 from .display.widgets.image_widget import ImageWidget
 from .display.widgets.weather_forecast_widget import WeatherForecastWidget
 from .display.widgets.list_widget import ListWidget, ListWidgetHeader, ListWidgetBody, ListWidgetItem, ListWidgetItemMarker
-from .display.widgets.charts.chart_widget import CharWidgetConfiguration
+from .display.widgets.charts.chart_widget import ChartWidgetHorizontalTextBlock
 from .display.widgets.charts.line_chart_widget import LineChartWidget
-from .display.widgets.widget_font import WidgetFont
+from .display.widgets.widget_font import WidgetFont, WidgetFontTextAlign
 
 from .modules.mqtt.mqtt_client import MQTTClient
 from .modules.mqtt.data_sources.telegraf.mqtt_telegraf_data_source import MQTTTelegrafCPUDataSource, MQTTTelegrafCPUTemperatureDataSource
@@ -308,25 +308,37 @@ class Boot:
                         )
                     )
                 elif (widget_settings.get("type", None) == "line_chart"):
-                    config = CharWidgetConfiguration()
-                    widget_header_settings = widget_settings.get('header', {})
-
-                    if widget_header_settings.get("visible", False):
-                        config.title = {
-                            "visible": True,
-                            "font": self.get_widget_font_from_config(widget_settings = widget_header_settings),
-                            "text": widget_header_settings.get("text", "TEST"),
-                            "masked_text": None
-                        }
+                    rect = self.get_widget_rect_from_config(widget_settings = widget_settings)
+                    top_title_block = None
+                    widget_header_settings = widget_settings.get('header', None)
+                    if widget_header_settings is not None:
+                        top_title_block = ChartWidgetHorizontalTextBlock(
+                            font = self.get_widget_font_from_config(widget_settings = widget_header_settings),
+                            text_align = WidgetFontTextAlign.from_string(widget_header_settings.get("text_align", "left")),
+                            text = widget_header_settings.get("text", None),
+                            masked_text = widget_header_settings.get("masked_text", None),
+                            fixed_width = rect.width
+                        )
+                    bottom_legend_block = None
+                    widget_footer_settings = widget_settings.get('footer', None)
+                    if widget_footer_settings is not None:
+                        bottom_legend_block = ChartWidgetHorizontalTextBlock(
+                            font = self.get_widget_font_from_config(widget_settings = widget_footer_settings),
+                            text_align = WidgetFontTextAlign.from_string(widget_footer_settings.get("text_align", "left")),
+                            text = widget_footer_settings.get("text", None),
+                            masked_text = widget_footer_settings.get("masked_text", None),
+                            fixed_width = rect.width
+                        )
                     self.__widgets.append(
                         LineChartWidget(
                             parent_surface = self.__main_surface,
                             name = widget_name,
-                            rect = self.get_widget_rect_from_config(widget_settings = widget_settings),
+                            rect = rect,
                             background_color = widget_settings.get('background_color', None),
                             border = self.__app_settings.debug_widgets,
-                            data_source = self.get_widget_data_source_from_config(widget_settings = widget_settings.get('data_source', None), mqtt = self.__mqtt),
-                            config = config
+                            top_title_block = top_title_block,
+                            bottom_legend_block = bottom_legend_block,
+                            data_source = self.get_widget_data_source_from_config(widget_settings = widget_settings.get('data_source', None), mqtt = self.__mqtt)
                         )
                     )
 
