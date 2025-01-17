@@ -151,8 +151,8 @@ skin:
         font_color: [255, 255, 255]
         font_style_bold: true
         font_style_italic: false
-        #text: "Firewall CPU Load"
-        masked_text: "Firewall CPU Load"
+        text: "Firewall CPU Load"
+        #masked_text: ""
         text_align: "center"
       footer:
         visible: true,
@@ -161,6 +161,7 @@ skin:
         font_color: [255, 255, 255]
         font_style_bold: true
         font_style_italic: false
+        #text: ""
         masked_text: "Curr/Min/Max: {current_value:.2f}%/{min_value:.2f}%/{max_value:.2f}%"
         text_align: "center"
       data_source:
@@ -184,7 +185,8 @@ skin:
         font_style_bold: true
         font_style_italic: false
         text: "NAS CPU Load"
-        #masked_text: "NAS CPU Load %f%%"
+        #masked_text: ""
+        text_align: "center"
       footer:
         visible: true,
         font_family: "monospace"
@@ -192,6 +194,7 @@ skin:
         font_color: [255, 255, 255]
         font_style_bold: true
         font_style_italic: false
+        #text: ""
         masked_text: "Curr/Min/Max: {current_value:.2f}%/{min_value:.2f}%/{max_value:.2f}%"
         text_align: "center"
       data_source:
@@ -215,7 +218,8 @@ skin:
         font_style_bold: true
         font_style_italic: false
         text: "VM server CPU Load"
-        #masked_text: "VM server CPU Load %f%%"
+        #masked_text: ""
+        text_align: "center"
       footer:
         visible: true,
         font_family: "monospace"
@@ -223,6 +227,7 @@ skin:
         font_color: [255, 255, 255]
         font_style_bold: true
         font_style_italic: false
+        #text: ""
         masked_text: "Curr/Min/Max: {current_value:.2f}%/{min_value:.2f}%/{max_value:.2f}%"
         text_align: "center"
       data_source:
@@ -246,7 +251,8 @@ skin:
         font_style_bold: true
         font_style_italic: false
         text: "DNS CPU Load"
-        #masked_text: "DNS CPU Load %f%%"
+        #masked_text: ""
+        text_align: "center"
       footer:
         visible: true,
         font_family: "monospace"
@@ -254,6 +260,7 @@ skin:
         font_color: [255, 255, 255]
         font_style_bold: true
         font_style_italic: false
+        #text: ""
         masked_text: "Curr/Min/Max: {current_value:.2f}%/{min_value:.2f}%/{max_value:.2f}%"
         text_align: "center"
       data_source:
@@ -277,7 +284,8 @@ skin:
         font_style_bold: true
         font_style_italic: false
         text: "Firewall CPU Temperature"
-        #masked_text: "Firewall CPU Temperature %fC"
+        #masked_text: ""
+        text_align: "center"
       footer:
         visible: true,
         font_family: "monospace"
@@ -285,6 +293,7 @@ skin:
         font_color: [255, 255, 255]
         font_style_bold: true
         font_style_italic: false
+        #text: ""
         masked_text: "Curr/Min/Max: {current_value:.1f}C / {min_value:.1f}C / {max_value:.1f}C"
         text_align: "center"
       data_source:
@@ -308,7 +317,8 @@ skin:
         font_style_bold: true
         font_style_italic: false
         text: "NAS CPU Temperature"
-        #masked_text: "NAS CPU Temperature %fC"
+        #masked_text: ""
+        text_align: "center"
       footer:
         visible: true,
         font_family: "monospace"
@@ -316,6 +326,7 @@ skin:
         font_color: [255, 255, 255]
         font_style_bold: true
         font_style_italic: false
+        #text: ""
         masked_text: "Curr/Min/Max: {current_value:.1f}C / {min_value:.1f}C / {max_value:.1f}C"
         text_align: "center"
       data_source:
@@ -339,7 +350,8 @@ skin:
         font_style_bold: true
         font_style_italic: false
         text: "VM server CPU Temperature"
-        #masked_text: "VM server CPU Temperature %fC"
+        #masked_text: ""
+        text_align: "center"
       footer:
         visible: true,
         font_family: "monospace"
@@ -347,6 +359,7 @@ skin:
         font_color: [255, 255, 255]
         font_style_bold: true
         font_style_italic: false
+        #text: ""
         masked_text: "Curr/Min/Max: {current_value:.1f}C / {min_value:.1f}C / {max_value:.1f}C"
         text_align: "center"
       data_source:
@@ -370,7 +383,8 @@ skin:
         font_style_bold: true
         font_style_italic: false
         text: "DNS CPU Temperature"
-        #masked_text: "DNS CPU Temperature %fC"
+        #masked_text: ""
+        text_align: "center"
       footer:
         visible: true,
         font_family: "monospace"
@@ -378,6 +392,7 @@ skin:
         font_color: [255, 255, 255]
         font_style_bold: true
         font_style_italic: false
+        #text: ""
         masked_text: "Curr/Min/Max: {current_value:.1f}C / {min_value:.1f}C / {max_value:.1f}C"
         text_align: "center"
       data_source:
