@@ -66,8 +66,7 @@ class WidgetFont:
                 x_offset = (fixed_width - surface.get_width())
             else:
                 x_offset = 0
-            final_surface = pygame.Surface((fixed_width, surface.get_height()))
-            final_surface.fill((0,0,0))
+            final_surface = pygame.Surface((fixed_width, surface.get_height()), pygame.SRCALPHA)
             final_surface.blit(surface, (x_offset, 0))
             return final_surface
         else:
