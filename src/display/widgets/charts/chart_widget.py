@@ -26,7 +26,7 @@ class ChartWidgetHorizontalTextBlock():
         else:
             return self.__font.render(text = self.__text)
 
-    def render_masked_text(self, current_value: Any, min_value: Optional[Any] = None, max_value: Optional[Any] = None):
+    def render_masked_text(self, current_value: Any, min_value: Any, max_value: Any):
         formatted_text = self.__masked_text.format(current_value = current_value, min_value = min_value, max_value = max_value)
         if self.__text_align == WidgetFontTextAlign.CENTER or self.__text_align == WidgetFontTextAlign.RIGHT:
             return self.__font.render_aligned(text = formatted_text, fixed_width = self.__fixed_width, align = self.__text_align)

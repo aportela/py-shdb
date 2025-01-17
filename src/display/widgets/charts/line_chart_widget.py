@@ -13,10 +13,9 @@ class LineChartWidget(ChartWidget):
         super().__init__(parent_surface = parent_surface, name = name, rect = rect, background_color = background_color, border = border, border_color = border_color, top_title_block = top_title_block, bottom_legend_block = bottom_legend_block)
         self._refresh_required = True
         self.__data_source = data_source
-        self.__min_value = 0
-        self.__max_value = 0
-        self.__current_value = 0
-        self.__get_value()
+        self.__min_value = None
+        self.__max_value = None
+        self.__current_value = None
         self.__tmp_surface = pygame.Surface((self.width, self.height))
         self.__tmp_surface.fill((0, 0, 0))
         self._chart_height = self.height
@@ -58,14 +57,22 @@ class LineChartWidget(ChartWidget):
             if self._top_title_block.has_static_text:
                 self.__top_title_surface = self._top_title_block.render_text()
             else:
-                self.__top_title_surface = self._top_title_block.render_masked_text(current_value = self.__current_value, min_value = self.__min_value, max_value = self.__max_value)
+                self.__top_title_surface = self._top_title_block.render_masked_text(
+                    current_value = self.__current_value if self.__current_value is not None else 0,
+                    min_value = self.__min_value if self.__min_value is not None else 0,
+                    max_value = self.__max_value if self.__max_value is not None else 0
+                )
 
     def __refresh_bottom_legend_surface(self) -> None:
         if self._bottom_legend_block is not None:
             if self._bottom_legend_block.has_static_text:
                 self.__bottom_legend_surface = self._bottom_legend_block.render_text()
             else:
-                self.__bottom_legend_surface = self._bottom_legend_block.render_masked_text(current_value = self.__current_value, min_value = self.__min_value, max_value = self.__max_value)
+                self.__bottom_legend_surface = self._bottom_legend_block.render_masked_text(
+                    current_value = self.__current_value if self.__current_value is not None else 0,
+                    min_value = self.__min_value if self.__min_value is not None else 0,
+                    max_value = self.__max_value if self.__max_value is not None else 0
+                )
 
     def __render_graph(self, value: int) -> pygame.Surface:
         surface = pygame.Surface((self.width, self.height))
@@ -98,26 +105,24 @@ class LineChartWidget(ChartWidget):
         return surface
 
     def refresh(self, force: bool = False) -> bool:
-        if self.__get_value():
-            if force or self._refresh_required:
-                super()._clear()
-                if self._top_title_block is not None:
-                    if not self._top_title_block.has_static_text:
-                        self.__refresh_top_title_surface()
-                    super()._blit(self.__top_title_surface, (0, 0))
-                if self._bottom_legend_block is not None:
-                    if not self._bottom_legend_block.has_static_text:
-                        self.__refresh_bottom_legend_surface()
-                    super()._blit(self.__bottom_legend_surface, (0, self.height - self.__bottom_legend_surface.get_height()))
+        self._refresh_required = self.__get_value()
+        if force or self._refresh_required:
+            super()._clear()
+            if self._top_title_block is not None:
+                if not self._top_title_block.has_static_text:
+                    self.__refresh_top_title_surface()
+                super()._blit(self.__top_title_surface, (0, 0))
+            if self._bottom_legend_block is not None:
+                if not self._bottom_legend_block.has_static_text:
+                    self.__refresh_bottom_legend_surface()
+                super()._blit(self.__bottom_legend_surface, (0, self.height - self.__bottom_legend_surface.get_height()))
 
-                    #self.__tmp_surface.blit(self.__top_title_surface, (0, 0))
-                #super()._blit(self.__render_graph(int(value.value)), (0, 0))
+                #self.__tmp_surface.blit(self.__top_title_surface, (0, 0))
+            #super()._blit(self.__render_graph(int(value.value)), (0, 0))
 
-                super()._render()
-                #self._refresh_required = False
-                return True
-            else:
-                return False
+            super()._render()
+            #self._refresh_required = False
+            return True
         else:
             return False
 
