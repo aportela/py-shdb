@@ -4,12 +4,11 @@ import random
 from typing import Optional, Any
 from .chart_widget import ChartWidget, ChartWidgetHorizontalTextBlock
 from ..widget import DEFAULT_WIDGET_BORDER_COLOR
-from ....modules.data_source.mqtt.mqtt_data_source import MQTTDataSource
-from ....modules.queue.queue import QueueMSG
+from ....modules.data_source.queue_data_source import QueueDataSource
 
 class LineChartWidget(ChartWidget):
 
-    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, top_title_block: Optional[ChartWidgetHorizontalTextBlock] = None, bottom_legend_block: Optional[ChartWidgetHorizontalTextBlock] = None, data_source: MQTTDataSource = None, y_axis_min_value: Any = 0, y_axis_max_value: Any = 0) -> None:
+    def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR, top_title_block: Optional[ChartWidgetHorizontalTextBlock] = None, bottom_legend_block: Optional[ChartWidgetHorizontalTextBlock] = None, data_source: QueueDataSource = None, y_axis_min_value: Any = 0, y_axis_max_value: Any = 0) -> None:
         super().__init__(parent_surface = parent_surface, name = name, rect = rect, background_color = background_color, border = border, border_color = border_color, top_title_block = top_title_block, bottom_legend_block = bottom_legend_block)
         self._refresh_required = True
         self.__data_source = data_source
@@ -35,7 +34,7 @@ class LineChartWidget(ChartWidget):
         self.__graph_surface = pygame.Surface((self.width, self._chart_height), pygame.SRCALPHA)
 
 
-    def set_data_source(self, data_source: MQTTDataSource):
+    def set_data_source(self, data_source: QueueDataSource):
         self.__data_source = data_source
 
     def __map_value(self, value, fromLow, fromHigh, toLow, toHigh):
