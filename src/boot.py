@@ -312,7 +312,7 @@ class Boot:
                     rect = self.get_widget_rect_from_config(widget_settings = widget_settings)
                     top_title_block = None
                     widget_header_settings = widget_settings.get('header', None)
-                    if widget_header_settings is not None:
+                    if widget_header_settings is not None and widget_header_settings.get("visible", False):
                         top_title_block = ChartWidgetHorizontalTextBlock(
                             font = self.get_widget_font_from_config(widget_settings = widget_header_settings),
                             text_align = WidgetFontTextAlign.from_string(widget_header_settings.get("text_align", "left")),
@@ -322,7 +322,7 @@ class Boot:
                         )
                     bottom_legend_block = None
                     widget_footer_settings = widget_settings.get('footer', None)
-                    if widget_footer_settings is not None:
+                    if widget_footer_settings is not None and widget_footer_settings.get("visible", False):
                         bottom_legend_block = ChartWidgetHorizontalTextBlock(
                             font = self.get_widget_font_from_config(widget_settings = widget_footer_settings),
                             text_align = WidgetFontTextAlign.from_string(widget_footer_settings.get("text_align", "left")),
