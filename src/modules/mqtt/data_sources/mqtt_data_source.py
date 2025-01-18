@@ -2,29 +2,20 @@ from typing import Optional
 from abc import abstractmethod
 import re
 from decimal import Decimal
-from ....utils.logger import Logger
-from ...queue.queue import Queue, QueueMSG
+from .queue_data_source import QueueDataSource
 from ..mqtt_client import MQTTClient
 
 
-class MQTTDataSource:
-    def __init__(self, mqtt: MQTTClient, topic: str) -> None: #), extract_pattern: str, extracted_value_type: MQTTDataSourceValueType, search_pattern: Optional[str] = None) -> None:
-        self._log = Logger()
+class MQTTDataSource (QueueDataSource):
+    def __init__(self, mqtt: MQTTClient, topic: str) -> None:
+        super().__init__()
         self.__topic = topic
         self.__mqtt = mqtt
-        self.__queue = Queue()
         self.__mqtt.add_callback(topic = topic, callback = self.__on_message_received)
-
 
     def __del__(self):
         if self.__mqtt is not None:
             self.__mqtt.remove_callback(topic = self.__topic, callback = self.__on_message_received)
-
-    def _enqueue(self, msg: QueueMSG) -> None:
-        self.__queue.enqueue(msg)
-
-    def dequeue(self) -> QueueMSG:
-        return self.__queue.dequeue()
 
     def __on_message_received(self, topic: str, message: str) -> None:
         self._parse(topic = topic, message = message, timestamp = self.__extract__timestamp(message=message))
