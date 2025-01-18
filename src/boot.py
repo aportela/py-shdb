@@ -338,7 +338,9 @@ class Boot:
                             border = self.__app_settings.debug_widgets,
                             top_title_block = top_title_block,
                             bottom_legend_block = bottom_legend_block,
-                            data_source = self.get_widget_data_source_from_config(widget_settings = widget_settings.get('data_source', None), mqtt = self.__mqtt)
+                            data_source = self.get_widget_data_source_from_config(widget_settings = widget_settings.get('data_source', None), mqtt = self.__mqtt),
+                            y_axis_min_value = 0,
+                            y_axis_max_value = 100
                         )
                     )
 
