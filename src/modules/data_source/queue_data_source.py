@@ -1,5 +1,5 @@
-from ....utils.logger import Logger
-from ...queue.queue import Queue, QueueMSG
+from ...utils.logger import Logger
+from ..queue.queue import Queue, QueueMSG
 
 class QueueDataSource:
     def __init__(self) -> None:

@@ -4,7 +4,7 @@ import random
 from typing import Optional, Any
 from .chart_widget import ChartWidget, ChartWidgetHorizontalTextBlock
 from ..widget import DEFAULT_WIDGET_BORDER_COLOR
-from ....modules.mqtt.data_sources.mqtt_data_source import MQTTDataSource
+from ....modules.data_source.mqtt.mqtt_data_source import MQTTDataSource
 from ....modules.queue.queue import QueueMSG
 
 class LineChartWidget(ChartWidget):

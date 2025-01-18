@@ -2,9 +2,8 @@ from typing import Optional
 from abc import abstractmethod
 import re
 from decimal import Decimal
-from .queue_data_source import QueueDataSource
-from ..mqtt_client import MQTTClient
-
+from ..queue_data_source import QueueDataSource
+from ...mqtt.mqtt_client import MQTTClient
 
 class MQTTDataSource (QueueDataSource):
     def __init__(self, mqtt: MQTTClient, topic: str) -> None:

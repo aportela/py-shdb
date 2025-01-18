@@ -24,8 +24,8 @@ from .display.widgets.charts.line_chart_widget import LineChartWidget
 from .display.widgets.widget_font import WidgetFont, WidgetFontTextAlign
 
 from .modules.mqtt.mqtt_client import MQTTClient
-from .modules.mqtt.data_sources.queue_data_source import QueueDataSource
-from .modules.mqtt.data_sources.telegraf.mqtt_telegraf_data_source import MQTTTelegrafCPUDataSource, MQTTTelegrafCPUTemperatureDataSource
+from .modules.data_source.queue_data_source import QueueDataSource
+from .modules.data_source.mqtt.telegraf.mqtt_telegraf_data_source import MQTTTelegrafCPUDataSource, MQTTTelegrafCPUTemperatureDataSource
 
 class Boot:
     def __init__(self, ) -> None:

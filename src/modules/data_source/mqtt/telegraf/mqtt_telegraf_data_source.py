@@ -1,8 +1,8 @@
 from typing import Optional
 import re
 from decimal import Decimal
-from ..mqtt_data_source import MQTTDataSource
-from ...mqtt_client import MQTTClient
+from ...mqtt.mqtt_data_source import MQTTDataSource
+from ....mqtt.mqtt_client import MQTTClient
 from ....queue.queue import QueueMSG
 
 # TODO: refactor MQTTTelegrafCPULoadDataSource
