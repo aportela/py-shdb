@@ -24,6 +24,7 @@ from .display.widgets.charts.line_chart_widget import LineChartWidget
 from .display.widgets.widget_font import WidgetFont, WidgetFontTextAlign
 
 from .modules.mqtt.mqtt_client import MQTTClient
+from .modules.mqtt.data_sources.queue_data_source import QueueDataSource
 from .modules.mqtt.data_sources.telegraf.mqtt_telegraf_data_source import MQTTTelegrafCPUDataSource, MQTTTelegrafCPUTemperatureDataSource
 
 class Boot:
@@ -53,8 +54,6 @@ class Boot:
 
         if self.__app_settings.mqtt_broker_host and self.__app_settings.mqtt_broker_port > 0:
             self.__mqtt = MQTTClient(broker = self.__app_settings.mqtt_broker_host, port = self.__app_settings.mqtt_broker_port, username = self.__app_settings.mqtt_username, password = self.__app_settings.mqtt_password)
-            #self.__mqtt_data = MQTTDataSource(self.__mqtt, topic = "telegraf/OPNsense.localdomain/net", extract_pattern = r"bytes_recv=(\d+)i", extracted_value_type = MQTTDataSourceValueType.INTEGER, search_pattern = r"interface=pppoe0")
-            self.__mqtt_data = MQTTTelegrafCPUDataSource(self.__mqtt, topic = "telegraf/openmediavault/cpu")
 
         self.__widgets = []
         self.__load_widgets()
@@ -140,7 +139,7 @@ class Boot:
             style_italic = widget_settings.get('font_style_italic', False)
         )
 
-    def get_widget_data_source_from_config(self, widget_settings: Dict[str, Any], mqtt: MQTTClient) -> MQTTTelegrafCPUDataSource:
+    def get_widget_data_source_from_config(self, widget_settings: Dict[str, Any], mqtt: MQTTClient) -> QueueDataSource:
         if widget_settings.get('type', None) == "cpu_load":
             return MQTTTelegrafCPUDataSource(mqtt=mqtt, topic = widget_settings.get('mqtt', None).get('topic', None))
         elif widget_settings.get('type', None) == "cpu_temperature":
