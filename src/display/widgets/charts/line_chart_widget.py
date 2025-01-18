@@ -29,7 +29,7 @@ class LineChartWidget(ChartWidget):
         self.__bottom_legend_surface = None
         self.__refresh_bottom_legend_surface()
         if self.__bottom_legend_surface is not None:
-            self._chart_height -= self.__top_title_surface.get_height()
+            self._chart_height -= self.__bottom_legend_surface.get_height()
 
         self.__graph_surface = pygame.Surface((self.width, self._chart_height), pygame.SRCALPHA)
 
