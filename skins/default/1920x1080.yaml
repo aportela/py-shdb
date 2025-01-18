@@ -144,7 +144,7 @@ skin:
       height: 100
       #background_color: [20, 20, 50]
       header:
-        visible: false
+        visible: true
         font_family: "monospace"
         font_size: 16
         font_color: [255, 255, 255]
@@ -154,7 +154,7 @@ skin:
         #masked_text: ""
         text_align: "center"
       footer:
-        visible: false
+        visible: true
         font_family: "monospace"
         font_size: 12
         font_color: [255, 255, 255]
