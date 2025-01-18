@@ -26,6 +26,7 @@ from .display.widgets.widget_font import WidgetFont, WidgetFontTextAlign
 from .modules.mqtt.mqtt_client import MQTTClient
 from .modules.data_source.queue_data_source import QueueDataSource
 from .modules.data_source.mqtt.telegraf.mqtt_telegraf_data_source import MQTTTelegrafCPUDataSource, MQTTTelegrafCPUTemperatureDataSource
+from .modules.data_source.random.random_data_source import RandomDataSource
 
 class Boot:
     def __init__(self, ) -> None:
@@ -140,6 +141,7 @@ class Boot:
         )
 
     def get_widget_data_source_from_config(self, widget_settings: Dict[str, Any], mqtt: MQTTClient) -> QueueDataSource:
+        return RandomDataSource()
         if widget_settings.get('type', None) == "cpu_load":
             return MQTTTelegrafCPUDataSource(mqtt=mqtt, topic = widget_settings.get('mqtt', None).get('topic', None))
         elif widget_settings.get('type', None) == "cpu_temperature":
