@@ -98,13 +98,13 @@ class LineChartWidget(ChartWidget):
         x = self.__graph_surface.get_width() -1
         y = self.__graph_surface.get_height() -1
 
-        v = int(self.__map_value(value, 0, y, self._y_axis_min_value, self._y_axis_max_value))
+        v = int(self.__map_value(value, self._y_axis_min_value, self._y_axis_max_value, 0, y))
         #print(f"Value: {value} - Mapped value: {v} - {0} a {y}, {self._y_axis_min_value} a {self._y_axis_max_value}")
 
         pygame.draw.line(surface = self.__graph_surface, color=(0, 0, 0, 0), start_pos=(x, 0), end_pos=(x, y), width=1) # delete with black vertical line
         self.__graph_surface.set_at((x, y - v), (255, 0, 255)) # pixel
         pygame.draw.line(surface=self.__graph_surface, color=(125, 0, 125), start_pos=(x, y - v +1), end_pos=(x, y), width=1) ## line (fill bg)
-        surface.blit(source = self.__graph_surface, dest=(6, 6))
+        surface.blit(source = self.__graph_surface, dest=(0, 0))
         self.__graph_surface.scroll(dx = -1, dy = 0)
         return surface
 
