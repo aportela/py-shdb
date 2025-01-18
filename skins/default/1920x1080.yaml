@@ -138,13 +138,32 @@ skin:
     line_chart1:
       visible: true
       type: "line_chart"
-      x: 600
-      y: 850
-      width: 200
-      height: 120
+      x: 500
+      y: 800
+      width: 250
+      height: 100
       #background_color: [20, 20, 50]
-      font_family: "line_chart"
-      font_size: 16
-      font_color: [255, 255, 255]
-      font_style_bold: true
-      font_style_italic: false
+      header:
+        visible: false
+        font_family: "monospace"
+        font_size: 16
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+        text: "DNS CPU Temperature"
+        #masked_text: ""
+        text_align: "center"
+      footer:
+        visible: false
+        font_family: "monospace"
+        font_size: 12
+        font_color: [255, 255, 255]
+        font_style_bold: true
+        font_style_italic: false
+        #text: ""
+        masked_text: "Curr/Min/Max: {current_value:.1f}C / {min_value:.1f}C / {max_value:.1f}C"
+        text_align: "center"
+      data_source:
+        type: "cpu_temperature"
+        mqtt:
+          topic: "telegraf/pihole/sensors"
