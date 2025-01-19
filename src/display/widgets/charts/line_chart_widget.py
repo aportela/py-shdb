@@ -17,8 +17,11 @@ class LineChartWidget(ChartWidget):
         self.__min_value = None
         self.__max_value = None
         self.__current_value = None
+        self.__last_min_value = None
+        self.__last_max_value = None
+        self.__last_current_value = None
         self.__tmp_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-        self.__tmp_surface.fill((0, 0, 0))
+        self.__tmp_surface.fill((0, 0, 0, 0))
         self._chart_height = self.height
         self.__top_title_surface = None
         self.__refresh_top_title_surface()
@@ -32,6 +35,7 @@ class LineChartWidget(ChartWidget):
             self._chart_height -= self.__bottom_legend_surface.get_height()
 
         self.__graph_surface = pygame.Surface((self.width, self._chart_height), pygame.SRCALPHA)
+        self.__graph_surface.fill((0, 0, 0, 0))
 
 
     def set_data_source(self, data_source: QueueDataSource):
@@ -43,17 +47,22 @@ class LineChartWidget(ChartWidget):
     def __get_value(self) -> bool:
         value = self.__data_source.dequeue()
         if value is not None:
+            self.__last_current_value = self.__current_value
             self.__current_value = value.value
             if (self.__min_value is not None):
                 if self.__current_value < self.__min_value:
+                    self.__last_min_value = self.__min_value
                     self.__min_value = self.__current_value
             else:
                 self.__min_value = self.__current_value
+                self.__last_min_value = self.__min_value
             if (self.__max_value is not None):
                 if self.__current_value > self.__max_value:
+                    self.__last_max_value = self.__max_value
                     self.__max_value = self.__current_value
             else:
                 self.__max_value = self.__current_value
+                self.__last_max_value = self.__max_value
             return True
         else:
             return False
@@ -63,27 +72,29 @@ class LineChartWidget(ChartWidget):
             if self._top_title_block.has_static_text:
                 self.__top_title_surface = self._top_title_block.render_text()
             else:
-                self.__top_title_surface = self._top_title_block.render_masked_text(
-                    current_value = self.__current_value if self.__current_value is not None else 0,
-                    min_value = self.__min_value if self.__min_value is not None else 0,
-                    max_value = self.__max_value if self.__max_value is not None else 0
-                )
+                if self.__last_current_value != self.__current_value or self.__last_min_value != self.__min_value or self.__last_max_value != self.__max_value:
+                    self.__top_title_surface = self._top_title_block.render_masked_text(
+                        current_value = self.__current_value if self.__current_value is not None else 0,
+                        min_value = self.__min_value if self.__min_value is not None else 0,
+                        max_value = self.__max_value if self.__max_value is not None else 0
+                    )
 
     def __refresh_bottom_legend_surface(self) -> None:
         if self._bottom_legend_block is not None:
             if self._bottom_legend_block.has_static_text:
                 self.__bottom_legend_surface = self._bottom_legend_block.render_text()
             else:
-                self.__bottom_legend_surface = self._bottom_legend_block.render_masked_text(
-                    current_value = self.__current_value if self.__current_value is not None else 0,
-                    min_value = self.__min_value if self.__min_value is not None else 0,
-                    max_value = self.__max_value if self.__max_value is not None else 0
-                )
+                #if self.__last_current_value != self.__current_value or self.__last_min_value != self.__min_value or self.__last_max_value != self.__max_value:
+                #if True:
+                    self.__bottom_legend_surface = self._bottom_legend_block.render_masked_text(
+                        current_value = self.__current_value if self.__current_value is not None else 0,
+                        min_value = self.__min_value if self.__min_value is not None else 0,
+                        max_value = self.__max_value if self.__max_value is not None else 0
+                    )
 
     def __render_graph(self, value: int) -> pygame.Surface:
         surface = pygame.Surface((self.width, self._chart_height), pygame.SRCALPHA)
-
-        #surface.fill((0, 0, 0))
+        surface.fill((0, 0, 0, 0))
 
         """
         start_pos = (0, 0) #(4, 4)
@@ -95,17 +106,18 @@ class LineChartWidget(ChartWidget):
         pygame.draw.line(surface = surface, color=(255, 255, 255), start_pos = start_pos, end_pos = end_pos, width = 2)
 
         """
-        x = self.__graph_surface.get_width() -1
-        y = self.__graph_surface.get_height() -1
+        current_x = self.__graph_surface.get_width() -1
+        max_y = self.__graph_surface.get_height() - 1
 
-        v = int(self.__map_value(value, self._y_axis_min_value, self._y_axis_max_value, 0, y))
+        v = int(self.__map_value(value, self._y_axis_min_value, self._y_axis_max_value, 0, max_y))
         #print(f"Value: {value} - Mapped value: {v} - {0} a {y}, {self._y_axis_min_value} a {self._y_axis_max_value}")
 
-        pygame.draw.line(surface = self.__graph_surface, color=(0, 0, 0, 0), start_pos=(x, 0), end_pos=(x, y), width=1) # delete with black vertical line
-        self.__graph_surface.set_at((x, y - v), (255, 0, 255)) # pixel
-        pygame.draw.line(surface=self.__graph_surface, color=(125, 0, 125), start_pos=(x, y - v +1), end_pos=(x, y), width=1) ## line (fill bg)
+        pygame.draw.line(surface = self.__graph_surface, color = (0, 0, 0, 0), start_pos = (current_x, 0), end_pos = (current_x, max_y), width = 1) # clear previous value (with transparent vertical line)
+        #self.__graph_surface.set_at((current_x, max_y - v), (255, 0, 255)) # draw current value (pixel)
+        pygame.draw.line(surface = self.__graph_surface, color = (125, 0, 125), start_pos = (current_x, max_y - v  + 1), end_pos = (current_x, max_y), width = 1) # draw current value (line / fill bg)
+        # dump
         surface.blit(source = self.__graph_surface, dest=(0, 0))
-        self.__graph_surface.scroll(dx = -1, dy = 0)
+        self.__graph_surface.scroll(dx = -1, dy = 0) # scroll (left) current value (vertical line) 1 pixel
         return surface
 
     def refresh(self, force: bool = False) -> bool:
