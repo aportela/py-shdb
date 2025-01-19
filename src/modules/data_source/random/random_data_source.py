@@ -6,11 +6,12 @@ from ..queue_data_source import QueueDataSource
 from ...queue.queue import QueueMSG
 
 class RandomDataSource (QueueDataSource):
-    def __init__(self ) -> None:
+    def __init__(self, interval: float = 1) -> None:
         super().__init__()
         self._running = True
         self._thread = None
         self.current_time = 0.0
+        self.__interval = interval
         self._start_auto_enqueue()
 
     def __del__(self):
@@ -31,7 +32,7 @@ class RandomDataSource (QueueDataSource):
         def auto_enqueue():
             while self._running:
                 self._enqueue(QueueMSG(value = self._get_random(), timestamp = time.time()))
-                time.sleep(1)
+                time.sleep(self.__interval)
         self._thread = threading.Thread(target = auto_enqueue, daemon = True)
         self._thread.start()
 
