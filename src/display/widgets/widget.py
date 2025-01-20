@@ -4,6 +4,7 @@ from typing import Optional
 from ...utils.logger import Logger
 
 DEFAULT_WIDGET_BORDER_COLOR=(255, 105, 180) # PINK
+DEFAULT_WIDGET_COLOR=(255, 255, 255) # WHITE
 
 class Widget(ABC):
     def __init__(self, parent_surface: pygame.Surface, name: str, rect: pygame.Rect, background_color: tuple[int, int, int] = None, border: bool = False, border_color: tuple[int, int, int] = DEFAULT_WIDGET_BORDER_COLOR) -> None:

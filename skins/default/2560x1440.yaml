@@ -143,6 +143,7 @@ skin:
       y: 1000
       width: 250
       height: 100
+      chart_color: [255, 0, 0]
       #background_color: [20, 20, 50]
       header:
         visible: true,
@@ -176,6 +177,7 @@ skin:
       y: 1000
       width: 250
       height: 100
+      chart_color: [0, 255, 0]
       #background_color: [20, 20, 50]
       header:
         visible: true,
@@ -209,6 +211,7 @@ skin:
       y: 1000
       width: 250
       height: 100
+      chart_color: [0, 255, 255]
       #background_color: [20, 20, 50]
       header:
         visible: true,
@@ -242,6 +245,7 @@ skin:
       y: 1000
       width: 250
       height: 100
+      chart_color: [255, 255, 0]
       #background_color: [20, 20, 50]
       header:
         visible: true,
@@ -275,6 +279,7 @@ skin:
       y: 1150
       width: 250
       height: 100
+      chart_color: [255, 165, 0]
       #background_color: [20, 20, 50]
       header:
         visible: true,
@@ -308,6 +313,7 @@ skin:
       y: 1150
       width: 250
       height: 100
+      chart_color: [255, 192, 203]
       #background_color: [20, 20, 50]
       header:
         visible: true,
@@ -341,6 +347,7 @@ skin:
       y: 1150
       width: 250
       height: 100
+      chart_color: [255, 215, 0]
       #background_color: [20, 20, 50]
       header:
         visible: true,
@@ -374,6 +381,7 @@ skin:
       y: 1150
       width: 250
       height: 100
+      chart_color: [189, 252, 201]
       #background_color: [20, 20, 50]
       header:
         visible: true,

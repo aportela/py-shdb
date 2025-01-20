@@ -1,6 +1,7 @@
 import os
 import sys
 import pygame
+import random
 
 from typing import Dict, Any
 from .utils.logger import Logger
@@ -141,7 +142,7 @@ class Boot:
         )
 
     def get_widget_data_source_from_config(self, widget_settings: Dict[str, Any], mqtt: MQTTClient) -> QueueDataSource:
-        return RandomDataSource()
+        #return RandomDataSource(0.1)
         if widget_settings.get('type', None) == "cpu_load":
             return MQTTTelegrafCPUDataSource(mqtt=mqtt, topic = widget_settings.get('mqtt', None).get('topic', None))
         elif widget_settings.get('type', None) == "cpu_temperature":
@@ -210,7 +211,6 @@ class Boot:
                         )
                     )
                 elif (widget_settings.get("type", None) == "horizontal_ticker"):
-                    text = None
                     source = None
                     url = widget_settings.get('rss_url', None)
                     if url is not None:
@@ -339,6 +339,7 @@ class Boot:
                             border = self.__app_settings.debug_widgets,
                             top_title_block = top_title_block,
                             bottom_legend_block = bottom_legend_block,
+                            chart_color = widget_settings.get('chart_color', [ random.randint(64, 255), random.randint(64, 255), random.randint(64, 255)]),
                             data_source = self.get_widget_data_source_from_config(widget_settings = widget_settings.get('data_source', None), mqtt = self.__mqtt),
                             y_axis_min_value = 0,
                             y_axis_max_value = 100
