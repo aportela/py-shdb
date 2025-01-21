@@ -144,9 +144,9 @@ class Boot:
     def get_widget_data_source_from_config(self, widget_settings: Dict[str, Any], mqtt: MQTTClient) -> QueueDataSource:
         #return RandomDataSource(0.1)
         if widget_settings.get('type', None) == "cpu_load":
-            return MQTTTelegrafCPUDataSource(mqtt=mqtt, topic = widget_settings.get('mqtt', None).get('topic', None))
+            return MQTTTelegrafCPUDataSource(mqtt=mqtt, topic = widget_settings.get('mqtt', {}).get('topic', None))
         elif widget_settings.get('type', None) == "cpu_temperature":
-            return MQTTTelegrafCPUTemperatureDataSource(mqtt=mqtt, topic = widget_settings.get('mqtt', None).get('topic', None))
+            return MQTTTelegrafCPUTemperatureDataSource(mqtt=mqtt, topic = widget_settings.get('mqtt', {}).get('topic', None), feature_search = widget_settings.get('mqtt', {}).get('feature_search', "feature=package_id_0"))
         else:
             raise ValueError("TODO")
 

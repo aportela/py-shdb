@@ -31,17 +31,16 @@ class MQTTTelegrafCPUDataSource (MQTTDataSource):
                     self._enqueue(QueueMSG(value = 0.0, timestamp = timestamp))
 
 class MQTTTelegrafCPUTemperatureDataSource (MQTTDataSource):
-    def __init__(self, mqtt: MQTTClient, topic: str) -> None:
+    def __init__(self, mqtt: MQTTClient, topic: str, feature_search: str = "feature=package_id_0") -> None:
         super().__init__(mqtt = mqtt, topic = topic)
+        self.__feature_search = feature_search
 
     def _parse(self, topic: str, message: str, timestamp: Optional[float] = None):
-        #self._log.debug(message)
         temp = None
-        if re.search(r"feature=package_id_0", message):
+        if re.search(r"{}".format(re.escape(self.__feature_search)), message):
             temp = self._extract_decimal(pattern = r"temp_input=([0-9]+(?:\.[0-9]+)?)", message = message)
-        # TODO: not working with raspberry PI feature=temp1
-        #if temp is None:
-            #temp = self._extract_decimal(pattern = r"temp=([0-9]+(?:\.[0-9]+)?)", message = message)
+            if temp is None:
+                temp = self._extract_decimal(pattern = r"temp=([0-9]+(?:\.[0-9]+)?)", message = message)
         if temp is not None:
             self._enqueue(QueueMSG(value = temp, timestamp = timestamp))
 

@@ -305,6 +305,7 @@ skin:
         type: "cpu_temperature"
         mqtt:
           topic: "telegraf/OPNsense.localdomain/sensors"
+          feature_search: "feature=package_id_0"
 
     line_chart6:
       visible: true
@@ -339,6 +340,7 @@ skin:
         type: "cpu_temperature"
         mqtt:
           topic: "telegraf/openmediavault/sensors"
+          feature_search: "feature=package_id_0"
 
     line_chart7:
       visible: true
@@ -373,6 +375,7 @@ skin:
         type: "cpu_temperature"
         mqtt:
           topic: "telegraf/proxmox/sensors"
+          feature_search: "feature=package_id_0"
 
     line_chart8:
       visible: true
@@ -407,3 +410,4 @@ skin:
         type: "cpu_temperature"
         mqtt:
           topic: "telegraf/pihole/sensors"
+          feature_search: "feature=temp1"
